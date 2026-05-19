@@ -2,16 +2,13 @@ from fastapi import FastAPI, APIRouter, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-import ast
 import asyncio
-import json
 import os
 import logging
 import random
-import re
 import unicodedata
 import uuid
-import pandas as pd
+import httpx
 from pathlib import Path
 from typing import List, Optional
 from pydantic import BaseModel, Field
@@ -19,7 +16,7 @@ from pydantic import BaseModel, Field
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-from catalog import CATALOG, CATEGORIES, OBF_PRODUCTS, fetch_obf_products  # noqa: E402
+from catalog import CATALOG, CATEGORIES, OBF_PRODUCTS, fetch_obf_products, SUPABASE_URL, SUPABASE_ANON_KEY  # noqa: E402
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -28,158 +25,47 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
-# ============ Sephora France CSV loader ============
+# ============ Sephora — Supabase loader ============
 
 def _normalize(s: str) -> str:
     s = s.lower().replace("-", " ").replace("_", " ")
     return unicodedata.normalize("NFD", s).encode("ascii", "ignore").decode("ascii")
 
 
-def _parse_json_safe(val, default):
-    if not isinstance(val, str) and pd.isna(val):
-        return default
+def _fetch_sephora_from_supabase() -> list[dict]:
+    url = f"{SUPABASE_URL}/rest/v1/sephora_products"
+    headers = {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+    }
+    products: list[dict] = []
+    offset, limit = 0, 1000
     try:
-        return json.loads(val)
-    except Exception:
-        return default
-
-
-def _compute_smart_tags(name: str, description: str, more_info: str, ingredients: str, promo_tags: list) -> list[str]:
-    promo_str = " ".join(promo_tags).lower()
-    desc_lower = (description or "").lower()
-    more_lower = (more_info or "").lower()
-    ingr_lower = (ingredients or "").lower()
-    # Full marketing text (not ingredients) for skin/benefit/claim checks
-    full_text = f"{name.lower()} {promo_str} {desc_lower} {more_lower}"
-
-    # Tag 1 — Skin type
-    if any(w in full_text for w in ["grasse", "oily"]):
-        skin_tag = "Peau grasse"
-    elif any(w in full_text for w in ["sèche", "seche", "dry"]):
-        skin_tag = "Peau sèche"
-    elif any(w in full_text for w in ["sensible", "sensitive"]):
-        skin_tag = "Peau sensible"
-    elif any(w in full_text for w in ["mixte", "combination"]):
-        skin_tag = "Peau mixte"
-    else:
-        skin_tag = "Peau normale"
-
-    # Tag 2 — Benefit
-    if "hydrat" in full_text:
-        benefit_tag = "Hydratation intense"
-    elif any(w in full_text + ingr_lower for w in ["anti-âge", "anti-age", "antiaging", "retinol", "rétinol"]):
-        benefit_tag = "Anti-âge"
-    elif any(w in full_text for w in ["éclat", "eclat", "glow"]):
-        benefit_tag = "Éclat & teint unifié"
-    elif any(w in full_text for w in ["apaisant", "apaisante", "soothing"]):
-        benefit_tag = "Apaisant"
-    elif "matif" in full_text:
-        benefit_tag = "Matifiant"
-    elif any(w in full_text for w in ["répar", "repar", "repair"]):
-        benefit_tag = "Réparateur"
-    elif any(w in full_text + ingr_lower for w in ["spf", "solaire"]):
-        benefit_tag = "Protecteur (SPF)"
-    else:
-        benefit_tag = "Soin quotidien"
-
-    # Tag 3 — Ingredient / preference (paraben/silicone checked in marketing text only)
-    if "vegan" in full_text:
-        ingr_tag = "Vegan"
-    elif "cruelty" in full_text:
-        ingr_tag = "Cruelty-free"
-    elif "paraben" in full_text:
-        ingr_tag = "Sans paraben"
-    elif "silicone" in full_text:
-        ingr_tag = "Sans silicone"
-    elif "hyaluroni" in ingr_lower:
-        ingr_tag = "Acide hyaluronique"
-    elif any(w in ingr_lower for w in ["retinol", "rétinol", "retinyl"]):
-        ingr_tag = "Avec rétinol"
-    elif "niacinamide" in ingr_lower:
-        ingr_tag = "Avec niacinamide"
-    else:
-        ingr_tag = "Naturelle / Bio"
-
-    return [skin_tag, benefit_tag, ingr_tag]
-
-
-def _load_sephora_fr_csv() -> list[dict]:
-    csv_path = ROOT_DIR / "Sephora products.csv"
-    if not csv_path.exists():
-        logger.warning("Sephora products.csv not found at %s", csv_path)
-        return []
-    try:
-        df = pd.read_csv(csv_path)
-        products = []
-        for _, row in df.iterrows():
-            brand_obj = _parse_json_safe(row.get("brand"), {})
-            brand = brand_obj.get("name", "") if isinstance(brand_obj, dict) else ""
-
-            raw_price = str(row.get("actual_price", "") or "").replace('"', "").replace("€", "").strip()
-            try:
-                price = float(raw_price)
-            except ValueError:
-                price = None
-
-            images = _parse_json_safe(row.get("images"), [])
-            image = images[0] if isinstance(images, list) and images else ""
-
-            rating_obj = _parse_json_safe(row.get("rating"), {})
-            if isinstance(rating_obj, dict):
-                overall = rating_obj.get("overall") or 0
-                total_count = int(rating_obj.get("total_count") or 0)
-            else:
-                overall, total_count = 0, 0
-            rating = round(float(overall), 1) if overall else None
-
-            breadcrumbs = _parse_json_safe(row.get("breadcrumbs"), [])
-            if isinstance(breadcrumbs, list) and breadcrumbs:
-                category = breadcrumbs[-1].get("name", "") if isinstance(breadcrumbs[-1], dict) else ""
-                category_path = " > ".join(
-                    b.get("name", "") for b in breadcrumbs if isinstance(b, dict)
-                )
-            else:
-                category, category_path = "", ""
-
-            promo_tags = _parse_json_safe(row.get("tags"), [])
-            promo_tags = [t for t in promo_tags if isinstance(t, str)] if isinstance(promo_tags, list) else []
-
-            description = str(row.get("description", "") or "")
-            more_info = str(row.get("more_information", "") or "")
-
-            url = str(row.get("url", ""))
-            slug = url.split("/p/")[-1].rsplit(".html", 1)[0]
-            parts = slug.rsplit("-", 1)
-            if len(parts) == 2 and parts[-1].isdigit():
-                slug = parts[0]
-            name_raw = str(row.get("name", "") or "").strip()
-            name = name_raw if name_raw and name_raw != "nan" else re.sub(r"-+", " ", slug).strip().title()
-
-            ingredients_str = str(row.get("ingredients", "") or "")
-            smart_tags = _compute_smart_tags(name, description, more_info, ingredients_str, promo_tags)
-
-            products.append({
-                "id": str(row["id"]),
-                "name": name,
-                "brand": brand,
-                "price": price,
-                "rating": rating,
-                "reviews": total_count,
-                "category": category,
-                "tags": smart_tags,
-                "ingredients": ingredients_str,
-                "image": image,
-                "affiliate_url": url,
-                "_category_norm": _normalize(category_path),
-            })
-        logger.info("Loaded %d Sephora France products", len(products))
-        return products
+        while True:
+            resp = httpx.get(
+                url,
+                headers=headers,
+                params={"select": "*", "limit": limit, "offset": offset},
+                timeout=30,
+            )
+            resp.raise_for_status()
+            batch = resp.json()
+            if not batch:
+                break
+            for p in batch:
+                p["_category_norm"] = _normalize(p.get("category_path") or "")
+                p.setdefault("tags", [])
+            products.extend(batch)
+            if len(batch) < limit:
+                break
+            offset += limit
+        logger.info("Loaded %d Sephora products from Supabase", len(products))
     except Exception as exc:
-        logger.error("Failed to load Sephora France CSV: %s", exc)
-        return []
+        logger.error("Failed to fetch Sephora products from Supabase: %s", exc)
+    return products
 
 
-SEPHORA_FR_PRODUCTS: list[dict] = _load_sephora_fr_csv()
+SEPHORA_FR_PRODUCTS: list[dict] = _fetch_sephora_from_supabase()
 
 
 # ============ Schemas ============

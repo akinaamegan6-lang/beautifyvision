@@ -7,6 +7,11 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
+# ── Supabase ───────────────────────────────────────────────────────────────────
+
+SUPABASE_URL = "https://wdoaanrpbudegpcrreah.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkb2FhbnJwYnVkZWdwY3JyZWFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMjA0MzksImV4cCI6MjA5NDc5NjQzOX0.0YGmWyIqIAXQettKFSOEsnX_loiZHdI5kNIQP_OMyjA"
+
 # ── Open Beauty Facts ──────────────────────────────────────────────────────────
 
 OBF_PRODUCTS: List[Dict[str, Any]] = []
