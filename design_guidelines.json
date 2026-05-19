@@ -1,0 +1,125 @@
+{
+  "project_name": "Glowmatch",
+  "theme": "light",
+  "archetype": "Archetype 3: Pastel & Soft (Premium Accessible Beauty)",
+  "design_philosophy": "E1: Anti-AI Designer. We avoid clinical or cheap saas layouts. Instead, we use generous white space, very subtle decorative halos, elegant typography mixing a clean sans-serif with an italic editorial serif, and premium but accessible visual hierarchy. Tension is created by asymmetric whitespace and alternating soft pastel tones against a stark white canvas.",
+  "colors": {
+    "background": {
+      "main": "#FFFFFF",
+      "card": "#FFFFFF",
+      "overlay": "rgba(255, 255, 255, 0.8)",
+      "halo_pink": "rgba(254, 196, 210, 0.08)"
+    },
+    "text": {
+      "primary": "#1A1A1A",
+      "secondary": "#5C5C5C",
+      "heading_h1": "#FEC4D2",
+      "heading_h2_h3": "#79C1E0",
+      "white": "#FFFFFF"
+    },
+    "brand": {
+      "pink": "#FEC4D2",
+      "blue": "#79C1E0"
+    },
+    "cta": {
+      "primary": {
+        "bg": "#FEC4D2",
+        "text": "#1A1A1A",
+        "hover_bg": "#fdb2c3"
+      },
+      "secondary": {
+        "bg": "#79C1E0",
+        "text": "#FFFFFF",
+        "hover_bg": "#6ab1d1"
+      }
+    },
+    "borders": {
+      "card": "#FEC4D2",
+      "input": "#E5E5E5",
+      "divider": "#F2F2F2"
+    }
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Poppins, sans-serif",
+      "editorial_italic": "'Bodoni Moda', serif",
+      "body": "Poppins, sans-serif"
+    },
+    "font_weights": {
+      "headings": "600, 700",
+      "body": "400, 500",
+      "editorial": "400 italic"
+    },
+    "text_sizes": {
+      "h1": "text-5xl md:text-6xl tracking-tight leading-tight",
+      "h2": "text-3xl md:text-4xl tracking-tight",
+      "h3": "text-2xl md:text-3xl",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm",
+      "editorial_accent": "font-serif italic font-normal"
+    }
+  },
+  "spacing_and_layout": {
+    "general": "Airy, modern, heavily utilizing white space. Containers should have padding between p-12 to p-24.",
+    "borders": "Cards must have a solid 1px or 2px border in #FEC4D2. No heavy drop shadows. Use subtle glows instead.",
+    "radius": "rounded-2xl for main cards, rounded-full for buttons and tags.",
+    "decorations": "Use absolute positioned blur-3xl divs with bg-[#FEC4D2] at 5-10% opacity as decorative halos behind key sections."
+  },
+  "animations": {
+    "scroll": "Subtle fade-in and slide-up on scroll (using framer-motion).",
+    "interactions": "Buttons scale up slightly on hover. Cards border changes slightly, and wishlist icon appears on hover.",
+    "ia_loader": "Sequential loading animation with fading text/icons for the Virtual Try-On module."
+  },
+  "components_strategy": {
+    "buttons": "Pill-shaped (rounded-full), alternating between the Pink and Blue colors. Text color should maintain contrast.",
+    "cards_comparator": "White background, #FEC4D2 border. Image at top, Name, Brand, Price, Stars, Ingredient tags. 'Voir le produit' button and a Wishlist heart icon appearing on hover.",
+    "podium": "3-column layout. The #1 spot must be elevated in the center. The bases/pedestals must alternate between #FEC4D2 and #79C1E0.",
+    "inputs": "Shadcn based, rounded-lg or rounded-xl, light gray borders, focusing to #FEC4D2 or #79C1E0 ring.",
+    "ia_module": "Drag & Drop zone with dashed border. A slider for budget. Results view is a 2-column layout: left side is the uploaded photo with absolute positioned interactive hotspots (framer-motion pulse), right side is a list of the used products.",
+    "badges": "Small pill tags for ingredients or tags, pale background with dark text."
+  },
+  "media": {
+    "hero_portrait": {
+      "url": "https://images.unsplash.com/photo-1763192902738-a3e17d5f9015?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwbWFrZXVwJTIwcG9ydHJhaXQlMjBnbG93fGVufDB8fHx8MTc3ODQ0NzQwNHww&ixlib=rb-4.1.0&q=85",
+      "description": "Natural glowing makeup portrait for the hero section."
+    },
+    "cosmetics_podium_1": {
+      "url": "https://images.pexels.com/photos/14973938/pexels-photo-14973938.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Elegant minimal skincare product."
+    },
+    "cosmetics_podium_2": {
+      "url": "https://images.unsplash.com/photo-1672062519544-0d0139821c84?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwxfHxjb3NtZXRpYyUyMHNlcnVtJTIwYm90dGxlJTIwbWFyYmxlfGVufDB8fHx8MTc3ODQ0NzQwNHww&ixlib=rb-4.1.0&q=85",
+      "description": "Serum bottle on surface."
+    },
+    "cosmetics_podium_3": {
+      "url": "https://images.unsplash.com/photo-1755344339841-d34979cbfd10?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODl8MHwxfHNlYXJjaHwzfHxjb3NtZXRpY3MlMjBtaW5pbWFsJTIwc2tpbmNhcmV8ZW58MHx8fHwxNzc4NDQ3NDEyfDA&ixlib=rb-4.1.0&q=85",
+      "description": "Gel facial cleanser tube."
+    },
+    "lipstick_texture": {
+      "url": "https://images.unsplash.com/photo-1558906384-f1c3c2dc30c4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwxfHxsaXBzdGljayUyMG1ha2V1cCUyMHRleHR1cmV8ZW58MHx8fHwxNzc4NDQ3NDA0fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Lipstick makeup texture reference."
+    }
+  },
+  "pages_structure": {
+    "Header": "Mega menu with 'Visage', 'Corps', 'Cosmétiques'. Dropdown showing 2 columns (Products vs Skin problems).",
+    "Homepage": [
+      "Hero section: Bold H1 in #FEC4D2 (using Bodoni italic for emphasis keywords), CTA.",
+      "How it works: 3 clean steps.",
+      "Highlighted Modules: Comparator preview and IA Virtual Try-On.",
+      "Top of the Month Podium: Ranked products #1, #2, #3.",
+      "IA Banner: Call to action for the try-on module.",
+      "Footer"
+    ],
+    "Comparator_Page": [
+      "Initial state: Popup asking for criteria.",
+      "Main layout: Left sidebar for real-time filters. Right side is a CSS Grid of product cards."
+    ],
+    "IA_TryOn_Module": [
+      "Upload view: Drag&drop zone.",
+      "Configuration view: Prompts selection (emojis: ✨🍊🌸💋🖤☀️💜) + free text input + Budget Slider.",
+      "Result view: 2 Columns. Left has the photo with floating interactive hotspots. Right has the breakdown of products applied."
+    ]
+  },
+  "data_testid_instructions": "All interactive elements, inputs, buttons, and cards MUST have a kebab-case data-testid property (e.g., 'hero-cta-button', 'wishlist-toggle', 'budget-slider').",
+  "implementation_notes_for_main_agent": "Ensure you install and configure Poppins and Bodoni Moda fonts from Google Fonts. Use lucide-react for standard icons. Emphasize spacing (padding and margins) over borders/backgrounds to maintain the airy premium feel. The H1 must be #FEC4D2, H2/H3 must be #79C1E0. Alternate CTA button colors. Cards must have the specific pink border (#FEC4D2). Remember the decorative halos with 5-10% opacity."
+}
