@@ -6,8 +6,8 @@ import ProductCard from "../components/ProductCard";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1763192902738-a3e17d5f9015?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwbWFrZXVwJTIwcG9ydHJhaXQlMjBnbG93fGVufDB8fHx8MTc3ODQ0NzQwNHww&ixlib=rb-4.1.0&q=85";
-const BEFORE_IMG = "https://customer-assets.emergentagent.com/job_makeup-match-test/artifacts/0l4tws9l_IMG_2228%20%281%29.JPG";
-const AFTER_IMG = "https://customer-assets.emergentagent.com/job_makeup-match-test/artifacts/u8viubvz_d633f23b-733d-43d5-9640-021d3f2a937f.png";
+const BEFORE_IMG = "https://customer-assets.emergentagent.com/job_makeup-match-test/artifacts/u8viubvz_d633f23b-733d-43d5-9640-021d3f2a937f.png";
+const AFTER_IMG = "https://customer-assets.emergentagent.com/job_makeup-match-test/artifacts/0l4tws9l_IMG_2228%20%281%29.JPG";
 
 const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
