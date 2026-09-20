@@ -1,5 +1,6 @@
 import { Heart, Star } from "lucide-react";
 import { useWishlist } from "../hooks/useWishlist";
+import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 
 export default function ProductCard({ product, rank }) {
   const { has, toggle } = useWishlist();
@@ -26,10 +27,10 @@ export default function ProductCard({ product, rank }) {
       </button>
       <div className="aspect-square w-full rounded-xl bg-gradient-to-br from-[#FEC4D2]/10 to-[#79C1E0]/10 overflow-hidden mb-4">
         <img
-          src={product.image}
+          src={NO_PRODUCT_IMAGE}
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+          className="w-full h-full object-contain group-hover:scale-105 transition duration-700"
         />
       </div>
       <p className="text-xs uppercase tracking-wider text-neutral-500">{product.brand}</p>

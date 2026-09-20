@@ -1,5 +1,6 @@
 import { Heart, Star, ExternalLink } from "lucide-react";
 import { useWishlist } from "../hooks/useWishlist";
+import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 
 export default function HorizontalProductCard({ product }) {
   const { has, toggle } = useWishlist();
@@ -10,13 +11,12 @@ export default function HorizontalProductCard({ product }) {
       className="group relative bg-white border border-[#FEC4D2] rounded-3xl overflow-hidden flex flex-col md:flex-row card-lift"
       data-testid={`product-card-${product.id}`}
     >
-      <div className="md:w-56 md:shrink-0 relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10" style={{ alignSelf: "stretch" }}>
+      <div className="md:w-72 md:shrink-0 relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10">
         <img
-          src={product.image || product.image_url}
+          src={NO_PRODUCT_IMAGE}
           alt={product.name}
           loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          className="group-hover:scale-105 transition duration-700"
+          className="w-full h-64 md:h-full object-contain group-hover:scale-105 transition duration-700"
         />
       </div>
 
@@ -26,13 +26,11 @@ export default function HorizontalProductCard({ product }) {
             <p className="text-xs uppercase tracking-[0.18em] text-[#79C1E0] font-semibold">{product.brand}</p>
             <h3 className="mt-2 text-xl md:text-2xl font-bold text-neutral-900 line-clamp-2">{product.name}</h3>
           </div>
-          <span className="text-2xl md:text-3xl font-bold text-neutral-900 whitespace-nowrap">
-            {product.price != null ? `${product.price.toFixed(0)} €` : "Prix n.d."}
-          </span>
+          <span className="text-2xl md:text-3xl font-bold text-neutral-900 whitespace-nowrap">{product.price.toFixed(0)} €</span>
         </div>
 
         <div className="flex flex-wrap gap-2 mt-4">
-          {(product.tags || []).slice(0, 3).map((t) => (
+          {(product.tags || []).slice(0, 4).map((t) => (
             <span key={t} className="text-xs bg-[#FEC4D2]/40 text-neutral-800 px-3 py-1.5 rounded-full">{t}</span>
           ))}
         </div>

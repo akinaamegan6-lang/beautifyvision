@@ -1,8 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bodoni+Moda:ital,wght@1,400;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bodoni+Moda:ital,wght@1,400;1,500;1,600&family=Caveat:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
 
 html, body {
   margin: 0;
@@ -44,6 +48,9 @@ html, body {
 
 /* Editorial italic helper */
 .editorial { font-family: 'Bodoni Moda', serif; font-style: italic; font-weight: 500; }
+
+/* Handwritten note helper (hero annotations) */
+.handwritten { font-family: 'Caveat', cursive; font-weight: 600; }
 
 /* Halos decoration */
 .halo-pink {

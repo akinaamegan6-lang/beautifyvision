@@ -31,6 +31,12 @@ dist/
 dist
 
 # Environment files (comprehensive coverage)
+.env
+.env.*
+backend/.env
+frontend/.env
+!.env.example
+!**/.env.example
 
 *token.json*
 *credentials.json*
@@ -80,6 +86,3 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/
-backend/Sephora_products.csv
-backend/Sephora products.csv
-backend/product_info.csv

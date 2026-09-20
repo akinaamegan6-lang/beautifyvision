@@ -1,94 +1,6 @@
-"""Glowmatch in-memory product catalog seed (~80 produits) + Open Beauty Facts integration."""
-from typing import List, Dict, Any, Optional
+"""Glowmatch in-memory product catalog seed (~80 produits)."""
+from typing import List, Dict, Any
 import uuid
-import logging
-
-import httpx
-
-logger = logging.getLogger(__name__)
-
-# ── Supabase ───────────────────────────────────────────────────────────────────
-
-SUPABASE_URL = "https://wdoaanrpbudegpcrreah.supabase.co"
-SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indkb2FhbnJwYnVkZWdwY3JyZWFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMjA0MzksImV4cCI6MjA5NDc5NjQzOX0.0YGmWyIqIAXQettKFSOEsnX_loiZHdI5kNIQP_OMyjA"
-
-# ── Open Beauty Facts ──────────────────────────────────────────────────────────
-
-OBF_PRODUCTS: List[Dict[str, Any]] = []
-
-_OBF_URL = "https://world.openbeautyfacts.org/api/v2/search"
-_OBF_FIELDS = "product_name,brands,image_url,categories_tags,ingredients_text"
-
-
-async def fetch_obf_products(target: int = 2000) -> int:
-    """Fetch up to `target` products from Open Beauty Facts API into OBF_PRODUCTS.
-
-    Returns the number of products actually loaded.
-    Products with no name are skipped. Price is always None (not in OBF dataset).
-    """
-    collected: List[Dict[str, Any]] = []
-    page = 1
-    page_size = 100
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        while len(collected) < target:
-            try:
-                resp = await client.get(
-                    _OBF_URL,
-                    params={
-                        "fields": _OBF_FIELDS,
-                        "page_size": page_size,
-                        "page": page,
-                        "json": 1,
-                    },
-                )
-                resp.raise_for_status()
-                data = resp.json()
-            except Exception as exc:
-                logger.warning("OBF fetch error (page %d): %s", page, exc)
-                break
-
-            items = data.get("products") or []
-            if not items:
-                break
-
-            for item in items:
-                name = (item.get("product_name") or "").strip()
-                if not name:
-                    continue
-
-                # First English category tag, fall back to raw first tag
-                cats: List[str] = item.get("categories_tags") or []
-                en_cats = [c.split(":")[-1].replace("-", " ") for c in cats if c.startswith("en:")]
-                category = en_cats[0] if en_cats else (cats[0].split(":")[-1] if cats else "other")
-
-                # First brand only
-                brands_raw = (item.get("brands") or "").split(",")
-                brand: Optional[str] = brands_raw[0].strip() or None
-
-                collected.append({
-                    "id": str(uuid.uuid5(uuid.NAMESPACE_DNS, f"obf-{item.get('_id', name)}")),
-                    "name": name,
-                    "brand": brand,
-                    "image_url": item.get("image_url") or None,
-                    "category": category,
-                    "ingredients": (item.get("ingredients_text") or "").strip() or None,
-                    "price": None,
-                })
-
-                if len(collected) >= target:
-                    break
-
-            logger.info("OBF page %d fetched — %d products so far", page, len(collected))
-            page += 1
-
-    OBF_PRODUCTS.clear()
-    OBF_PRODUCTS.extend(collected)
-    logger.info("OBF import complete: %d products loaded", len(OBF_PRODUCTS))
-    return len(OBF_PRODUCTS)
-
-
-# ──────────────────────────────────────────────────────────────────────────────
 
 # Helper for stable ids
 def _id(seed: str) -> str:
@@ -189,6 +101,44 @@ CATALOG: List[Dict[str, Any]] = [
 
     # ===== COSMÉTIQUES - Primer =====
     {"id": _id("pr1"), "category": "primer", "parent": "cosmetiques", "name": "Smooth Base Primer", "brand": "Lumière Paris", "price": 26.00, "rating": 4.6, "reviews": 840, "image": "https://images.unsplash.com/photo-1620916297897-9c8d3e3a3d4f?w=600", "tags": ["Lissant", "Hydratant"], "color_hex": "#F4E5D5", "zone": "face", "benefits": ["Éclat & teint unifié"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Shampoing =====
+    {"id": _id("sh1"), "category": "shampoing", "parent": "cheveux", "name": "Pureté Douce Shampoing", "brand": "Botanique", "price": 14.90, "rating": 4.5, "reviews": 1240, "image": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600", "tags": ["Sans sulfate", "Doux", "Vegan"], "hair_types": ["normaux", "fins", "ondulés"], "benefits": ["Nettoyage doux", "Volume"], "affiliate_url": "#"},
+    {"id": _id("sh2"), "category": "shampoing", "parent": "cheveux", "name": "Anti-Pelliculaire Zinc", "brand": "Pure Lab", "price": 12.00, "rating": 4.6, "reviews": 920, "image": "https://images.unsplash.com/photo-1556228841-7a36cee37b30?w=600", "tags": ["Antipelliculaire", "Zinc"], "hair_types": ["gras", "normaux"], "benefits": ["Antipelliculaire", "Cuir chevelu assaini"], "affiliate_url": "#"},
+    {"id": _id("sh3"), "category": "shampoing", "parent": "cheveux", "name": "Nutrition Intense Argan", "brand": "Verveine", "price": 18.50, "rating": 4.7, "reviews": 760, "image": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600", "tags": ["Huile d'argan", "Nourrissante", "Sans silicone"], "hair_types": ["secs", "crépus", "bouclés", "frisés"], "benefits": ["Nutrition intense", "Réparateur"], "affiliate_url": "#"},
+    {"id": _id("sh4"), "category": "shampoing", "parent": "cheveux", "name": "Volume Boost Shampoing", "brand": "Lumière Paris", "price": 16.00, "rating": 4.4, "reviews": 540, "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600", "tags": ["Volume", "Légèreté"], "hair_types": ["fins", "normaux", "raides"], "benefits": ["Volume", "Légèreté"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Après-shampoing =====
+    {"id": _id("as1"), "category": "apres-shampoing", "parent": "cheveux", "name": "Démêlant Karité Onctueux", "brand": "Botanique", "price": 16.90, "rating": 4.6, "reviews": 890, "image": "https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?w=600", "tags": ["Karité", "Démêlant", "Vegan"], "hair_types": ["secs", "crépus", "bouclés", "frisés"], "benefits": ["Démêlant", "Nutrition intense"], "affiliate_url": "#"},
+    {"id": _id("as2"), "category": "apres-shampoing", "parent": "cheveux", "name": "Légèreté & Volume", "brand": "Pure Skin", "price": 13.50, "rating": 4.4, "reviews": 1120, "image": "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=600", "tags": ["Volume", "Légèreté", "Sans silicone"], "hair_types": ["fins", "normaux", "raides"], "benefits": ["Volume", "Légèreté"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Masque =====
+    {"id": _id("mch1"), "category": "masque-cheveux", "parent": "cheveux", "name": "Masque Reconstituant Kératine", "brand": "Skinology", "price": 24.00, "rating": 4.8, "reviews": 1340, "image": "https://images.unsplash.com/photo-1612886623306-c8b6f6a8aaa9?w=600", "tags": ["Kératine", "Réparateur", "Anti-casse"], "hair_types": ["abîmés", "secs", "colorés"], "benefits": ["Réparateur", "Anti-casse", "Brillance"], "affiliate_url": "#"},
+    {"id": _id("mch2"), "category": "masque-cheveux", "parent": "cheveux", "name": "Masque Hydratant Aloe Vera", "brand": "Verveine", "price": 19.00, "rating": 4.6, "reviews": 720, "image": "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=600", "tags": ["Aloe vera", "Hydratation", "Douceur"], "hair_types": ["secs", "normaux", "ondulés", "bouclés"], "benefits": ["Hydratation intense", "Douceur"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Huile =====
+    {"id": _id("hch1"), "category": "huile-cheveux", "parent": "cheveux", "name": "Huile Précieuse Argan Coco", "brand": "Verveine", "price": 22.00, "rating": 4.7, "reviews": 1820, "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600", "tags": ["Huile d'argan", "Coco", "Brillance"], "hair_types": ["secs", "crépus", "bouclés", "frisés", "colorés"], "benefits": ["Brillance", "Nutrition intense", "Anti-frisottis"], "affiliate_url": "#"},
+    {"id": _id("hch2"), "category": "huile-cheveux", "parent": "cheveux", "name": "Huile Légère Protect & Shine", "brand": "Lumière Paris", "price": 19.50, "rating": 4.5, "reviews": 640, "image": "https://images.unsplash.com/photo-1599733589046-9a45fa7c7ddb?w=600", "tags": ["Légère", "Protecteur", "Brillance"], "hair_types": ["normaux", "fins", "raides", "ondulés"], "benefits": ["Brillance", "Protection chaleur"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Sérum =====
+    {"id": _id("sch1"), "category": "serum-cheveux", "parent": "cheveux", "name": "Sérum Anti-Chute Biotine", "brand": "Pure Lab", "price": 28.00, "rating": 4.6, "reviews": 970, "image": "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=600", "tags": ["Biotine", "Anti-chute", "Fortifiant"], "hair_types": ["fins", "normaux", "raides", "ondulés"], "benefits": ["Anti-chute", "Fortifiant", "Volume"], "affiliate_url": "#"},
+    {"id": _id("sch2"), "category": "serum-cheveux", "parent": "cheveux", "name": "Sérum Pointes Fourchues", "brand": "Botanique", "price": 21.00, "rating": 4.5, "reviews": 480, "image": "https://images.unsplash.com/photo-1620916297893-9c8d3e3a3d4f?w=600", "tags": ["Pointes", "Réparateur", "Kératine"], "hair_types": ["secs", "abîmés", "colorés", "bouclés", "frisés", "crépus"], "benefits": ["Réparateur", "Anti-casse", "Pointes soignées"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Spray coiffant =====
+    {"id": _id("sp1"), "category": "spray-coiffant", "parent": "cheveux", "name": "Spray Thermoprotecteur 230°", "brand": "Skinology", "price": 17.00, "rating": 4.5, "reviews": 1120, "image": "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=600", "tags": ["Thermoprotecteur", "Protection chaleur"], "hair_types": ["normaux", "secs", "fins", "raides", "ondulés"], "benefits": ["Protection chaleur", "Brillance"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Shampoing sec =====
+    {"id": _id("shs1"), "category": "shampoing-sec", "parent": "cheveux", "name": "Shampoing Sec Fraîcheur Instantanée", "brand": "Pure Skin", "price": 11.00, "rating": 4.3, "reviews": 1540, "image": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600", "tags": ["Shampoing sec", "Volume", "Rapidité"], "hair_types": ["gras", "normaux", "fins"], "benefits": ["Volume", "Fraîcheur"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Soin anti-chute =====
+    {"id": _id("sac1"), "category": "soin-anti-chute", "parent": "cheveux", "name": "Fortifiant Anti-Chute Global", "brand": "Pure Lab", "price": 32.00, "rating": 4.7, "reviews": 840, "image": "https://images.unsplash.com/photo-1599733589046-9a45fa7c7ddb?w=600", "tags": ["Anti-chute", "Biotine", "Fortifiant"], "hair_types": ["fins", "normaux", "raides", "ondulés"], "benefits": ["Anti-chute", "Fortifiant", "Volume"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Soin cheveux colorés =====
+    {"id": _id("scc1"), "category": "soin-cheveux-colores", "parent": "cheveux", "name": "Protège Couleur Éclat", "brand": "Lumière Paris", "price": 26.00, "rating": 4.6, "reviews": 620, "image": "https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?w=600", "tags": ["Cheveux colorés", "Protecteur couleur", "Brillance"], "hair_types": ["colorés", "secs", "abîmés"], "benefits": ["Brillance", "Protection couleur", "Réparateur"], "affiliate_url": "#"},
+
+    # ===== CHEVEUX - Soin cuir chevelu =====
+    {"id": _id("scu1"), "category": "soin-cuir-chevelu", "parent": "cheveux", "name": "Équilibre Cuir Chevelu Gras", "brand": "Pure Lab", "price": 20.00, "rating": 4.5, "reviews": 760, "image": "https://images.unsplash.com/photo-1556228841-7a36cee37b30?w=600", "tags": ["Cuir chevelu", "Sébo-régulateur", "Zinc"], "hair_types": ["gras", "normaux"], "benefits": ["Sébo-régulateur", "Antipelliculaire", "Cuir chevelu assaini"], "affiliate_url": "#"},
+    {"id": _id("scu2"), "category": "soin-cuir-chevelu", "parent": "cheveux", "name": "Apaisant Cuir Chevelu Sensible", "brand": "Verveine", "price": 23.00, "rating": 4.7, "reviews": 480, "image": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600", "tags": ["Apaisant", "Sans parfum", "Sensible"], "hair_types": ["sensibles", "secs", "normaux"], "benefits": ["Apaisant", "Douceur", "Cuir chevelu apaisé"], "affiliate_url": "#"},
 ]
 
 # Categories tree for menu
@@ -268,5 +218,31 @@ CATEGORIES = {
             {"slug": "demaquillant-cosm", "label": "Démaquillant & Micellar"},
         ],
         "problems": [],
+    },
+    "cheveux": {
+        "label": "Cheveux",
+        "products": [
+            {"slug": "shampoing", "label": "Shampoing"},
+            {"slug": "apres-shampoing", "label": "Après-shampoing"},
+            {"slug": "masque-cheveux", "label": "Masque cheveux"},
+            {"slug": "huile-cheveux", "label": "Huile cheveux"},
+            {"slug": "serum-cheveux", "label": "Sérum cheveux"},
+            {"slug": "spray-coiffant", "label": "Spray coiffant"},
+            {"slug": "shampoing-sec", "label": "Shampoing sec"},
+            {"slug": "soin-anti-chute", "label": "Soin anti-chute"},
+            {"slug": "soin-cheveux-colores", "label": "Soin cheveux colorés"},
+            {"slug": "soin-cuir-chevelu", "label": "Soin cuir chevelu"},
+        ],
+        "problems": [
+            {"slug": "chute", "label": "Chute de cheveux"},
+            {"slug": "cheveux-gras", "label": "Cheveux gras"},
+            {"slug": "cheveux-secs", "label": "Cheveux secs & abîmés"},
+            {"slug": "pellicules", "label": "Pellicules"},
+            {"slug": "cheveux-colores", "label": "Cheveux colorés & décolorés"},
+            {"slug": "frisottis", "label": "Frisottis & rebelles"},
+            {"slug": "manque-volume", "label": "Manque de volume"},
+            {"slug": "cuir-chevelu-sensible", "label": "Cuir chevelu sensible"},
+            {"slug": "pointes-fourchues", "label": "Pointes fourchues"},
+        ],
     },
 }
