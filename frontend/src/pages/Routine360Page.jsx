@@ -112,7 +112,7 @@ export default function Routine360Page() {
   const probleme = searchParams.get("probleme");
   const problemLabel = SKIN_PROBLEMS.find(p => p.slug === probleme)?.label;
 
-  const [step, setStep] = useState(0); // 0 auth, 1 type, 2 subtype (visage), 2.5 cat-questions, 3 products, 5 recap
+  const [step, setStep] = useState(1); // 0 auth, 1 type, 2 subtype (visage), 2.5 cat-questions, 3 products, 5 recap
   const [authOpen, setAuthOpen] = useState(false);
   const [chosenType, setChosenType] = useState(null);
   const [chosenSub, setChosenSub] = useState(null);
@@ -132,7 +132,7 @@ export default function Routine360Page() {
   if (status === "loading") {
     return <main className="min-h-screen flex items-center justify-center"><p className="text-neutral-500">Chargement…</p></main>;
   }
-  if (!user) {
+  if (false && !user) {
     return (
       <main className="bg-white min-h-screen px-6 py-20 relative" data-testid="routine-step-auth">
         <div className="halo-pink -top-20 -right-20"/>
