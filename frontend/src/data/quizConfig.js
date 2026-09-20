@@ -16,6 +16,9 @@ export const SKIN_PROBLEMS = [
   { slug: "cernes", label: "Cernes & Poches" },
 ];
 
+const Q = (key, label, multi, options) => ({ key, label, multi, options: options.map((v) => ({ value: v, label: v })) });
+
+
 // === Bloc 1 : questions universelles sur la peau ===
 const Q_BUDGET = {
   key: "budget",
@@ -99,8 +102,6 @@ export const LIFESTYLE_QUESTIONS = [
 ];
 
 // === Bloc 2 : questions spécifiques par type de produit ===
-const Q = (key, label, multi, options) => ({ key, label, multi, options: options.map((v) => ({ value: v, label: v })) });
-
 export const PRODUCT_QUESTIONS = {
   "masque": [
     Q("texture", "Texture préférée ?", false, ["Argile", "Crème", "Gel", "Tissu", "Peel-off"]),
