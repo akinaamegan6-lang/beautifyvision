@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import ArticleCard from "../components/ArticleCard";
 import NewsletterBlock from "../components/blog/NewsletterBlock";
 import { BLOG_CATEGORIES } from "../data/blogConfig";
+import Seo from "../components/Seo";
 
 const HERO_BANNER = "/image/hero-banner-blog.png";
 
@@ -29,6 +30,11 @@ export default function BlogPage() {
 
   return (
     <main className="bg-white overflow-x-hidden" data-testid="blog-page">
+      <Seo
+        title="Blog beauté : conseils skincare, make-up & cheveux | Beautify Vision"
+        description="Découvre nos articles beauté : routines skincare, conseils make-up, soins cheveux et corps pour prendre soin de toi simplement, avec Beautify Vision."
+        path="/blog"
+      />
       {/* ===== HERO ===== */}
       <section
         className="relative px-6 sm:px-10 py-16 sm:py-20 rounded-b-[2.5rem] sm:rounded-b-[3rem] bg-cover bg-[position:75%_center] sm:bg-[position:right_center] overflow-hidden"

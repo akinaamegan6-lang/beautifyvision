@@ -83,6 +83,10 @@ class Article(BaseModel):
     published_at: str
     chapo: Optional[str] = None
     blocks: List[dict] = []
+    # SEO : balise <title> et meta description dediees. Si absentes (vieil
+    # article, ou creees hors API), le front retombe sur title/excerpt.
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
 
 
 class ArticleCreate(BaseModel):
@@ -94,6 +98,8 @@ class ArticleCreate(BaseModel):
     read_minutes: int = 5
     chapo: Optional[str] = None
     blocks: List[dict] = []
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
 
 
 class Comment(BaseModel):
@@ -396,6 +402,16 @@ async def list_articles(category: Optional[str] = None, q: Optional[str] = None,
     return await cursor.to_list(length=limit)
 
 
+def _plain_text(value: Optional[str]) -> str:
+    """Enleve la syntaxe interne des titres ('\\n' et '{{...}}') pour obtenir
+    du texte brut, utilisable notamment en repli pour les balises SEO."""
+    if not value:
+        return ""
+    text = value.replace("\n", " ")
+    text = re.sub(r"\{\{(.+?)\}\}", r"\1", text)
+    return text.strip()
+
+
 @api_router.post("/blog/articles", response_model=Article)
 async def create_article(req: ArticleCreate, user: dict = Depends(current_user)):
     if user.get("role") != "admin":
@@ -408,6 +424,11 @@ async def create_article(req: ArticleCreate, user: dict = Depends(current_user))
     while await db.articles.find_one({"slug": slug}):
         slug = f"{slug_base}-{i}"
         i += 1
+    # SEO : si meta_title / meta_description ne sont pas fournis, on genere
+    # un repli automatique a partir du titre et de l'extrait, pour qu'aucun
+    # article ne se retrouve jamais sans balises SEO.
+    meta_title = req.meta_title or f"{_plain_text(req.title)} | Beautify Vision"
+    meta_description = req.meta_description or req.excerpt
     doc = {
         "id": f"art_{uuid.uuid4().hex[:12]}",
         "title": req.title,
@@ -420,6 +441,8 @@ async def create_article(req: ArticleCreate, user: dict = Depends(current_user))
         "published_at": datetime.now(timezone.utc).isoformat(),
         "chapo": req.chapo,
         "blocks": req.blocks,
+        "meta_title": meta_title,
+        "meta_description": meta_description,
     }
     await db.articles.insert_one(doc)
     doc.pop("_id", None)

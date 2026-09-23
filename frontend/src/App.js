@@ -1,4 +1,5 @@
 import "@/App.css";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -46,12 +47,14 @@ function AppRouter() {
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <AuthProvider>
-          <AppRouter />
-          <Toaster position="top-right" />
-        </AuthProvider>
-      </BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <AppRouter />
+            <Toaster position="top-right" />
+          </AuthProvider>
+        </BrowserRouter>
+      </HelmetProvider>
     </div>
   );
 }

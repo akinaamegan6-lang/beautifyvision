@@ -39,6 +39,9 @@ article = {
     "category": "skincare",
     "excerpt": "Découvrez les principes de la skincare coréenne, ses étapes incontournables, les meilleurs ingrédients et nos conseils pour adapter cette routine à votre peau.",
     "chapo": "Découvrez les principes de la skincare coréenne, ses étapes incontournables, les meilleurs ingrédients et nos conseils pour adapter cette routine à votre peau.",
+    # SEO : balise <title> et meta description dediees a cet article.
+    "meta_title": "Skincare coréenne : le guide complet | Beautify Vision",
+    "meta_description": "Skincare coréenne : découvrez les 10 étapes de la routine K-beauty, les ingrédients incontournables et nos conseils pour une peau lumineuse et hydratée.",
     "image": "/image/miniature-skincare-corenne.png",
     "hero_image": "/image/skincare-corenne-article-hero.png",
     "read_minutes": 6,

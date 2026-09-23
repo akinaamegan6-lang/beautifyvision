@@ -11,6 +11,7 @@ import NewsletterBlock from "../components/blog/NewsletterBlock";
 import CommentsSection from "../components/blog/CommentsSection";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 import { plainText } from "../components/blog/blogText";
+import Seo, { absoluteUrl } from "../components/Seo";
 
 function formatDate(iso) {
   try {
@@ -36,6 +37,7 @@ export default function ArticlePage() {
   if (notFound) {
     return (
       <main className="max-w-3xl mx-auto px-6 py-24 text-center" data-testid="article-not-found">
+        <Seo title="Article introuvable | Beautify Vision" noindex/>
         <p className="text-neutral-500">Cet article n'existe pas ou plus.</p>
         <Link to="/blog" className="inline-flex items-center gap-1.5 mt-4 text-[#79C1E0] font-medium hover:underline">
           Retour au blog
@@ -53,9 +55,32 @@ export default function ArticlePage() {
   }
 
   const cat = getBlogCategory(article.category);
+  const plainTitle = plainText(article.title);
+  const metaTitle = article.meta_title || `${plainTitle} | Beautify Vision`;
+  const metaDescription = article.meta_description || article.excerpt || article.chapo || "";
+  const heroImg = article.hero_image || article.image;
+  const canonicalPath = `/blog/${article.slug}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: plainTitle,
+    description: metaDescription,
+    ...(heroImg ? { image: [absoluteUrl(heroImg)] } : {}),
+    datePublished: article.published_at,
+    mainEntityOfPage: absoluteUrl(canonicalPath),
+    author: { "@type": "Organization", name: "Beautify Vision" },
+  };
 
   return (
-    <main className="bg-white overflow-x-hidden" data-testid="article-page">
+    <main className="bg-white" data-testid="article-page">
+      <Seo
+        title={metaTitle}
+        description={metaDescription}
+        path={canonicalPath}
+        image={heroImg}
+        type="article"
+        jsonLd={jsonLd}
+      />
       {/* ===== HERO ===== */}
       <section className="relative px-6 sm:px-10 pt-8 pb-12 sm:pb-16 rounded-b-[2.5rem] sm:rounded-b-[3rem] bg-[#FEEFF2] overflow-hidden" data-testid="article-hero">
         <div className="max-w-7xl mx-auto">
