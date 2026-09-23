@@ -15,13 +15,19 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+import certifi
 from dotenv import load_dotenv
 from pymongo import MongoClient
+
+# Corrige automatiquement l'erreur SSL "CERTIFICATE_VERIFY_FAILED" que macOS
+# peut renvoyer quand Python ne trouve pas de certificats racine valides.
+# Plus besoin de faire `export SSL_CERT_FILE=...` a la main dans le terminal.
+os.environ.setdefault("SSL_CERT_FILE", certifi.where())
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-client = MongoClient(os.environ["MONGO_URL"])
+client = MongoClient(os.environ["MONGO_URL"], tlsCAFile=certifi.where())
 db = client[os.environ["DB_NAME"]]
 
 SLUG = "skincare-coreenne-le-guide-complet"

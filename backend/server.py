@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
+import certifi
 import os
 import json
 import logging
@@ -14,6 +15,11 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from motor.motor_asyncio import AsyncIOMotorClient
 
+# Corrige automatiquement l'erreur SSL "CERTIFICATE_VERIFY_FAILED" que macOS
+# peut renvoyer quand Python ne trouve pas de certificats racine valides.
+# Plus besoin de faire `export SSL_CERT_FILE=...` a la main avant de lancer uvicorn.
+os.environ.setdefault("SSL_CERT_FILE", certifi.where())
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -24,7 +30,7 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 
 # MongoDB
-mongo_client = AsyncIOMotorClient(os.environ["MONGO_URL"])
+mongo_client = AsyncIOMotorClient(os.environ["MONGO_URL"], tlsCAFile=certifi.where())
 db = mongo_client[os.environ["DB_NAME"]]
 
 app = FastAPI()
