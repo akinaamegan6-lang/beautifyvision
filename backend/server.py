@@ -175,7 +175,7 @@ def _extract_json(text: str) -> dict:
 
 @api_router.post("/ai/select-products", response_model=AISelectResponse)
 async def ai_select_products(req: AISelectRequest):
-        if not ANTHROPIC_API_KEY:
+    if not ANTHROPIC_API_KEY:
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY missing")
 
     # Candidate pool: cosmetiques within budget
