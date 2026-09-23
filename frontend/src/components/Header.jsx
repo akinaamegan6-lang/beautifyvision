@@ -48,10 +48,10 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-1" onMouseLeave={startCloseTimer}>
+        <nav className="hidden lg:flex items-center gap-0.5 shrink-0" onMouseLeave={startCloseTimer}>
           {navItems.map((it) => (
             <div key={it.key} className="relative" onMouseEnter={() => { cancelCloseTimer(); setOpen(it.key); }}>
-              <button className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-[#79C1E0] flex items-center gap-1 transition" data-testid={`menu-${it.key}`}>
+              <button className="px-3 py-2 text-sm font-medium text-neutral-700 hover:text-[#79C1E0] flex items-center gap-1 transition whitespace-nowrap" data-testid={`menu-${it.key}`}>
                 {it.label}
                 <ChevronDown size={14} className={`transition ${open === it.key ? "rotate-180" : ""}`} />
               </button>
@@ -59,8 +59,8 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Link to="/routine-360" className="hidden md:inline-flex items-center gap-1.5 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 px-5 py-2.5 rounded-full text-sm font-semibold transition shadow-sm hover:shadow-md" data-testid="routine-360-cta">
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Link to="/routine-360" className="hidden md:inline-flex items-center gap-1.5 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 px-4 py-2.5 rounded-full text-sm font-semibold transition shadow-sm hover:shadow-md whitespace-nowrap shrink-0" data-testid="routine-360-cta">
             <Sparkles size={14}/> Routine 360°
           </Link>
           <Link to="/wishlist" className="relative p-2 hover:text-[#FEC4D2] transition" data-testid="wishlist-link">
@@ -82,10 +82,10 @@ export default function Header() {
               </div>
             )}
           </div>
-          <Link to="/essayage-ia" className="hidden md:inline-flex items-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white px-5 py-2.5 rounded-full text-sm font-medium transition shadow-sm hover:shadow-md" data-testid="try-ai-cta">
+          <Link to="/essayage-ia" className="hidden md:inline-flex items-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white px-4 py-2.5 rounded-full text-sm font-medium transition shadow-sm hover:shadow-md whitespace-nowrap shrink-0" data-testid="try-ai-cta">
             <Sparkles size={14}/> Essayer l'IA
           </Link>
-          <Link to="/blog" className="hidden lg:inline-flex px-4 py-2 text-sm font-bold text-neutral-900 hover:text-[#FEC4D2] transition" data-testid="menu-blog">
+          <Link to="/blog" className="hidden lg:inline-flex px-2 py-2 text-sm font-bold text-neutral-900 hover:text-[#FEC4D2] transition whitespace-nowrap shrink-0" data-testid="menu-blog">
             Blog
           </Link>
         </div>
