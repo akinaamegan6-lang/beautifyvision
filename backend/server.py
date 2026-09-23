@@ -221,7 +221,7 @@ async def ai_select_products(req: AISelectRequest):
         "Réponds uniquement avec le JSON demandé."
     )
 
-        client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
 
     try:
         message = await client.messages.create(
@@ -273,7 +273,7 @@ async def ai_select_products(req: AISelectRequest):
 
 @api_router.post("/ai/apply-makeup", response_model=ApplyMakeupResponse)
 async def ai_apply_makeup(req: ApplyMakeupRequest):
-        if not GOOGLE_API_KEY:
+    if not GOOGLE_API_KEY:
         raise HTTPException(status_code=500, detail="GOOGLE_API_KEY missing")
 
     from google import genai
