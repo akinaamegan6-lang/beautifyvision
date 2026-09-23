@@ -106,3 +106,7 @@ html, body {
   cursor: pointer;
   border: 2px solid #fff;
 }
+
+/* Hide scrollbar for horizontal product carousels (blog articles) */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
-import { Search, Send } from "lucide-react";
-import { toast } from "sonner";
+import { Search } from "lucide-react";
 import { api } from "../lib/api";
 import ArticleCard from "../components/ArticleCard";
+import NewsletterBlock from "../components/blog/NewsletterBlock";
 import { BLOG_CATEGORIES } from "../data/blogConfig";
 
 const HERO_BANNER = "/image/hero-banner-blog.png";
-const SEND_ICON = "/icone/envoi-picto-newsletter.png";
 
 export default function BlogPage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("tous");
   const [search, setSearch] = useState("");
-  const [email, setEmail] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -28,13 +26,6 @@ export default function BlogPage() {
     }, 300);
     return () => clearTimeout(handle);
   }, [activeCategory, search]);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    toast.success("Merci pour ton inscription ! À très vite dans ta boîte mail.");
-    setEmail("");
-  };
 
   return (
     <main className="bg-white overflow-x-hidden" data-testid="blog-page">
@@ -125,37 +116,7 @@ export default function BlogPage() {
 
       {/* ===== NEWSLETTER ===== */}
       <section className="px-6 pb-24" data-testid="blog-newsletter">
-        <div className="max-w-6xl mx-auto bg-[#FEC4D2]/[0.12] border border-[#FEC4D2]/30 rounded-[2rem] p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <img src={SEND_ICON} alt="" className="w-9 h-9 object-contain shrink-0 mt-1"/>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">
-                Ne manque <span className="text-[#79C1E0]">aucun conseil beauté</span>
-              </h2>
-              <p className="mt-1.5 text-sm text-neutral-600 max-w-md">
-                Inscris-toi à notre newsletter pour recevoir nos derniers articles, nos conseils et nos sélections produits.
-              </p>
-            </div>
-          </div>
-          <form onSubmit={handleSubscribe} className="flex w-full md:w-auto gap-2" data-testid="newsletter-form">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Ton e-mail"
-              className="flex-1 md:w-64 px-5 py-3 rounded-full border border-[#FEC4D2]/50 bg-white text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#FEC4D2]/50 transition"
-              data-testid="newsletter-email-input"
-            />
-            <button
-              type="submit"
-              className="inline-flex items-center gap-1.5 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 px-6 py-3 rounded-full text-sm font-semibold transition shadow-sm hover:shadow-md whitespace-nowrap"
-              data-testid="newsletter-submit"
-            >
-              S'inscrire <Send size={14}/>
-            </button>
-          </form>
-        </div>
+        <NewsletterBlock/>
       </section>
     </main>
   );

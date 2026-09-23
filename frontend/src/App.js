@@ -12,6 +12,7 @@ import WishlistPage from "@/pages/WishlistPage";
 import AuthCallback from "@/pages/AuthCallback";
 import ProblemeRoutinePage from "@/pages/ProblemeRoutinePage";
 import BlogPage from "@/pages/BlogPage";
+import ArticlePage from "@/pages/ArticlePage";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 
@@ -34,6 +35,7 @@ function AppRouter() {
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/probleme/:slug" element={<ProblemeRoutinePage />} />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<ArticlePage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
       <Footer />

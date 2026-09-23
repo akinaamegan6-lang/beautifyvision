@@ -72,9 +72,11 @@ class Article(BaseModel):
     category: str
     excerpt: str
     image: Optional[str] = None
+    hero_image: Optional[str] = None
     read_minutes: int = 5
     published_at: str
-    content: Optional[str] = None
+    chapo: Optional[str] = None
+    blocks: List[dict] = []
 
 
 class ArticleCreate(BaseModel):
@@ -82,8 +84,23 @@ class ArticleCreate(BaseModel):
     category: str
     excerpt: str
     image: Optional[str] = None
+    hero_image: Optional[str] = None
     read_minutes: int = 5
-    content: Optional[str] = None
+    chapo: Optional[str] = None
+    blocks: List[dict] = []
+
+
+class Comment(BaseModel):
+    id: str
+    article_id: str
+    name: str
+    text: str
+    created_at: str
+
+
+class CommentCreate(BaseModel):
+    name: str
+    text: str
 
 
 class AISelectRequest(BaseModel):
@@ -392,13 +409,55 @@ async def create_article(req: ArticleCreate, user: dict = Depends(current_user))
         "category": req.category,
         "excerpt": req.excerpt,
         "image": req.image,
+        "hero_image": req.hero_image,
         "read_minutes": req.read_minutes,
         "published_at": datetime.now(timezone.utc).isoformat(),
-        "content": req.content,
+        "chapo": req.chapo,
+        "blocks": req.blocks,
     }
     await db.articles.insert_one(doc)
     doc.pop("_id", None)
     return doc
+
+
+@api_router.get("/blog/articles/{slug}", response_model=Article)
+async def get_article(slug: str):
+    doc = await db.articles.find_one({"slug": slug}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Article introuvable")
+    return doc
+
+
+@api_router.get("/blog/articles/{article_id}/comments", response_model=List[Comment])
+async def list_comments(article_id: str):
+    cursor = db.blog_comments.find({"article_id": article_id}, {"_id": 0}).sort("created_at", -1)
+    return await cursor.to_list(length=500)
+
+
+@api_router.post("/blog/articles/{article_id}/comments", response_model=Comment)
+async def create_comment(article_id: str, req: CommentCreate):
+    name = req.name.strip()
+    text = req.text.strip()
+    if not name or not text:
+        raise HTTPException(status_code=400, detail="Nom et commentaire requis")
+    doc = {
+        "id": f"cmt_{uuid.uuid4().hex[:12]}",
+        "article_id": article_id,
+        "name": name[:80],
+        "text": text[:2000],
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.blog_comments.insert_one(doc)
+    doc.pop("_id", None)
+    return doc
+
+
+@api_router.delete("/blog/articles/{article_id}/comments/{comment_id}")
+async def delete_comment(article_id: str, comment_id: str, user: dict = Depends(current_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Reserve aux administrateurs")
+    await db.blog_comments.delete_one({"id": comment_id, "article_id": article_id})
+    return {"ok": True}
 
 
 # Include router
