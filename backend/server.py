@@ -20,7 +20,8 @@ load_dotenv(ROOT_DIR / '.env')
 from catalog import CATALOG, CATEGORIES  # noqa: E402
 from auth import build_router as build_auth_router, seed_admin  # noqa: E402
 
-EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 
 # MongoDB
 mongo_client = AsyncIOMotorClient(os.environ["MONGO_URL"])
@@ -174,8 +175,8 @@ def _extract_json(text: str) -> dict:
 
 @api_router.post("/ai/select-products", response_model=AISelectResponse)
 async def ai_select_products(req: AISelectRequest):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY missing")
+        if not ANTHROPIC_API_KEY:
+        raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY missing")
 
     # Candidate pool: cosmetiques within budget
     candidates = [p for p in CATALOG if p["parent"] == "cosmetiques" and p["price"] <= req.budget_max]
@@ -195,7 +196,7 @@ async def ai_select_products(req: AISelectRequest):
         for p in candidates
     ]
 
-    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    from anthropic import AsyncAnthropic
 
     system_msg = (
         "Tu es BeautifyVision AI, une experte beauté qui sélectionne des produits de maquillage "
@@ -220,14 +221,16 @@ async def ai_select_products(req: AISelectRequest):
         "Réponds uniquement avec le JSON demandé."
     )
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=f"glowmatch-{uuid.uuid4()}",
-        system_message=system_msg,
-    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+        client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
 
     try:
-        response = await chat.send_message(UserMessage(text=user_text))
+        message = await client.messages.create(
+            model="claude-sonnet-4-5-20250929",
+            max_tokens=2000,
+            system=system_msg,
+            messages=[{"role": "user", "content": user_text}],
+        )
+        response = "".join(block.text for block in message.content if block.type == "text")
     except Exception as e:
         logger.exception("Claude error: %s", e)
         raise HTTPException(status_code=502, detail=f"AI selection failed: {e}")
@@ -270,10 +273,11 @@ async def ai_select_products(req: AISelectRequest):
 
 @api_router.post("/ai/apply-makeup", response_model=ApplyMakeupResponse)
 async def ai_apply_makeup(req: ApplyMakeupRequest):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY missing")
+        if not GOOGLE_API_KEY:
+        raise HTTPException(status_code=500, detail="GOOGLE_API_KEY missing")
 
-    from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
+    from google import genai
+    from google.genai import types
 
     lips = req.colors.get("lips", "")
     eyes = req.colors.get("eyes", "")
@@ -294,26 +298,39 @@ async def ai_apply_makeup(req: ApplyMakeupRequest):
         prompt += f"Overall look: {req.look_description}.\n"
     prompt += "Output a clean portrait, same framing, same person."
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=f"glowmatch-img-{uuid.uuid4()}",
-        system_message="You are a virtual makeup artist that edits photos realistically.",
-    ).with_model("gemini", "gemini-3.1-flash-image-preview").with_params(modalities=["image", "text"])
+    client = genai.Client(api_key=GOOGLE_API_KEY)
 
-    msg = UserMessage(text=prompt, file_contents=[ImageContent(req.image_base64)])
+    image_bytes = base64.b64decode(req.image_base64)
+    input_mime = "image/png" if image_bytes[:8] == b"\x89PNG\r\n\x1a\n" else "image/jpeg"
 
     try:
-        _text, images = await chat.send_message_multimodal_response(msg)
+        response = await client.aio.models.generate_content(
+            model="gemini-3.1-flash-image",
+            contents=[
+                prompt,
+                types.Part.from_bytes(data=image_bytes, mime_type=input_mime),
+            ],
+            config=types.GenerateContentConfig(response_modalities=["Image", "Text"]),
+        )
     except Exception as e:
         logger.exception("Nano Banana error: %s", e)
         raise HTTPException(status_code=502, detail=f"Makeup application failed: {e}")
 
-    if not images:
+    out_data = None
+    out_mime = "image/png"
+    candidates = response.candidates or []
+    if candidates and candidates[0].content and candidates[0].content.parts:
+        for part in candidates[0].content.parts:
+            if part.inline_data is not None:
+                out_data = part.inline_data.data
+                out_mime = part.inline_data.mime_type or "image/png"
+                break
+
+    if not out_data:
         # Fallback: return original
         return ApplyMakeupResponse(image_base64=req.image_base64, mime_type="image/png")
 
-    img = images[0]
-    return ApplyMakeupResponse(image_base64=img["data"], mime_type=img.get("mime_type", "image/png"))
+    return ApplyMakeupResponse(image_base64=base64.b64encode(out_data).decode("utf-8"), mime_type=out_mime)
 
 
 # Include router
