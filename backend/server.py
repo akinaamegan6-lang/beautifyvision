@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 import certifi
@@ -487,6 +487,57 @@ async def delete_comment(article_id: str, comment_id: str, user: dict = Depends(
         raise HTTPException(status_code=403, detail="Reserve aux administrateurs")
     await db.blog_comments.delete_one({"id": comment_id, "article_id": article_id})
     return {"ok": True}
+
+
+# ============ Sitemap (SEO) ============
+SITE_URL = "https://beautifyvision.fr"
+
+# Pages statiques a inclure en plus des articles de blog et des pages
+# "probleme de peau" (generees depuis CATEGORIES, deja dynamique).
+SITEMAP_STATIC_PATHS = ["/", "/blog", "/routine-360", "/essayage-ia"]
+
+
+def _xml_escape(value: str) -> str:
+    return (
+        value.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+@app.get("/sitemap.xml")
+async def sitemap():
+    """Sitemap genere dynamiquement : pages statiques, pages "probleme de
+    peau" (depuis le catalogue) et tous les articles de blog publies.
+    Se met a jour tout seul a chaque nouvel article, sans intervention manuelle.
+    Expose aussi via https://beautifyvision.fr/sitemap.xml (rewrite Vercel cote front)."""
+    today = datetime.now(timezone.utc).date().isoformat()
+    urls = [{"loc": f"{SITE_URL}{p}", "lastmod": today} for p in SITEMAP_STATIC_PATHS]
+
+    for cat in CATEGORIES.values():
+        for prob in cat.get("problems", []):
+            urls.append({"loc": f"{SITE_URL}/probleme/{prob['slug']}", "lastmod": today})
+
+    cursor = db.articles.find({}, {"_id": 0, "slug": 1, "published_at": 1})
+    async for doc in cursor:
+        slug = doc.get("slug")
+        if not slug:
+            continue
+        lastmod = (doc.get("published_at") or today)[:10]
+        urls.append({"loc": f"{SITE_URL}/blog/{slug}", "lastmod": lastmod})
+
+    body = "\n".join(
+        f"  <url><loc>{_xml_escape(u['loc'])}</loc><lastmod>{u['lastmod']}</lastmod></url>"
+        for u in urls
+    )
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{body}\n"
+        "</urlset>"
+    )
+    return Response(content=xml, media_type="application/xml")
 
 
 # Include router
