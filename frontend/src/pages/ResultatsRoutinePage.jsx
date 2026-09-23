@@ -13,7 +13,7 @@ function AlternativeCard({ product, index }) {
   return (
     <div className="bg-white border border-[#FEC4D2]/50 rounded-2xl p-4 flex items-center gap-4">
       <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 overflow-hidden shrink-0">
-        <img src={NO_PRODUCT_IMAGE} alt={product.name} className="w-full h-full object-contain"/>
+        <img src={product.image || NO_PRODUCT_IMAGE} alt={product.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }} className="w-full h-full object-contain"/>
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[10px] uppercase tracking-wider text-[#79C1E0] font-semibold">Alternative n°{index}</p>
@@ -50,7 +50,7 @@ function ProductSection({ slug, recommendations }) {
       <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
       <div className="bg-white border-2 border-[#FEC4D2] rounded-3xl overflow-hidden grid md:grid-cols-[280px_1fr]">
         <div className="bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10">
-          <img src={NO_PRODUCT_IMAGE} alt={best.name} className="w-full h-56 md:h-full object-contain"/>
+          <img src={best.image || NO_PRODUCT_IMAGE} alt={best.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }} className="w-full h-56 md:h-full object-contain"/>
         </div>
         <div className="p-6 md:p-7 flex flex-col">
           <div className="flex items-start justify-between gap-4">
@@ -194,7 +194,7 @@ export default function ResultatsRoutinePage() {
               {allBest.map((p) => (
                 <div key={p.id} className="shrink-0 w-44 bg-white border border-[#FEC4D2]/60 rounded-2xl p-3">
                   <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 mb-2">
-                    <img src={NO_PRODUCT_IMAGE} alt={p.name} className="w-full h-full object-contain"/>
+                    <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }} className="w-full h-full object-contain"/>
                   </div>
                   <p className="text-[10px] uppercase tracking-wider text-neutral-500 truncate">{p.brand}</p>
                   <p className="text-xs font-medium text-neutral-900 line-clamp-2 min-h-[2.4em]">{p.name}</p>
