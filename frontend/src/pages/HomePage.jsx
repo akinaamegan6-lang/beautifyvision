@@ -256,7 +256,7 @@ export default function HomePage() {
                   <div key={p.id} className={`flex flex-col items-center ${isFirst ? "" : "mb-0"}`}>
                     <div className="bg-white border-2 border-[#FEC4D2] rounded-2xl p-3 md:p-4 w-full max-w-[180px] mb-3 card-lift">
                       <div className="aspect-square rounded-xl bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 overflow-hidden mb-2">
-                        <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
+                        <img src={NO_PRODUCT_IMAGE} alt={p.name} className="w-full h-full object-contain"/>
                       </div>
                       <p className="text-[10px] uppercase tracking-wider text-neutral-500 text-center">{p.brand}</p>
                       <h3 className="text-xs md:text-sm font-medium text-neutral-900 text-center line-clamp-2 mt-1">{p.name}</h3>

@@ -12,7 +12,7 @@ export default function ProductRecommendationCard({ product, badge = "Recommand√
         <Sparkles size={12}/> {badge}
       </div>
       <div className="relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10">
-        <img src={product.image || NO_PRODUCT_IMAGE} alt={product.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }} className="w-full h-64 md:h-full object-contain"/>
+        <img src={NO_PRODUCT_IMAGE} alt={product.name} className="w-full h-64 md:h-full object-contain"/>
       </div>
       <div className="p-7 md:p-10 flex flex-col">
         <div className="flex items-start justify-between gap-4">

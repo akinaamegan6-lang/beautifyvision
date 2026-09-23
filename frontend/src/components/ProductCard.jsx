@@ -27,10 +27,9 @@ export default function ProductCard({ product, rank }) {
       </button>
       <div className="aspect-square w-full rounded-xl bg-gradient-to-br from-[#FEC4D2]/10 to-[#79C1E0]/10 overflow-hidden mb-4">
         <img
-          src={product.image || NO_PRODUCT_IMAGE}
+          src={NO_PRODUCT_IMAGE}
           alt={product.name}
           loading="lazy"
-          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
           className="w-full h-full object-contain group-hover:scale-105 transition duration-700"
         />
       </div>
