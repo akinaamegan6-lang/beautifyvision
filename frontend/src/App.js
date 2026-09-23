@@ -11,6 +11,7 @@ import AITryOnPage from "@/pages/AITryOnPage";
 import WishlistPage from "@/pages/WishlistPage";
 import AuthCallback from "@/pages/AuthCallback";
 import ProblemeRoutinePage from "@/pages/ProblemeRoutinePage";
+import BlogPage from "@/pages/BlogPage";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 
@@ -32,6 +33,7 @@ function AppRouter() {
         <Route path="/essayage-ia" element={<AITryOnPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/probleme/:slug" element={<ProblemeRoutinePage />} />
+        <Route path="/blog" element={<BlogPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
       <Footer />

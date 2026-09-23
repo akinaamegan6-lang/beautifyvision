@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -60,6 +60,30 @@ class Product(BaseModel):
     color_hex: Optional[str] = None
     zone: Optional[str] = None
     affiliate_url: str = "#"
+
+
+BLOG_CATEGORIES = {"skincare", "maquillage", "cheveux", "corps", "ingredients", "conseils"}
+
+
+class Article(BaseModel):
+    id: str
+    title: str
+    slug: str
+    category: str
+    excerpt: str
+    image: Optional[str] = None
+    read_minutes: int = 5
+    published_at: str
+    content: Optional[str] = None
+
+
+class ArticleCreate(BaseModel):
+    title: str
+    category: str
+    excerpt: str
+    image: Optional[str] = None
+    read_minutes: int = 5
+    content: Optional[str] = None
 
 
 class AISelectRequest(BaseModel):
@@ -331,6 +355,50 @@ async def ai_apply_makeup(req: ApplyMakeupRequest):
         return ApplyMakeupResponse(image_base64=req.image_base64, mime_type="image/png")
 
     return ApplyMakeupResponse(image_base64=base64.b64encode(out_data).decode("utf-8"), mime_type=out_mime)
+
+
+# ============ Blog ============
+@api_router.get("/blog/articles", response_model=List[Article])
+async def list_articles(category: Optional[str] = None, q: Optional[str] = None, limit: int = 50):
+    query: dict = {}
+    if category and category != "tous":
+        query["category"] = category
+    if q:
+        safe_q = re.escape(q.strip())
+        query["$or"] = [
+            {"title": {"$regex": safe_q, "$options": "i"}},
+            {"excerpt": {"$regex": safe_q, "$options": "i"}},
+        ]
+    cursor = db.articles.find(query, {"_id": 0}).sort("published_at", -1).limit(limit)
+    return await cursor.to_list(length=limit)
+
+
+@api_router.post("/blog/articles", response_model=Article)
+async def create_article(req: ArticleCreate, user: dict = Depends(current_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Reserve aux administrateurs")
+    if req.category not in BLOG_CATEGORIES:
+        raise HTTPException(status_code=400, detail=f"Categorie invalide. Attendu: {sorted(BLOG_CATEGORIES)}")
+    slug_base = re.sub(r"[^a-z0-9]+", "-", req.title.lower()).strip("-") or "article"
+    slug = slug_base
+    i = 2
+    while await db.articles.find_one({"slug": slug}):
+        slug = f"{slug_base}-{i}"
+        i += 1
+    doc = {
+        "id": f"art_{uuid.uuid4().hex[:12]}",
+        "title": req.title,
+        "slug": slug,
+        "category": req.category,
+        "excerpt": req.excerpt,
+        "image": req.image,
+        "read_minutes": req.read_minutes,
+        "published_at": datetime.now(timezone.utc).isoformat(),
+        "content": req.content,
+    }
+    await db.articles.insert_one(doc)
+    doc.pop("_id", None)
+    return doc
 
 
 # Include router

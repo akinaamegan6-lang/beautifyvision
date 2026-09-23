@@ -85,6 +85,9 @@ export default function Header() {
           <Link to="/essayage-ia" className="hidden md:inline-flex items-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white px-5 py-2.5 rounded-full text-sm font-medium transition shadow-sm hover:shadow-md" data-testid="try-ai-cta">
             <Sparkles size={14}/> Essayer l'IA
           </Link>
+          <Link to="/blog" className="hidden lg:inline-flex px-4 py-2 text-sm font-bold text-neutral-900 hover:text-[#FEC4D2] transition" data-testid="menu-blog">
+            Blog
+          </Link>
         </div>
       </div>
 
