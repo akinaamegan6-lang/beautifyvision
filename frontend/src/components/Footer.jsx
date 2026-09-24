@@ -18,18 +18,16 @@ export default function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-[#79C1E0] mb-4">À propos</h4>
           <ul className="space-y-2 text-sm text-neutral-600">
-            <li><Link to="/" className="hover:text-[#FEC4D2]">L'équipe</Link></li>
             <li><Link to="/" className="hover:text-[#FEC4D2]">Comment ça marche</Link></li>
-            <li><Link to="/" className="hover:text-[#FEC4D2]">Affiliation</Link></li>
             <li><Link to="/" className="hover:text-[#FEC4D2]">Contact</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-sm font-semibold text-[#79C1E0] mb-4">Légal</h4>
           <ul className="space-y-2 text-sm text-neutral-600">
-            <li><Link to="/" className="hover:text-[#FEC4D2]">CGU</Link></li>
-            <li><Link to="/" className="hover:text-[#FEC4D2]">Politique de confidentialité</Link></li>
-            <li><Link to="/" className="hover:text-[#FEC4D2]">Mentions légales</Link></li>
+            <li><Link to="/cgu" className="hover:text-[#FEC4D2]">CGU</Link></li>
+            <li><Link to="/politique-de-confidentialite" className="hover:text-[#FEC4D2]">Politique de confidentialité</Link></li>
+            <li><Link to="/mentions-legales" className="hover:text-[#FEC4D2]">Mentions légales</Link></li>
           </ul>
         </div>
         <div>

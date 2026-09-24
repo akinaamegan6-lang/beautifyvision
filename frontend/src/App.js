@@ -14,6 +14,9 @@ import AuthCallback from "@/pages/AuthCallback";
 import ProblemeRoutinePage from "@/pages/ProblemeRoutinePage";
 import BlogPage from "@/pages/BlogPage";
 import ArticlePage from "@/pages/ArticlePage";
+import MentionsLegalesPage from "@/pages/legal/MentionsLegalesPage";
+import PolitiqueConfidentialitePage from "@/pages/legal/PolitiqueConfidentialitePage";
+import CguPage from "@/pages/legal/CguPage";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 
@@ -37,6 +40,9 @@ function AppRouter() {
         <Route path="/probleme/:slug" element={<ProblemeRoutinePage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<ArticlePage />} />
+        <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+        <Route path="/politique-de-confidentialite" element={<PolitiqueConfidentialitePage />} />
+        <Route path="/cgu" element={<CguPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
       <Footer />
