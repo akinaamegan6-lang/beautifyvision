@@ -17,6 +17,8 @@ import ArticlePage from "@/pages/ArticlePage";
 import MentionsLegalesPage from "@/pages/legal/MentionsLegalesPage";
 import PolitiqueConfidentialitePage from "@/pages/legal/PolitiqueConfidentialitePage";
 import CguPage from "@/pages/legal/CguPage";
+import CommentCaMarchePage from "@/pages/CommentCaMarchePage";
+import ContactPage from "@/pages/ContactPage";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 
@@ -43,6 +45,8 @@ function AppRouter() {
         <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
         <Route path="/politique-de-confidentialite" element={<PolitiqueConfidentialitePage />} />
         <Route path="/cgu" element={<CguPage />} />
+        <Route path="/comment-ca-marche" element={<CommentCaMarchePage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
       <Footer />

@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ChevronDown, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronDown, Sparkles } from "lucide-react";
 import Seo from "../Seo";
+import PageHero from "../PageHero";
 import { CONTACT_EMAIL } from "../../data/legalContent";
-
-const HERO_BG = "/image/fond-hero-page.png";
 
 function AccordionRow({ index, section, isOpen, onToggle }) {
   const isPink = index % 2 === 0;
@@ -80,24 +78,13 @@ export default function LegalPage({
     <main className="bg-white" data-testid="legal-page">
       <Seo title={metaTitle} description={metaDescription} path={path}/>
 
-      {/* ===== HERO ===== */}
-      <section
-        className="relative px-6 sm:px-10 py-16 sm:py-20 rounded-b-[2.5rem] sm:rounded-b-[3rem] bg-cover bg-center overflow-hidden"
-        style={{ backgroundImage: `url(${HERO_BG})`, backgroundColor: "#FEEFF2" }}
-        data-testid="legal-hero"
-      >
-        <div className="max-w-7xl mx-auto">
-          <nav className="flex items-center gap-1.5 text-xs text-neutral-500 mb-6" data-testid="breadcrumb">
-            <Link to="/" className="hover:text-[#79C1E0] transition">Accueil</Link>
-            <ChevronRight size={12}/>
-            <span className="text-neutral-700">{breadcrumbLabel}</span>
-          </nav>
-          <h1 className="text-4xl sm:text-5xl font-bold leading-[1.1] text-neutral-900 max-w-2xl">
-            {titleBlack} <span className="editorial text-[#79C1E0]">{titleBlue}</span>
-          </h1>
-          {intro && <p className="mt-6 text-neutral-600 leading-relaxed max-w-xl">{intro}</p>}
-        </div>
-      </section>
+      <PageHero
+        breadcrumbLabel={breadcrumbLabel}
+        titleBlack={titleBlack}
+        titleBlue={titleBlue}
+        intro={intro}
+        testId="legal-hero"
+      />
 
       {/* ===== ACCORDEON ===== */}
       <section className="px-6 py-14" data-testid="legal-sections">

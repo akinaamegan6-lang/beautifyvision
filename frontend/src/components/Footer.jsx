@@ -18,8 +18,8 @@ export default function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-[#79C1E0] mb-4">À propos</h4>
           <ul className="space-y-2 text-sm text-neutral-600">
-            <li><Link to="/" className="hover:text-[#FEC4D2]">Comment ça marche</Link></li>
-            <li><Link to="/" className="hover:text-[#FEC4D2]">Contact</Link></li>
+            <li><Link to="/comment-ca-marche" className="hover:text-[#FEC4D2]">Comment ça marche</Link></li>
+            <li><Link to="/contact" className="hover:text-[#FEC4D2]">Contact</Link></li>
           </ul>
         </div>
         <div>
