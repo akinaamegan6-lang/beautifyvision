@@ -79,7 +79,7 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
     title: "Responsable du traitement",
     summary: "Qui est responsable du traitement de tes données personnelles.",
     body: [
-      { type: "p", text: "Le responsable du traitement des données collectées sur beautifyvision.fr est Akina Mégan, entrepreneure individuelle exerçant sous le nom commercial Beautify Vision, 78400 Chatou." },
+      { type: "p", text: "Le responsable du traitement des données collectées sur beautifyvision.fr est Akina Mégan, entrepreneure individuelle (SIRET : 105 479 539 00022) exerçant sous le nom commercial Beautify Vision, 78400 Chatou." },
       { type: "p", text: `Pour toute question relative à tes données personnelles, tu peux nous contacter à ${CONTACT_EMAIL}.` },
     ],
   },
@@ -179,7 +179,7 @@ export const CGU_SECTIONS = [
     title: "Objet",
     summary: "Présentation de Beautify Vision et objet des présentes conditions.",
     body: [
-      { type: "p", text: "Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation du site beautifyvision.fr (« le Site »), édité par Beautify Vision : un comparateur beauté propulsé par l'intelligence artificielle proposant diagnostics personnalisés, essayage virtuel de maquillage, recommandations de produits et articles de blog." },
+      { type: "p", text: "Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation du site beautifyvision.fr (« le Site »), édité par Akina Mégan, entrepreneure individuelle (SIRET : 105 479 539 00022), exerçant sous le nom commercial Beautify Vision. Beautify Vision est un comparateur beauté propulsé par l'intelligence artificielle proposant diagnostics personnalisés, essayage virtuel de maquillage, recommandations de produits et articles de blog." },
       { type: "p", text: "L'utilisation du Site implique l'acceptation pleine et entière des présentes CGU." },
     ],
   },
