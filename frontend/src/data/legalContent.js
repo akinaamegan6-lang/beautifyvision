@@ -2,9 +2,6 @@
 // Redige a partir des obligations LCEN (mentions legales), des recommandations
 // CNIL (donnees personnelles / cookies) et du contrat d'exploitation du
 // Programme Partenaires Amazon (mention de divulgation obligatoire).
-//
-// A COMPLETER : le numero SIRET n'a pas encore ete fourni (voir section
-// "Editeur du site" ci-dessous). A remplacer des que disponible.
 
 export const CONTACT_EMAIL = "contactbeautifyvision@gmail.com";
 export const LAST_UPDATED = "24 septembre 2026";
@@ -19,7 +16,7 @@ export const MENTIONS_LEGALES_SECTIONS = [
         type: "ul",
         items: [
           "Adresse : 78400 Chatou, France",
-          "SIRET : (à compléter)",
+          "SIRET : 105 479 539 00022",
           `E-mail : ${CONTACT_EMAIL}`,
           "Directeur de la publication : Akina Mégan",
         ],
