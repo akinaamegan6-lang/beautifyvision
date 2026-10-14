@@ -8,6 +8,7 @@ export default function CguPage() {
       titleBlack="Conditions générales"
       titleBlue="d'utilisation"
       intro="Les règles qui encadrent l'utilisation du site et des services Beautify Vision."
+      noindex
       sections={CGU_SECTIONS}
       metaTitle="Conditions générales d'utilisation | Beautify Vision"
       metaDescription="Conditions générales d'utilisation du site Beautify Vision : accès au service, fonctionnalités IA, recommandations produits et affiliation."

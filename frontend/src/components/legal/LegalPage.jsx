@@ -62,6 +62,7 @@ export default function LegalPage({
   metaTitle,
   metaDescription,
   path,
+  noindex = false,
 }) {
   const [openIds, setOpenIds] = useState(() => new Set());
 
@@ -76,7 +77,7 @@ export default function LegalPage({
 
   return (
     <main className="bg-white" data-testid="legal-page">
-      <Seo title={metaTitle} description={metaDescription} path={path}/>
+      <Seo title={metaTitle} description={metaDescription} path={path} noindex={noindex}/>
 
       <PageHero
         breadcrumbLabel={breadcrumbLabel}

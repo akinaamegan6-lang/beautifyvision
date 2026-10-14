@@ -8,6 +8,7 @@ export default function PolitiqueConfidentialitePage() {
       titleBlack="Politique de"
       titleBlue="confidentialité"
       intro="Comment Beautify Vision collecte, utilise et protège tes données personnelles."
+      noindex
       sections={POLITIQUE_CONFIDENTIALITE_SECTIONS}
       metaTitle="Politique de confidentialité | Beautify Vision"
       metaDescription="Découvre comment Beautify Vision collecte, utilise et protège tes données personnelles, ainsi que tes droits RGPD."
