@@ -35,6 +35,38 @@ db = mongo_client[os.environ["DB_NAME"]]
 products_col = db["products"]
 
 
+def _normalize_text(text: str) -> str:
+    import unicodedata
+    t = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    return t.strip().lower()
+
+
+def dedupe_variants(items):
+    """Fusionne les doublons du flux Awin qui sont en fait LE MEME produit.
+
+    Le flux Awin liste parfois une reference plusieurs fois sous des
+    aw_product_id differents (variantes de teinte/taille, ou carrement des
+    lignes dupliquees cote marchand) alors que le nom, la marque et la photo
+    sont identiques. Sans ce filtre, un produit comme "Effecernes New"
+    (LANCOME) pouvait apparaitre 3-4 fois d'affilee, a l'identique, dans les
+    resultats de recommandation. On ne garde que la premiere occurrence par
+    (categorie, marque, nom normalise) - le nom est normalise (minuscule,
+    accents retires, texte apres une virgule ou avant une parenthese ignore)
+    pour qu'une vraie variante de taille/teinte explicite dans le nom (ex:
+    "Effecernes New 15 ml" vs "Effecernes New") reste bien distincte.
+    """
+    seen = set()
+    deduped = []
+    for p in items:
+        name_key = _normalize_text(re.sub(r"[,(].*$", "", p.get("name", "")).strip())
+        key = (p.get("category"), _normalize_text(p.get("brand", "")), name_key)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(p)
+    return deduped
+
+
 async def get_catalog():
     """Catalogue de produits servi par l'API.
 
@@ -48,7 +80,7 @@ async def get_catalog():
         return CATALOG
     for it in items:
         it.pop("_id", None)
-    return items
+    return dedupe_variants(items)
 
 
 app = FastAPI()
@@ -215,42 +247,19 @@ LOW_RES_IMAGE_PRODUCTS = {
 }
 
 
-def _normalize_for_exclusion(text: str) -> str:
-    import unicodedata
-    t = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
-    return t.strip().lower()
-
-
 @api_router.get("/products/top", response_model=List[Product])
 async def top_products(parent: str = "cosmetiques", limit: int = 10):
     catalog = await get_catalog()
     items = [p for p in catalog if p["parent"] == parent]
     items = [
         p for p in items
-        if (_normalize_for_exclusion(p["brand"]), _normalize_for_exclusion(re.sub(r"[,(].*$", "", p["name"]).strip())) not in LOW_RES_IMAGE_PRODUCTS
+        if (_normalize_text(p["brand"]), _normalize_text(re.sub(r"[,(].*$", "", p["name"]).strip())) not in LOW_RES_IMAGE_PRODUCTS
     ]
     items.sort(key=lambda p: (-p["rating"], -p["reviews"]))
-    # Le flux Awin liste souvent la meme reference en plusieurs variantes
-    # (teinte, taille) sous un nom quasi identique : sans deduplication, le
-    # "Top" affichait plusieurs fois le meme produit (ex: 4 teintes du meme
-    # fond de teint a la suite) au lieu de vrais produits differents. On ne
-    # garde que la premiere variante rencontree par (marque, nom normalise),
-    # le nom etant normalise (minuscule, ponctuation/texte entre parentheses
-    # ou apres une virgule ignores) pour que "Fond de Teint, Beige" et "Fond
-    # de Teint, Noisette" comptent comme UNE seule entree du "Top".
-    seen = set()
-    deduped = []
-    for p in items:
-        name_key = re.sub(r"[,(].*$", "", p["name"]).strip().lower()
-        key = (p["brand"].strip().lower(), name_key)
-        if key in seen:
-            continue
-        seen.add(key)
-        deduped.append(p)
-
-    # La dedup ci-dessus enleve les variantes du MEME produit, mais ne
-    # resout pas un autre probleme : la plupart des produits Awin partagent
-    # la meme note par defaut (RATING_DEFAULT/REVIEWS_DEFAULT, cf.
+    # get_catalog() a deja fusionne les variantes du MEME produit
+    # (dedupe_variants), donc pas besoin de refaire ce tri ici. Il reste par
+    # contre un autre probleme a regler : la plupart des produits Awin
+    # partagent la meme note par defaut (RATING_DEFAULT/REVIEWS_DEFAULT, cf.
     # import_awin_feed.py), donc le tri par note ne les depart pas vraiment
     # entre eux. Resultat : le Top finissait domine par la marque qui a le
     # plus de produits dans le catalogue (ex: Essence), meme apres dedup
@@ -260,7 +269,7 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
     # que le Top melange plusieurs marques au lieu d'etre monopolise par
     # celle qui a le plus large catalogue.
     by_brand = {}
-    for p in deduped:
+    for p in items:
         by_brand.setdefault(p["brand"].strip().lower(), []).append(p)
 
     result = []
