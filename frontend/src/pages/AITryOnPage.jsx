@@ -34,7 +34,23 @@ const PROMPT_DICT = [
   "naturel", "mat", "doré", "champagne", "pêche", "orangé", "violet", "shimmer",
 ];
 
-async function selectProducts({ undertone, budgetMax, presetId, prompt }) {
+async function selectProducts({ undertone, budgetMax, presetId, prompt, skinToneHex }) {
+  // Vraie selection IA (Claude) cote backend. Si la cle ANTHROPIC_API_KEY
+  // n'est pas configuree (ou que l'appel echoue pour une autre raison), on
+  // retombe sur l'heuristique locale ci-dessous pour que la page reste
+  // utilisable pendant la mise en place des cles API.
+  try {
+    const { data } = await api.post("/ai/select-products", {
+      prompt,
+      skin_tone_hex: skinToneHex || "#E2BFA0",
+      undertone,
+      budget_max: budgetMax || 200,
+    });
+    return { products: data.products, summary: data.summary };
+  } catch (err) {
+    console.warn("Selection IA (backend) indisponible, repli sur la selection locale :", err);
+  }
+
   const res = await api.get("/products", { params: { parent: "cosmetiques" } });
   const products = (res.data || []).filter((p) => !budgetMax || p.price <= budgetMax);
 
@@ -133,12 +149,13 @@ export default function AITryOnPage() {
     try {
       const fullPrompt = `${presetText}. ${prompt}`.trim();
 
-      // 1. Select products client-side (no AI, no paid API)
+      // 1. Selection des produits (IA cote backend si les cles sont configurees)
       const { products: selected, summary } = await selectProducts({
         undertone: skinTone.undertone,
         budgetMax: budget[1],
         presetId,
         prompt: fullPrompt,
+        skinToneHex: skinTone.hex,
       });
 
       setLoadingStep(1);
@@ -149,8 +166,23 @@ export default function AITryOnPage() {
         if (p.zone && !colors[p.zone]) colors[p.zone] = p.color_hex;
       }
 
-      // 2. Apply makeup via MediaPipe FaceLandmarker + Canvas (browser-side, free)
-      const imageUrl = await applyMakeup(photoDataUrl, colors);
+      // 2. Application du maquillage : vraie generation IA photorealiste
+      // (Gemini "Nano Banana" cote backend) si GOOGLE_API_KEY est configuree,
+      // sinon repli sur l'overlay local MediaPipe + Canvas (gratuit mais
+      // moins realiste) pour que la page reste fonctionnelle entre-temps.
+      let imageUrl;
+      try {
+        const base64Only = photoDataUrl.split(",")[1] || photoDataUrl;
+        const { data } = await api.post("/ai/apply-makeup", {
+          image_base64: base64Only,
+          colors,
+          look_description: fullPrompt,
+        });
+        imageUrl = `data:${data.mime_type};base64,${data.image_base64}`;
+      } catch (err) {
+        console.warn("Application IA (backend) indisponible, repli sur l'overlay local :", err);
+        imageUrl = await applyMakeup(photoDataUrl, colors);
+      }
 
       setLoadingStep(2);
 
@@ -178,7 +210,7 @@ export default function AITryOnPage() {
       <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Essayage IA · Étape 1</p>
       <h1 className="mt-3 text-4xl md:text-5xl font-bold text-[#FEC4D2]">Upload ta <span className="editorial text-neutral-900">photo</span></h1>
       <p className="mt-3 text-neutral-600 leading-relaxed">Photo de face, éclairage naturel, sans maquillage de préférence.</p>
-      <p className="mt-1 text-xs text-neutral-500">Ta photo est traitée uniquement dans ton navigateur. Elle n'est jamais envoyée à un serveur.</p>
+      <p className="mt-1 text-xs text-neutral-500">Ta photo est envoyée de façon sécurisée uniquement pour générer ton essai maquillage, et n'est pas conservée.</p>
       <label
         htmlFor="photo-upload"
         className="mt-10 block border-2 border-dashed border-[#FEC4D2] rounded-3xl p-16 cursor-pointer hover:bg-[#FEC4D2]/5 transition"
