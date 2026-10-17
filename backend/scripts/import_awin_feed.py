@@ -96,11 +96,25 @@ EXCLUDE_CATEGORY_NAME = {
 
 # Deuxieme niveau du chemin merchant_category a exclure (accessoires /
 # outils / complements / hors-sujet) même si category_name n'est pas filtré.
+# NB: "hair styling tool" (sans le "s" final) et "hairbrush" (sans "es")
+# sont volontairement des racines courtes : elles doivent matcher aussi bien
+# "Hair Styling Tools" que "Hair Styling Tool Accessories", et aussi bien
+# "Combs & Brushes" (deja couvert par "combs & brushes") que "Hairbrushes &
+# Combs" (ordre inverse, qui echappait a l'ancienne liste) sans avoir a lister
+# toutes les combinaisons d'ordre des mots.
 EXCLUDE_PATH_CONTAINS = [
-    "etui", "hair styling tools", "hair pins", "combs & brushes",
+    "etui", "hair styling tool", "hair pins", "combs & brushes", "hairbrush",
     "hair accessories", "headband", "gift card", "vitamins", "supplements",
     "sante sexuelle", "santé sexuelle", "supplementation", "coloration et decoloration",
     "coloration et décoloration", "ongles", "nail",
+    # Outils de coiffage / accessoires capillaires divers (pas des produits
+    # de soin : rien a appliquer, rien a recommander dans un quiz beaute)
+    "hair curler", "ponytail holder", "hair pin",
+    # Articles hors beaute presents dans le flux de certains marchands
+    # (linge de bain/lit, bagagerie) qui se glissaient dans les resultats
+    # (ex: une housse de couette classee a tort comme masque capillaire)
+    "travel bottle", "toiletry bag", "tote bag", "shower visor", "shower cap",
+    "soap dish", "towel", "pillowcase", "duvet", "bed sheet", "decor",
 ]
 
 # ---------------------------------------------------------------------------
@@ -128,8 +142,11 @@ CATEGORY_RULES = [
 
     # --- Maquillage (cosmetiques) ---
     ("mascara", "cosmetiques", ["mascara"]),
-    ("eyeliner", "cosmetiques", ["eyeliner", "crayon yeux", "crayon khol", "kohl", "liner yeux", "feutre eyeliner"]),
-    ("palette-yeux", "cosmetiques", ["palette", "fard à paupières", "fard a paupieres", "ombre à paupières", "> ombres", "eyeshadow"]),
+    ("eyeliner", "cosmetiques", ["eyeliner", "crayon yeux", "crayon khol", "khol", "kohl", "crayon d'œil", "crayon d'oeil", "crayon doeil", "liner yeux", "feutre eyeliner"]),
+    # "palette" seul est trop generique (ex: une description de gloss ou de
+    # blush qui dit juste "disponible dans une palette de tons" matchait a
+    # tort) : on exige un vrai mot-cle "palette d'yeux/de fards".
+    ("palette-yeux", "cosmetiques", ["palette yeux", "palette de fards", "palette d'ombres", "eye palette", "eyeshadow palette", "fard à paupières", "fard a paupieres", "ombre à paupières", "> ombres", "eyeshadow"]),
     ("sourcils", "cosmetiques", ["sourcils", "eyebrow", "crayon sourcils", "gel sourcils", "poudre sourcils"]),
     ("highlighter", "cosmetiques", ["highlighter", "enlumineur", "illuminateur teint", "strobing"]),
     ("blush", "cosmetiques", ["blush", "bronzer", "bronzant", "bronzants", "terre cuite", "blush poudre"]),
