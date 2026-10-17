@@ -102,88 +102,97 @@ export const LIFESTYLE_QUESTIONS = [
 ];
 
 // === Bloc 2 : questions spécifiques par type de produit ===
+// Règle : les questions "structurelles" (un seul fait vrai possible, ex. type de cuir
+// chevelu, type de chute, type de traitement, problème diagnostiqué) restent en
+// sélection unique sans option "Peu importe". Les questions de "goût"/style (texture,
+// fini, objectif, tenue, format...) sont en sélection multiple et proposent "Peu importe",
+// pour élargir les produits proposés plutôt que de forcer un choix unique trop restrictif.
 export const PRODUCT_QUESTIONS = {
   "masque": [
-    Q("texture", "Texture préférée ?", false, ["Argile", "Crème", "Gel", "Tissu", "Peel-off"]),
-    Q("objectif", "Objectif principal ?", false, ["Purifier", "Hydrater", "Éclat", "Anti-âge", "Apaisant"]),
-    Q("ingredients_specifiques", "Ingrédients spécifiques souhaités ?", true, ["Charbon", "Argile", "Kaolin", "Acide salicylique", "Aloe vera", "Vitamine C", "Miel"]),
-    Q("frequence", "Fréquence d'utilisation ?", false, ["1 fois/semaine", "2-3 fois/semaine", "Quotidien"]),
+    Q("texture", "Texture préférée ?", true, ["Argile", "Crème", "Gel", "Tissu", "Peel-off", "Peu importe"]),
+    Q("objectif", "Objectif principal ?", true, ["Purifier", "Hydrater", "Éclat", "Anti-âge", "Apaisant", "Peu importe"]),
+    Q("ingredients_specifiques", "Ingrédients spécifiques souhaités ?", true, ["Charbon", "Argile", "Kaolin", "Acide salicylique", "Aloe vera", "Vitamine C", "Miel", "Peu importe"]),
+    Q("frequence", "Fréquence d'utilisation ?", true, ["1 fois/semaine", "2-3 fois/semaine", "Quotidien", "Peu importe"]),
   ],
   "creme-hydratante": [
-    Q("texture", "Texture ?", false, ["Légère/Gel", "Fluide", "Riche", "Baume"]),
-    Q("moment", "Moment d'application ?", false, ["Matin", "Soir", "Matin et soir"]),
-    Q("benefice", "Bénéfice principal ?", false, ["Hydratation intense", "Anti-âge", "Éclat", "Matifiant", "Apaisant"]),
-    Q("ingredients_specifiques", "Ingrédients ?", true, ["Acide hyaluronique", "Rétinol", "Niacinamide", "Céramides", "Squalane", "Vitamine C"]),
+    Q("texture", "Texture ?", true, ["Légère/Gel", "Fluide", "Riche", "Baume", "Peu importe"]),
+    Q("moment", "Moment d'application ?", true, ["Matin", "Soir", "Peu importe"]),
+    Q("benefice", "Bénéfice principal ?", true, ["Hydratation intense", "Anti-âge", "Éclat", "Matifiant", "Apaisant", "Peu importe"]),
+    Q("ingredients_specifiques", "Ingrédients ?", true, ["Acide hyaluronique", "Rétinol", "Niacinamide", "Céramides", "Squalane", "Vitamine C", "Peu importe"]),
   ],
   "serum": [
-    Q("concentration", "Concentration souhaitée ?", false, ["Légère", "Concentrée"]),
-    Q("objectif", "Objectif ?", false, ["Anti-âge", "Éclat", "Hydratation", "Anti-taches", "Pores", "Fermeté"]),
-    Q("texture", "Texture ?", false, ["Huileuse", "Aqueuse", "Gel"]),
+    Q("concentration", "Concentration souhaitée ?", true, ["Légère", "Concentrée", "Peu importe"]),
+    Q("objectif", "Objectif ?", true, ["Anti-âge", "Éclat", "Hydratation", "Anti-taches", "Pores", "Fermeté", "Peu importe"]),
+    Q("texture", "Texture ?", true, ["Huileuse", "Aqueuse", "Gel", "Peu importe"]),
   ],
   "nettoyant": [
-    Q("format", "Format ?", false, ["Liquide", "Solide", "Mousse", "Huile", "Gel", "Eau micellaire"]),
-    Q("objectif", "Objectif ?", false, ["Purifier", "Douceur", "Anti-acné", "Démaquillant"]),
-    Q("rincage", "Rinçage ?", false, ["À rincer", "Sans rinçage"]),
+    Q("format", "Format ?", true, ["Liquide", "Solide", "Mousse", "Huile", "Gel", "Eau micellaire", "Peu importe"]),
+    Q("objectif", "Objectif ?", true, ["Purifier", "Douceur", "Anti-acné", "Démaquillant", "Peu importe"]),
+    Q("rincage", "Rinçage ?", true, ["À rincer", "Sans rinçage", "Peu importe"]),
   ],
   "fond-de-teint-cosmetique": [
-    Q("couvrance", "Couvrance ?", false, ["Légère", "Moyenne", "Totale"]),
-    Q("fini", "Fini ?", false, ["Mat", "Naturel", "Lumineux", "Satiné"]),
-    Q("tenue", "Tenue ?", false, ["Normale", "Longue tenue", "Waterproof"]),
-    Q("format", "Format ?", false, ["Liquide", "Poudre", "Coussin", "Stick"]),
+    Q("couvrance", "Couvrance ?", true, ["Légère", "Moyenne", "Totale", "Peu importe"]),
+    Q("fini", "Fini ?", true, ["Mat", "Naturel", "Lumineux", "Satiné", "Peu importe"]),
+    Q("tenue", "Tenue ?", true, ["Normale", "Longue tenue", "Waterproof", "Peu importe"]),
+    Q("format", "Format ?", true, ["Liquide", "Poudre", "Coussin", "Stick", "Peu importe"]),
   ],
   "rouge-a-levres": [
-    Q("fini", "Fini ?", false, ["Mat", "Satiné", "Brillant", "Gloss"]),
-    Q("tenue", "Tenue ?", false, ["Courte", "Longue tenue", "Transfert-proof"]),
-    Q("soin", "Avec soin hydratant ?", false, ["Avec soin hydratant", "Non important"]),
+    Q("fini", "Fini ?", true, ["Mat", "Satiné", "Brillant", "Gloss", "Peu importe"]),
+    Q("tenue", "Tenue ?", true, ["Courte", "Longue tenue", "Transfert-proof", "Peu importe"]),
+    Q("soin", "Avec soin hydratant ?", false, ["Avec soin hydratant", "Peu importe"]),
   ],
   "mascara": [
-    Q("effet", "Effet ?", false, ["Volume", "Allongement", "Courbe", "Séparation", "Combiné"]),
-    Q("tenue", "Tenue ?", false, ["Normale", "Longue tenue", "Waterproof"]),
+    Q("effet", "Effet ?", true, ["Volume", "Allongement", "Courbe", "Séparation", "Combiné", "Peu importe"]),
+    Q("tenue", "Tenue ?", true, ["Normale", "Longue tenue", "Waterproof", "Peu importe"]),
+  ],
+  "eyeliner": [
+    Q("format", "Format ?", true, ["Liquide", "Feutre", "Crayon", "Gel", "Peu importe"]),
+    Q("tenue", "Tenue ?", true, ["Normale", "Longue tenue", "Waterproof", "Peu importe"]),
   ],
   "blush": [
-    Q("format", "Format ?", false, ["Poudre", "Crème", "Liquide"]),
-    Q("fini", "Fini ?", false, ["Mat", "Satiné", "Shimmer"]),
+    Q("format", "Format ?", true, ["Poudre", "Crème", "Liquide", "Peu importe"]),
+    Q("fini", "Fini ?", true, ["Mat", "Satiné", "Shimmer", "Peu importe"]),
   ],
   "palette-yeux": [
-    Q("look", "Type de look ?", false, ["Nude & naturel", "Smoky", "Terracotta", "Prune & mauve", "Coloré"]),
-    Q("fini", "Fini préféré ?", true, ["Mat", "Shimmer", "Métallisé", "Satiné"]),
+    Q("look", "Type de look ?", true, ["Nude & naturel", "Smoky", "Terracotta", "Prune & mauve", "Coloré", "Peu importe"]),
+    Q("fini", "Fini préféré ?", true, ["Mat", "Shimmer", "Métallisé", "Satiné", "Peu importe"]),
   ],
   "highlighter": [
-    Q("format", "Format ?", false, ["Poudre", "Crème", "Liquide"]),
-    Q("teinte", "Teinte ?", false, ["Champagne", "Doré", "Rosé", "Argenté"]),
+    Q("format", "Format ?", true, ["Poudre", "Crème", "Liquide", "Peu importe"]),
+    Q("teinte", "Teinte ?", true, ["Champagne", "Doré", "Rosé", "Argenté", "Peu importe"]),
   ],
   "shampoing": [
-    Q("texture", "Type de shampoing ?", false, ["Liquide", "Solide", "Mousse"]),
-    Q("objectif", "Objectif principal ?", false, ["Nettoyage doux", "Volume", "Nutrition", "Antipelliculaire", "Sébum"]),
+    Q("texture", "Type de shampoing ?", true, ["Liquide", "Solide", "Mousse", "Peu importe"]),
+    Q("objectif", "Objectif principal ?", true, ["Nettoyage doux", "Volume", "Nutrition", "Antipelliculaire", "Sébum", "Peu importe"]),
     Q("scalp", "Cuir chevelu ?", false, ["Gras", "Sec", "Normal", "Sensible", "À pellicules"]),
   ],
   "apres-shampoing": [
-    Q("objectif", "Objectif principal ?", false, ["Démêlant", "Nutrition", "Volume", "Réparateur"]),
-    Q("texture", "Texture ?", false, ["Légère", "Normale", "Riche"]),
+    Q("objectif", "Objectif principal ?", true, ["Démêlant", "Nutrition", "Volume", "Réparateur", "Peu importe"]),
+    Q("texture", "Texture ?", true, ["Légère", "Normale", "Riche", "Peu importe"]),
   ],
   "masque-cheveux": [
-    Q("objectif", "Objectif ?", false, ["Réparateur", "Hydratation intense", "Brillance", "Anti-casse"]),
-    Q("frequence", "Fréquence ?", false, ["1 fois/semaine", "2 fois/semaine", "Quotidien"]),
+    Q("objectif", "Objectif ?", true, ["Réparateur", "Hydratation intense", "Brillance", "Anti-casse", "Peu importe"]),
+    Q("frequence", "Fréquence ?", true, ["1 fois/semaine", "2 fois/semaine", "Quotidien", "Peu importe"]),
   ],
   "huile-cheveux": [
-    Q("moment", "Moment d'application ?", false, ["Avant shampoing", "Après shampoing", "Sur cheveux secs", "Les deux"]),
-    Q("objectif", "Objectif ?", false, ["Brillance", "Nutrition", "Anti-frisottis", "Protection chaleur"]),
+    Q("moment", "Moment d'application ?", true, ["Avant shampoing", "Après shampoing", "Sur cheveux secs", "Peu importe"]),
+    Q("objectif", "Objectif ?", true, ["Brillance", "Nutrition", "Anti-frisottis", "Protection chaleur", "Peu importe"]),
   ],
   "serum-cheveux": [
-    Q("objectif", "Objectif ?", false, ["Anti-chute", "Pointes sèches", "Frisottis", "Cuir chevelu"]),
+    Q("objectif", "Objectif ?", true, ["Anti-chute", "Pointes sèches", "Frisottis", "Cuir chevelu", "Peu importe"]),
   ],
   "spray-coiffant": [
-    Q("objectif", "Utilisation ?", false, ["Thermoprotection", "Définition des boucles", "Volume", "Lissage"]),
+    Q("objectif", "Utilisation ?", true, ["Thermoprotection", "Définition des boucles", "Volume", "Lissage", "Peu importe"]),
   ],
   "shampoing-sec": [
-    Q("moment", "Moment d'utilisation ?", false, ["Matin", "Entre deux shampoings", "Avant sortie"]),
+    Q("moment", "Moment d'utilisation ?", true, ["Matin", "Entre deux shampoings", "Avant sortie", "Peu importe"]),
   ],
   "soin-anti-chute": [
     Q("type_chute", "Type de chute ?", false, ["Saisonnière", "Chronique", "Post-partum", "Liée au stress"]),
   ],
   "soin-cheveux-colores": [
     Q("traitement", "Type de traitement colorant ?", false, ["Coloration chimique", "Décoloration", "Mèches", "Coloration naturelle"]),
-    Q("objectif", "Objectif ?", false, ["Protéger la couleur", "Réparer la fibre", "Brillance", "Douceur"]),
+    Q("objectif", "Objectif ?", true, ["Protéger la couleur", "Réparer la fibre", "Brillance", "Douceur", "Peu importe"]),
   ],
   "soin-cuir-chevelu": [
     Q("probleme", "Problème principal ?", false, ["Pellicules", "Excès de sébum", "Cuir chevelu sensible", "Démangeaisons"]),
@@ -192,8 +201,8 @@ export const PRODUCT_QUESTIONS = {
 
 // Fallback generic questions when product type has no specific config
 export const GENERIC_PRODUCT_QUESTIONS = [
-  Q("texture", "Texture préférée ?", false, ["Légère", "Fluide", "Riche", "Crémeuse"]),
-  Q("objectif", "Objectif principal ?", false, ["Hydratation", "Éclat", "Anti-âge", "Apaisant", "Matifiant"]),
+  Q("texture", "Texture préférée ?", true, ["Légère", "Fluide", "Riche", "Crémeuse", "Peu importe"]),
+  Q("objectif", "Objectif principal ?", true, ["Hydratation", "Éclat", "Anti-âge", "Apaisant", "Matifiant", "Peu importe"]),
 ];
 
 export function getProductQuestions(slug) {
