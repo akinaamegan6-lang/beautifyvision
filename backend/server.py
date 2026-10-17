@@ -226,7 +226,33 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
             continue
         seen.add(key)
         deduped.append(p)
-    return deduped[:limit]
+
+    # La dedup ci-dessus enleve les variantes du MEME produit, mais ne
+    # resout pas un autre probleme : la plupart des produits Awin partagent
+    # la meme note par defaut (RATING_DEFAULT/REVIEWS_DEFAULT, cf.
+    # import_awin_feed.py), donc le tri par note ne les depart pas vraiment
+    # entre eux. Resultat : le Top finissait domine par la marque qui a le
+    # plus de produits dans le catalogue (ex: Essence), meme apres dedup
+    # des variantes - tout le "Top 10" pouvait etre la meme marque.
+    # On entrelace donc par marque : un produit par marque a la fois (en
+    # respectant l'ordre de tri ci-dessus au sein de chaque marque), pour
+    # que le Top melange plusieurs marques au lieu d'etre monopolise par
+    # celle qui a le plus large catalogue.
+    by_brand = {}
+    for p in deduped:
+        by_brand.setdefault(p["brand"].strip().lower(), []).append(p)
+
+    result = []
+    brands_cycle = list(by_brand.keys())
+    while len(result) < limit and any(by_brand[b] for b in brands_cycle):
+        for b in brands_cycle:
+            bucket = by_brand[b]
+            if not bucket:
+                continue
+            result.append(bucket.pop(0))
+            if len(result) >= limit:
+                break
+    return result
 
 
 @api_router.get("/products/{product_id}", response_model=Product)
