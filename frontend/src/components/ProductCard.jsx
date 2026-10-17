@@ -25,7 +25,7 @@ export default function ProductCard({ product, rank }) {
       >
         <Heart size={16} className={inWishlist ? "fill-[#FEC4D2] text-[#FEC4D2]" : "text-[#FEC4D2]"} />
       </button>
-      <div className="aspect-square w-full rounded-xl bg-gradient-to-br from-[#FEC4D2]/10 to-[#79C1E0]/10 overflow-hidden mb-4">
+      <div className="aspect-square w-full rounded-xl bg-gradient-to-br from-[#FEC4D2]/10 to-[#79C1E0]/10 overflow-hidden mb-4 p-6">
         <img
           src={product.image || NO_PRODUCT_IMAGE}
           alt={product.name}

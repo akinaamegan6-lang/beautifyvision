@@ -288,9 +288,27 @@ export function scoreProduct(product, answers = {}, problem = null) {
   // Rating boost
   if (product.rating >= 4.7) s += 5;
 
-  // Normalize 0-100 with floor 55 to feel encouraging
-  return { score: Math.min(99, Math.max(55, s)), reasons };
+  // Normalize 0-100. Pas de plancher artificiel ici : un produit qui ne
+  // correspond a rien de precis dans les reponses doit pouvoir redescendre
+  // pres de son score de base (30), sinon TOUT produit affiche un score
+  // "flatteur" meme quand il n'a objectivement rien a voir avec la demande
+  // (ex: un peigne demelant ou un crayon khol presente comme "55% compatible"
+  // alors qu'il ne correspond a aucun critere reel). C'est ce plancher que
+  // MIN_GOOD_MATCH_SCORE remplace plus bas : la "qualite" du match se decide
+  // sur le score reel, pas sur un chiffre gonfle artificiellement.
+  return { score: Math.min(99, Math.max(0, s)), reasons };
 }
+
+// Score minimum pour qu'on considere un produit comme un "vrai" match et
+// qu'on le presente comme "ton match parfait" / "ton produit ideal". En
+// dessous, le produit est un simple produit "qui pourrait convenir mais ne
+// respecte pas totalement les criteres" (prix hors budget, categorie pas
+// assez precise, aucun critere specifique rempli...), jamais LE match mis en
+// avant. Reprend la valeur de l'ancien plancher artificiel : le seuil est
+// donc calibre sur la meme echelle que precedemment, mais sert maintenant a
+// distinguer "bon match" de "pas de bon match" plutot qu'a gonfler tous les
+// scores.
+export const MIN_GOOD_MATCH_SCORE = 55;
 
 export function rankProducts(products, answers, problem = null) {
   return products
@@ -300,4 +318,16 @@ export function rankProducts(products, answers, problem = null) {
     })
     .filter((p) => !p._excluded)
     .sort((a, b) => b._score - a._score);
+}
+
+// Separe une liste deja classee (rankProducts) en "vrais" bons matchs et
+// "alternatives imparfaites" (score sous le seuil). Utilise par les pages de
+// resultats pour ne jamais presenter un produit hors-sujet comme "LE match
+// parfait" : si goodMatches est vide, la page doit afficher un message
+// "pas de produit qui correspond totalement a tes criteres" plutot que de
+// forcer alternatives[0] dans la carte hero.
+export function splitByMatchQuality(ranked) {
+  const goodMatches = ranked.filter((p) => p._score >= MIN_GOOD_MATCH_SCORE);
+  const alternatives = ranked.filter((p) => p._score < MIN_GOOD_MATCH_SCORE);
+  return { goodMatches, alternatives };
 }

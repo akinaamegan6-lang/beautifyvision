@@ -3,10 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Sparkles, ArrowRight } from "lucide-react";
 import { api } from "../lib/api";
 import { SKIN_PROBLEMS, getProblemQuestions } from "../data/quizConfig";
-import { rankProducts } from "../lib/scoring";
+import { rankProducts, splitByMatchQuality } from "../lib/scoring";
 import QuizStep from "../components/QuizStep";
 import ProductRecommendationCard from "../components/ProductRecommendationCard";
 import HorizontalProductCard from "../components/HorizontalProductCard";
+import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
 
 const VISAGE_ZONES = [
   "Front", "Joues", "Nez", "Menton", "Contour des yeux",
@@ -269,38 +270,76 @@ export default function ProblemeRoutinePage() {
               <p className="text-center py-20 text-neutral-500">Aucun résultat trouvé.</p>
             ) : (
               <>
-                <div className="text-center mb-10">
-                  <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Ta recommandation</p>
-                  <h2 className="mt-2 text-4xl md:text-5xl font-bold">
-                    Ton <span className="editorial text-neutral-900">match parfait</span>
-                  </h2>
-                  <p className="mt-3 text-neutral-600">
-                    Les produits les mieux adaptés à ton problème de peau.
-                  </p>
-                </div>
+                {(() => {
+                  const { goodMatches, alternatives } = splitByMatchQuality(ranked);
+                  const best = goodMatches[0];
+                  const otherGoodMatches = goodMatches.slice(1, 7);
+                  const altsToShow = alternatives.slice(0, 6);
+                  return (
+                    <>
+                      <div className="text-center mb-10">
+                        <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Ta recommandation</p>
+                        {best ? (
+                          <>
+                            <h2 className="mt-2 text-4xl md:text-5xl font-bold">
+                              Ton <span className="editorial text-neutral-900">match parfait</span>
+                            </h2>
+                            <p className="mt-3 text-neutral-600">
+                              Les produits les mieux adaptés à ton problème de peau.
+                            </p>
+                          </>
+                        ) : (
+                          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-neutral-900">Tes recommandations</h2>
+                        )}
+                      </div>
 
-                <ProductRecommendationCard
-                  product={ranked[0]}
-                  badge={`Recommandé · ${problem?.label || slug}`}
-                />
+                      {best ? (
+                        <ProductRecommendationCard
+                          product={best}
+                          badge={`Recommandé · ${problem?.label || slug}`}
+                        />
+                      ) : (
+                        <NoGoodMatchMessage/>
+                      )}
 
-                {ranked.slice(1, 7).length > 0 && (
-                  <section className="mt-12">
-                    <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-6">
-                      D'autres produits qui te correspondent
-                    </h3>
-                    <div className="grid grid-cols-1 gap-5">
-                      {ranked.slice(1, 7).map((p) => (
-                        <div key={p.id} className="relative">
-                          <span className="absolute top-4 right-4 z-10 bg-white border border-[#FEC4D2] text-[#FEC4D2] text-xs font-bold px-3 py-1.5 rounded-full">
-                            {p._score}%
-                          </span>
-                          <HorizontalProductCard product={p} />
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                )}
+                      {otherGoodMatches.length > 0 && (
+                        <section className="mt-12">
+                          <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-6">
+                            D'autres produits qui te correspondent
+                          </h3>
+                          <div className="grid grid-cols-1 gap-5">
+                            {otherGoodMatches.map((p) => (
+                              <div key={p.id} className="relative">
+                                <span className="absolute top-4 right-4 z-10 bg-white border border-[#FEC4D2] text-[#FEC4D2] text-xs font-bold px-3 py-1.5 rounded-full">
+                                  {p._score}%
+                                </span>
+                                <HorizontalProductCard product={p} />
+                              </div>
+                            ))}
+                          </div>
+                        </section>
+                      )}
+
+                      {altsToShow.length > 0 && (
+                        <section className="mt-12">
+                          <h3 className="text-lg md:text-xl font-semibold text-neutral-500 mb-6">
+                            Produits qui pourraient te plaire (mais ne respectent pas totalement tes critères)
+                          </h3>
+                          <div className="grid grid-cols-1 gap-5">
+                            {altsToShow.map((p) => (
+                              <div key={p.id} className="relative opacity-90">
+                                <span className="absolute top-4 right-4 z-10 bg-white border border-neutral-300 text-neutral-500 text-xs font-bold px-3 py-1.5 rounded-full">
+                                  {p._score}%
+                                </span>
+                                <HorizontalProductCard product={p} />
+                              </div>
+                            ))}
+                          </div>
+                        </section>
+                      )}
+                    </>
+                  );
+                })()}
 
                 <div
                   className="mt-12 rounded-[2.5rem] p-10 md:p-16 text-center relative overflow-hidden"

@@ -11,7 +11,7 @@ export default function ProductRecommendationCard({ product, badge = "Recommand√
       <div className="absolute top-5 left-5 z-10 inline-flex items-center gap-1.5 bg-[#FEC4D2] text-neutral-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow">
         <Sparkles size={12}/> {badge}
       </div>
-      <div className="relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10">
+      <div className="relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 p-8">
         <img
           src={product.image || NO_PRODUCT_IMAGE}
           alt={product.name}

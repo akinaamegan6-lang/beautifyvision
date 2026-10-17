@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Save, Share2, Sparkles, ChevronDown, Star, ExternalLink } from "lucide-react";
 import { api } from "../lib/api";
-import { rankProducts } from "../lib/scoring";
+import { rankProducts, splitByMatchQuality, MIN_GOOD_MATCH_SCORE } from "../lib/scoring";
 import { getRoutineProductBySlug, SKIN_PROBLEMS } from "../data/quizConfig";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
+import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
@@ -12,7 +13,7 @@ import { Input } from "../components/ui/input";
 function AlternativeCard({ product, index }) {
   return (
     <div className="bg-white border border-[#FEC4D2]/50 rounded-2xl p-4 flex items-center gap-4">
-      <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 overflow-hidden shrink-0">
+      <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 overflow-hidden shrink-0 p-2">
         <img src={product.image || NO_PRODUCT_IMAGE} alt={product.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
       </div>
       <div className="flex-1 min-w-0">
@@ -34,9 +35,8 @@ function AlternativeCard({ product, index }) {
 function ProductSection({ slug, recommendations }) {
   const [open, setOpen] = useState(false);
   const meta = getRoutineProductBySlug(slug);
-  const best = recommendations[0];
-  const alts = recommendations.slice(1, 3);
-  if (!best) {
+
+  if (recommendations.length === 0) {
     return (
       <div className="mb-12">
         <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-2">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
@@ -44,12 +44,34 @@ function ProductSection({ slug, recommendations }) {
       </div>
     );
   }
+
+  const { goodMatches, alternatives } = splitByMatchQuality(recommendations);
+  const best = goodMatches[0];
+  const alts = goodMatches.slice(1, 3);
+
+  // Aucun produit n'a vraiment rempli les criteres pour cette categorie :
+  // on le dit avec un ton leger plutot que de presenter la meilleure
+  // alternative (hors-sujet ou juste hors budget) comme "ton X ideal".
+  if (!best) {
+    return (
+      <div className="mb-14" data-testid={`routine-section-${slug}`}>
+        <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
+        <NoGoodMatchMessage productLabel={meta?.label.toLowerCase() || "produit"}/>
+        {alternatives.slice(0, 3).length > 0 && (
+          <div className="mt-4 space-y-2">
+            {alternatives.slice(0, 3).map((p, i) => <AlternativeCard key={p.id} product={p} index={i + 1}/>)}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   const filled = Math.round(best.rating || 0);
   return (
     <section className="mb-14" data-testid={`routine-section-${slug}`}>
       <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
       <div className="bg-white border-2 border-[#FEC4D2] rounded-3xl overflow-hidden grid md:grid-cols-[280px_1fr]">
-        <div className="bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10">
+        <div className="bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 p-6">
           <img src={best.image || NO_PRODUCT_IMAGE} alt={best.name} className="w-full h-56 md:h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
         </div>
         <div className="p-6 md:p-7 flex flex-col">
@@ -131,7 +153,7 @@ export default function ResultatsRoutinePage() {
         try {
           const r = await api.get("/products", { params: { category: meta.category } });
           const merged = { ...skinAnswers, budget_range: budgetRange, product_answers: productAnswers[slug] || {} };
-          result[slug] = rankProducts(r.data || [], merged).slice(0, 3);
+          result[slug] = rankProducts(r.data || [], merged).slice(0, 10);
         } catch {
           result[slug] = [];
         }
@@ -142,7 +164,9 @@ export default function ResultatsRoutinePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const allBest = selected.map((s) => recos[s]?.[0]).filter(Boolean);
+  const allBest = selected
+    .map((s) => (recos[s] || []).find((p) => p._score >= MIN_GOOD_MATCH_SCORE))
+    .filter(Boolean);
   const total = allBest.reduce((sum, p) => sum + (p.price || 0), 0);
 
   const saveRoutine = (e) => {
@@ -194,7 +218,7 @@ export default function ResultatsRoutinePage() {
             <div className="flex gap-4 overflow-x-auto pb-4" data-testid="routine-summary-strip">
               {allBest.map((p) => (
                 <div key={p.id} className="shrink-0 w-44 bg-white border border-[#FEC4D2]/60 rounded-2xl p-3">
-                  <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 mb-2">
+                  <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 mb-2 p-2">
                     <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
                   </div>
                   <p className="text-[10px] uppercase tracking-wider text-neutral-500 truncate">{p.brand}</p>

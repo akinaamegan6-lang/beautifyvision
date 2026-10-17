@@ -11,7 +11,7 @@ export default function HorizontalProductCard({ product }) {
       className="group relative bg-white border border-[#FEC4D2] rounded-3xl overflow-hidden flex flex-col md:flex-row card-lift"
       data-testid={`product-card-${product.id}`}
     >
-      <div className="md:w-72 md:shrink-0 relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10">
+      <div className="md:w-72 md:shrink-0 relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 p-6">
         <img
           src={product.image || NO_PRODUCT_IMAGE}
           alt={product.name}
