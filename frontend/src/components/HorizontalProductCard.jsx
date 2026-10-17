@@ -13,10 +13,11 @@ export default function HorizontalProductCard({ product }) {
     >
       <div className="md:w-72 md:shrink-0 relative bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10">
         <img
-          src={NO_PRODUCT_IMAGE}
+          src={product.image || NO_PRODUCT_IMAGE}
           alt={product.name}
           loading="lazy"
           className="w-full h-64 md:h-full object-contain group-hover:scale-105 transition duration-700"
+          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
         />
       </div>
 
