@@ -115,6 +115,7 @@ export default function ResultatsRoutinePage() {
   const selected = state?.selected || [];
   const skinAnswers = state?.skinAnswers || {};
   const productAnswers = state?.productAnswers || {};
+  const budgetRange = state?.budgetRange;
   const probleme = state?.probleme;
   const problemLabel = SKIN_PROBLEMS.find(p => p.slug === probleme)?.label;
 
@@ -129,7 +130,7 @@ export default function ResultatsRoutinePage() {
         if (!meta) continue;
         try {
           const r = await api.get("/products", { params: { category: meta.category } });
-          const merged = { ...skinAnswers, product_answers: productAnswers[slug] || {} };
+          const merged = { ...skinAnswers, budget_range: budgetRange, product_answers: productAnswers[slug] || {} };
           result[slug] = rankProducts(r.data || [], merged).slice(0, 3);
         } catch {
           result[slug] = [];

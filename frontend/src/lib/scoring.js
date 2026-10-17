@@ -2,7 +2,7 @@
 import { BUDGET_RANGES } from "../data/quizConfig";
 
 function contains(arr, needle) {
-  if (!arr) return false;
+  if (!arr || !needle) return false;
   const n = needle.toLowerCase();
   return arr.some((x) => x.toLowerCase().includes(n) || n.includes(x.toLowerCase()));
 }
@@ -34,6 +34,130 @@ const PROBLEM_SCORE_MAP = {
   "cernes":    { skin_types: [],                        keywords: ["cernes", "contour yeux", "poches", "anti-fatigue", "regard"] },
 };
 
+// --- Préoccupations du quiz "Routine 360°" (skin_concerns / body_concerns /
+// hair_concerns) : mêmes libellés que les options affichées dans le quiz
+// (data/quizConfig.js). On s'appuie sur la vraie catégorie du produit (déduite
+// par l'import Awin) en priorité, puis sur les types de peau/cheveux et les
+// bénéfices détectés dans le texte réel du produit — jamais d'invention.
+const SKIN_CONCERN_SCORE_MAP = {
+  "Acné / Imperfections":        { categories: ["exfoliant", "masque"],                 skin_types: ["acneique", "grasse"], benefits: ["Purifiant", "Matifiant"] },
+  "Pores dilatés":                { categories: ["exfoliant"],                           skin_types: ["grasse", "mixte"],    benefits: ["Purifiant", "Matifiant"] },
+  "Taches & hyperpigmentation":  { categories: [],                                       skin_types: [],                     benefits: ["Anti-taches", "Éclat"] },
+  "Teint terne":                  { categories: ["brume", "exfoliant"],                   skin_types: [],                     benefits: ["Éclat"] },
+  "Rides & anti-âge":            { categories: ["serum", "contour-yeux"],                skin_types: ["mature"],             benefits: ["Anti-âge"] },
+  "Rougeurs & couperose":        { categories: [],                                       skin_types: ["sensible"],           benefits: ["Apaisant"] },
+  "Sensibilité & réactivité":    { categories: [],                                       skin_types: ["sensible"],           benefits: ["Apaisant"] },
+  "Déshydratation":               { categories: ["creme-hydratante", "serum", "huile-visage"], skin_types: ["seche"],        benefits: ["Hydratation intense"] },
+  "Excès de sébum":              { categories: [],                                       skin_types: ["grasse"],             benefits: ["Matifiant", "Purifiant"] },
+  "Cernes & poches":              { categories: ["contour-yeux"],                         skin_types: [],                     benefits: [] },
+};
+
+const BODY_CONCERN_SCORE_MAP = {
+  "Vergetures":              { categories: ["vergetures"],                               benefits: [] },
+  "Cellulite":                { categories: ["gommage-corps", "huile-corps"],              benefits: [] },
+  "Peau qui tiraille":       { categories: ["lait-corporel", "beurre-corporel", "creme-corps", "huile-corps"], benefits: ["Hydratation intense"] },
+  "Démangeaisons":           { categories: [],                                            benefits: ["Apaisant"] },
+  "Taches corporelles":     { categories: [],                                            benefits: ["Anti-taches"] },
+  "Cicatrices":              { categories: [],                                            benefits: ["Réparateur"] },
+  "Acné corps":              { categories: ["gommage-corps"],                             benefits: ["Purifiant"] },
+  "Peau terne":              { categories: ["gommage-corps"],                             benefits: ["Éclat"] },
+  "Transpiration excessive":{ categories: ["deodorant"],                                 benefits: [] },
+};
+
+const HAIR_CONCERN_SCORE_MAP = {
+  "Chute":                 { categories: ["soin-anti-chute"],                 hair_types: ["fins"],                     benefits: ["Anti-chute", "Fortifiant"] },
+  "Casse":                 { categories: [],                                  hair_types: ["secs", "abîmés"],           benefits: ["Réparateur", "Fortifiant"] },
+  "Pointes sèches":        { categories: ["huile-cheveux", "serum-cheveux"],  hair_types: ["secs", "abîmés"],           benefits: ["Nutrition intense", "Réparateur"] },
+  "Pellicules":            { categories: ["soin-cuir-chevelu"],               hair_types: ["gras"],                     benefits: ["Antipelliculaire"] },
+  "Perte d'éclat":         { categories: [],                                  hair_types: [],                           benefits: ["Brillance"] },
+  "Frisottis":             { categories: ["spray-coiffant"],                  hair_types: ["bouclés", "frisés", "crépus"], benefits: ["Anti-frisottis"] },
+  "Cheveux colorés":       { categories: ["soin-cheveux-colores"],            hair_types: ["colorés"],                  benefits: [] },
+  "Cheveux abîmés":        { categories: ["masque-cheveux", "huile-cheveux"], hair_types: ["abîmés", "secs"],           benefits: ["Réparateur", "Nutrition intense"] },
+  "Manque de volume":      { categories: [],                                  hair_types: ["fins"],                     benefits: ["Volume"] },
+};
+
+function concernBonus(product, label, map) {
+  const rule = map[label];
+  if (!rule) return { bonus: 0, reasons: [] };
+  let bonus = 0;
+  const reasons = [];
+  if (rule.categories?.length && rule.categories.includes(product.category)) {
+    bonus += 25;
+    reasons.push(label.toLowerCase());
+  }
+  if (rule.skin_types?.length && rule.skin_types.some((t) => (product.skin_types || []).includes(t))) {
+    bonus += 15;
+  }
+  if (rule.hair_types?.length && rule.hair_types.some((t) => (product.hair_types || []).includes(t))) {
+    bonus += 15;
+  }
+  for (const b of rule.benefits || []) {
+    if (contains(product.benefits || [], b) || contains(product.tags || [], b)) {
+      bonus += 10;
+      reasons.push(b.toLowerCase());
+    }
+  }
+  return { bonus: Math.min(40, bonus), reasons };
+}
+
+// --- Ingrédients à éviter / allergies -------------------------------------
+// Le flux Awin ne contient pas la liste INCI complète des produits : on ne
+// peut donc pas garantir à 100% qu'un produit est totalement exempt d'un
+// ingrédient. On utilise les vrais signaux disponibles (nom du produit, tags
+// et bénéfices détectés par l'import à partir du texte réel du produit) :
+//  - si le produit affiche un tag "Sans X" -> on le FAVORISE nettement
+//    (il a été explicitement vérifié comme exempt de cet ingrédient)
+//  - si le produit mentionne explicitement l'ingrédient (ex: "parfumé",
+//    "à l'alcool") sans porter le tag "Sans X" -> on l'EXCLUT des résultats
+//  - sinon (aucune info disponible) -> neutre, le produit reste proposé
+// Cette table sert à la fois pour la question "allergies" (quiz par
+// produit/cheveux) et pour toute option "Sans X" cochée dans une question
+// d'ingrédients (Routine 360°, quiz par catégorie) : les deux expriment la
+// même intention "je ne veux pas de X dans mon produit".
+const UNWANTED_INGREDIENT_MAP = {
+  "Parfum":              { safeTag: "Sans parfum",   presence: ["parfumé", "parfumée", "au parfum"] },
+  "Sans parfum":         { safeTag: "Sans parfum",   presence: ["parfumé", "parfumée", "au parfum"] },
+  "Huiles essentielles": { safeTag: null,            presence: ["huile essentielle", "huiles essentielles"] },
+  "Alcool":              { safeTag: "Sans alcool",   presence: ["à l'alcool", "a l'alcool"] },
+  "Silicones":           { safeTag: "Sans silicone", presence: ["silicone"] },
+  "Sans silicone":       { safeTag: "Sans silicone", presence: ["silicone"] },
+  "Sulfates":            { safeTag: "Sans sulfate",  presence: ["sulfate"] },
+  "Sans sulfate":        { safeTag: "Sans sulfate",  presence: ["sulfate"] },
+  "Sans paraben":        { safeTag: "Sans paraben",  presence: ["paraben"] },
+};
+
+const IGNORED_INGREDIENT_LABELS = new Set(["Aucune connue", "Aucune préférence"]);
+
+function hasUnwantedSignal(product, presenceWords) {
+  if (!presenceWords || !presenceWords.length) return false;
+  const text = `${product.name || ""} ${(product.tags || []).join(" ")} ${(product.benefits || []).join(" ")}`.toLowerCase();
+  return presenceWords.some((w) => text.includes(w.toLowerCase()));
+}
+
+// Regroupe tout ce que la personne a dit vouloir éviter (question "allergies"
+// + toute case "Sans X" cochée dans une question d'ingrédients) et renvoie
+// soit une exclusion franche, soit un bonus pour les produits confirmés sûrs.
+function applyUnwantedIngredients(product, labels) {
+  let excluded = false;
+  let bonus = 0;
+  const reasons = [];
+  for (const label of labels) {
+    if (!label || IGNORED_INGREDIENT_LABELS.has(label)) continue;
+    const rule = UNWANTED_INGREDIENT_MAP[label];
+    if (!rule) continue;
+    if (rule.safeTag && contains(product.tags || [], rule.safeTag)) {
+      bonus += 15;
+      reasons.push(rule.safeTag.toLowerCase());
+      continue;
+    }
+    if (hasUnwantedSignal(product, rule.presence)) {
+      excluded = true;
+      break;
+    }
+  }
+  return { excluded, bonus: Math.min(30, bonus), reasons };
+}
+
 export function scoreProduct(product, answers = {}, problem = null) {
   let s = 30; // baseline so all products feel "considered"
   const reasons = [];
@@ -58,10 +182,19 @@ export function scoreProduct(product, answers = {}, problem = null) {
     }
   }
 
-  // Ingredients (+20 each, cap 40)
+  // Ingrédients préférés (+20 chacun, plafonné à 40) — plusieurs quiz
+  // utilisent des clés différentes selon le type de produit (skin_ingredients,
+  // body_ingredients, hair_ingredients) ; "ingredients" reste supporté pour
+  // compatibilité avec d'anciens appels.
+  const preferredIngredients = [
+    ...(answers.ingredients || []),
+    ...(answers.skin_ingredients || []),
+    ...(answers.body_ingredients || []),
+    ...(answers.hair_ingredients || []),
+  ];
   let ingPoints = 0;
-  for (const ing of answers.ingredients || []) {
-    if (ing === "Aucune préférence") continue;
+  for (const ing of preferredIngredients) {
+    if (!ing || IGNORED_INGREDIENT_LABELS.has(ing)) continue;
     if (contains(product.tags || [], ing) || contains(product.benefits || [], ing)) {
       ingPoints += 20;
       reasons.push(ing.toLowerCase());
@@ -69,9 +202,28 @@ export function scoreProduct(product, answers = {}, problem = null) {
   }
   s += Math.min(40, ingPoints);
 
-  // Budget (+15)
+  // Ingrédients à éviter / allergies : exclusion réelle si le produit signale
+  // explicitement contenir l'ingrédient, bonus si un tag "Sans X" confirme
+  // son absence. On regarde la question "allergies" ET toute case "Sans X"
+  // cochée dans une question d'ingrédients (même intention).
+  const unwantedLabels = [...(answers.allergies || []), ...preferredIngredients];
+  const { excluded, bonus: safeBonus, reasons: safeReasons } = applyUnwantedIngredients(product, unwantedLabels);
+  if (excluded) {
+    return { score: 0, reasons: ["contient un ingrédient que tu évites"], excluded: true };
+  }
+  s += safeBonus;
+  reasons.push(...safeReasons);
+
+  // Budget (+15) — soit un budget "slug" (quiz par produit, ex: "15-30"),
+  // soit une fourchette numérique globale (Routine 360°, ex: { min, max }).
+  let budgetRange = null;
   if (answers.budget && BUDGET_RANGES[answers.budget]) {
-    const [min, max] = BUDGET_RANGES[answers.budget];
+    budgetRange = BUDGET_RANGES[answers.budget];
+  } else if (answers.budget_range && typeof answers.budget_range.min === "number" && typeof answers.budget_range.max === "number") {
+    budgetRange = [answers.budget_range.min, answers.budget_range.max];
+  }
+  if (budgetRange) {
+    const [min, max] = budgetRange;
     if (product.price >= min && product.price <= max) {
       s += 15;
       reasons.push(`prix dans ta fourchette (${product.price}€)`);
@@ -90,7 +242,7 @@ export function scoreProduct(product, answers = {}, problem = null) {
   }
   s += Math.min(25, bonus);
 
-  // Problem-based scoring
+  // Problem-based scoring (quiz dédié à un problème de peau/cheveux)
   const effectiveProblem = problem || answers.problem || null;
   if (effectiveProblem) {
     const map = PROBLEM_SCORE_MAP[effectiveProblem] || HAIR_PROBLEM_SCORE_MAP[effectiveProblem];
@@ -114,6 +266,25 @@ export function scoreProduct(product, answers = {}, problem = null) {
     }
   }
 
+  // Préoccupations du quiz Routine 360° (skin_concerns / body_concerns / hair_concerns)
+  let concernBonusTotal = 0;
+  for (const label of answers.skin_concerns || []) {
+    const { bonus: b, reasons: r } = concernBonus(product, label, SKIN_CONCERN_SCORE_MAP);
+    concernBonusTotal += b;
+    reasons.push(...r);
+  }
+  for (const label of answers.body_concerns || []) {
+    const { bonus: b, reasons: r } = concernBonus(product, label, BODY_CONCERN_SCORE_MAP);
+    concernBonusTotal += b;
+    reasons.push(...r);
+  }
+  for (const label of answers.hair_concerns || []) {
+    const { bonus: b, reasons: r } = concernBonus(product, label, HAIR_CONCERN_SCORE_MAP);
+    concernBonusTotal += b;
+    reasons.push(...r);
+  }
+  s += Math.min(40, concernBonusTotal);
+
   // Rating boost
   if (product.rating >= 4.7) s += 5;
 
@@ -124,8 +295,9 @@ export function scoreProduct(product, answers = {}, problem = null) {
 export function rankProducts(products, answers, problem = null) {
   return products
     .map((p) => {
-      const { score, reasons } = scoreProduct(p, answers, problem);
-      return { ...p, _score: score, _reasons: [...new Set(reasons)].slice(0, 4) };
+      const { score, reasons, excluded } = scoreProduct(p, answers, problem);
+      return { ...p, _score: score, _reasons: [...new Set(reasons)].slice(0, 4), _excluded: !!excluded };
     })
+    .filter((p) => !p._excluded)
     .sort((a, b) => b._score - a._score);
 }

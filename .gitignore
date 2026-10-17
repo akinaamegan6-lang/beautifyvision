@@ -86,3 +86,6 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/
+# Flux de produits Awin (fichier de donnees brut, pas du code) + rapport d'import
+datafeed_*.csv
+backend/scripts/import_report.txt

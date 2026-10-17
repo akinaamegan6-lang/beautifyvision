@@ -438,7 +438,7 @@ export default function Routine360Page() {
 
         <div className="mt-10 text-center">
           <button
-            onClick={() => navigate("/resultats-routine", { state: { selected, skinAnswers: catAnswers, productAnswers: Object.fromEntries(Object.entries(productConfig).map(([k, v]) => [k, v.answers || {}])), probleme, chosenType, chosenSub } })}
+            onClick={() => navigate("/resultats-routine", { state: { selected, skinAnswers: catAnswers, budgetRange: budget, productAnswers: Object.fromEntries(Object.entries(productConfig).map(([k, v]) => [k, v.answers || {}])), probleme, chosenType, chosenSub } })}
             className="inline-flex items-center gap-2 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 px-12 py-4 rounded-full font-semibold transition shadow-lg"
             data-testid="generate-routine"
           >

@@ -32,6 +32,24 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 # MongoDB
 mongo_client = AsyncIOMotorClient(os.environ["MONGO_URL"], tlsCAFile=certifi.where())
 db = mongo_client[os.environ["DB_NAME"]]
+products_col = db["products"]
+
+
+async def get_catalog():
+    """Catalogue de produits servi par l'API.
+
+    Lit la collection Mongo "products" (les vrais produits importes depuis le
+    flux Awin via scripts/import_awin_feed.py). Si cette collection est encore
+    vide (import pas encore lance), on retombe sur l'ancien catalogue de demo
+    (catalog.CATALOG) pour que le site reste fonctionnel en attendant.
+    """
+    items = await products_col.find({}).to_list(length=20000)
+    if not items:
+        return CATALOG
+    for it in items:
+        it.pop("_id", None)
+    return items
+
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -165,7 +183,7 @@ async def list_products(
     sort: str = "price_asc",
     search: Optional[str] = None,
 ):
-    items = [p for p in CATALOG]
+    items = await get_catalog()
     if category:
         items = [p for p in items if p["category"] == category]
     if parent:
@@ -188,14 +206,16 @@ async def list_products(
 
 @api_router.get("/products/top", response_model=List[Product])
 async def top_products(parent: str = "cosmetiques", limit: int = 10):
-    items = [p for p in CATALOG if p["parent"] == parent]
+    catalog = await get_catalog()
+    items = [p for p in catalog if p["parent"] == parent]
     items.sort(key=lambda p: (-p["rating"], -p["reviews"]))
     return items[:limit]
 
 
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
-    for p in CATALOG:
+    catalog = await get_catalog()
+    for p in catalog:
         if p["id"] == product_id:
             return p
     raise HTTPException(status_code=404, detail="Product not found")
@@ -232,7 +252,8 @@ async def ai_select_products(req: AISelectRequest):
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY missing")
 
     # Candidate pool: cosmetiques within budget
-    candidates = [p for p in CATALOG if p["parent"] == "cosmetiques" and p["price"] <= req.budget_max]
+    catalog = await get_catalog()
+    candidates = [p for p in catalog if p["parent"] == "cosmetiques" and p["price"] <= req.budget_max]
     # Keep useful fields only to limit token count
     slim = [
         {
@@ -293,7 +314,7 @@ async def ai_select_products(req: AISelectRequest):
     summary = parsed.get("summary", "Look personnalisé BeautifyVision")
 
     # Validate product_ids exist
-    valid_ids = {p["id"] for p in CATALOG}
+    valid_ids = {p["id"] for p in catalog}
     cleaned = []
     for item in products:
         pid = item.get("product_id")
