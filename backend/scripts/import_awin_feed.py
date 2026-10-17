@@ -58,6 +58,32 @@ def norm_text(s):
 
 REVIEWS_DEFAULT = 0
 
+# Taille (en pixels) demandee au CDN d'images Awin (images2.productserve.com).
+# Le flux fournit des vignettes 200x200 : trop petites pour les grandes cartes
+# produit du site, elles y apparaissent floues/pixelisees une fois agrandies.
+IMAGE_TARGET_SIZE = 600
+
+
+def upgrade_image_url(url):
+    """Demande une image plus grande et sans fond blanc ajoute au CDN Awin.
+
+    Le flux fournit des URLs du type :
+      https://images2.productserve.com/?w=200&h=200&bg=white&trim=5&t=letterbox&url=...&feedId=...&k=...
+    On ne modifie QUE w=, h= et bg= par un remplacement de texte simple : on ne
+    touche jamais a url=/feedId=/k= (la signature k pourrait ne plus
+    correspondre si on les reencodait). bg=transparent retire le cadre blanc
+    que le CDN ajoutait autour du produit pour completer le carre demande,
+    ce qui laisse apparaitre le fond (degrade rose/bleu) des cartes du site
+    au lieu d'un bloc blanc. Les URLs qui ne viennent pas de ce CDN (ou sans
+    ces parametres) sont renvoyees telles quelles.
+    """
+    if not url or "productserve.com" not in url:
+        return url
+    url = re.sub(r'([?&]w=)\d+', r'\g<1>' + str(IMAGE_TARGET_SIZE), url)
+    url = re.sub(r'([?&]h=)\d+', r'\g<1>' + str(IMAGE_TARGET_SIZE), url)
+    url = re.sub(r'([?&]bg=)[^&]*', r'\g<1>transparent', url)
+    return url
+
 # ---------------------------------------------------------------------------
 # 1) Merchants / categories completement hors sujet pour Beautify Vision
 # ---------------------------------------------------------------------------
@@ -335,7 +361,7 @@ def main():
             hair_types = extract_matches(full_text, HAIR_TYPE_PATTERNS)
             benefits = extract_matches(full_text, BENEFIT_PATTERNS)
 
-            image = (row.get("aw_image_url") or row.get("merchant_image_url") or "").strip()
+            image = upgrade_image_url((row.get("aw_image_url") or row.get("merchant_image_url") or "").strip())
             affiliate_url = (row.get("aw_deep_link") or "#").strip() or "#"
 
             aw_id = (row.get("aw_product_id") or "").strip()
