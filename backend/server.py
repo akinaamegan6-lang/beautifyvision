@@ -209,7 +209,24 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
     catalog = await get_catalog()
     items = [p for p in catalog if p["parent"] == parent]
     items.sort(key=lambda p: (-p["rating"], -p["reviews"]))
-    return items[:limit]
+    # Le flux Awin liste souvent la meme reference en plusieurs variantes
+    # (teinte, taille) sous un nom quasi identique : sans deduplication, le
+    # "Top" affichait plusieurs fois le meme produit (ex: 4 teintes du meme
+    # fond de teint a la suite) au lieu de vrais produits differents. On ne
+    # garde que la premiere variante rencontree par (marque, nom normalise),
+    # le nom etant normalise (minuscule, ponctuation/texte entre parentheses
+    # ou apres une virgule ignores) pour que "Fond de Teint, Beige" et "Fond
+    # de Teint, Noisette" comptent comme UNE seule entree du "Top".
+    seen = set()
+    deduped = []
+    for p in items:
+        name_key = re.sub(r"[,(].*$", "", p["name"]).strip().lower()
+        key = (p["brand"].strip().lower(), name_key)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(p)
+    return deduped[:limit]
 
 
 @api_router.get("/products/{product_id}", response_model=Product)
