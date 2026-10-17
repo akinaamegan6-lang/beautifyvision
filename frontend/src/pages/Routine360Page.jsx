@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Check, X, AlertTriangle, ChevronRight, Sparkles, ChevronLeft } from "lucide-react";
-import { ROUTINE_PRODUCTS, SKIN_PROBLEMS, BUDGET_RANGES, getProductQuestions, getCategoryQuestions } from "../data/quizConfig";
+import { ROUTINE_PRODUCTS, SKIN_PROBLEMS, BUDGET_RANGES, TEINT_SLUGS, getProductQuestions, getCategoryQuestions } from "../data/quizConfig";
 import { TYPE_HERO_IMAGE, getProductImage } from "../data/imageAssets";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "../components/AuthModal";
 import QuizStep from "../components/QuizStep";
+import ShadePicker from "../components/ShadePicker";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 
 const VisageIcon = () => <img src="/icone/visage.png" alt="Visage" className="w-8 h-8 object-contain"/>;
@@ -50,11 +51,21 @@ function ProductFilterModal({ slug, open, onClose, onSave, budgetTotal }) {
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             {meta && <img src={getProductImage(meta.slug)} alt="" className="w-10 h-10 object-contain"/>}
-            <h3 className="text-xl font-bold">Personnalise ton <span className="editorial">{meta?.label.toLowerCase()}</span></h3>
+            <h3 className="text-xl font-bold">Personnalise {meta?.det || "ton"} <span className="editorial">{meta?.label.toLowerCase()}</span></h3>
           </div>
         </div>
 
         <div className="space-y-5">
+          {TEINT_SLUGS.has(meta?.category) && (
+            <div>
+              <p className="text-xs font-semibold tracking-[0.18em] text-[#79C1E0] uppercase mb-2.5">Teinte recherchée</p>
+              <ShadePicker
+                value={answers.shade_index ?? null}
+                onChange={(idx) => setAnswers((a) => ({ ...a, shade_index: idx }))}
+              />
+            </div>
+          )}
+
           {questions.map((q) => (
             <div key={q.key}>
               <p className="text-xs font-semibold tracking-[0.18em] text-[#79C1E0] uppercase mb-2.5">{q.label}</p>
@@ -191,7 +202,7 @@ export default function Routine360Page() {
             ))}
           </div>
 
-          <div className="mt-8 relative border-2 border-[#FEC4D2] rounded-3xl p-7 flex items-center gap-5 cursor-pointer card-lift" style={{ background: "linear-gradient(135deg,#FEC4D215,#79C1E015)" }} onClick={() => choose("360")} data-testid="type-360">
+          <div className="mt-8 relative border-2 border-[#FEC4D2] rounded-3xl p-7 flex items-center gap-5" style={{ background: "linear-gradient(135deg,#FEC4D215,#79C1E015)" }} data-testid="type-360">
             <span className="absolute top-4 right-5 bg-white text-[#8b3a52] text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Premium</span>
             <img src="/icone/routine-360.png" alt="Routine 360°" className="w-14 h-14 object-contain"/>
             <div className="flex-1">
@@ -236,7 +247,11 @@ export default function Routine360Page() {
 
   // === Step 2.5 — Category-specific questions ===
   if (step === 2.5 && chosenType) {
-    const questions = getCategoryQuestions(chosenType);
+    const allCatQuestions = getCategoryQuestions(chosenType);
+    // La question de porosité ne concerne que les cheveux frisés/crépus.
+    const questions = chosenType === "cheveux"
+      ? allCatQuestions.filter((qq) => qq.key !== "hair_porosity" || ["Frisés", "Crépus"].includes(catAnswers.hair_type))
+      : allCatQuestions;
     const q = questions[catQIdx];
     if (!q || questions.length === 0) {
       setStep(3);
@@ -296,6 +311,13 @@ export default function Routine360Page() {
     };
 
     const titleMap = { skincare: "Skincare", maquillage: "Maquillage", cheveux: "Cheveux" };
+    const routineLabelMap = {
+      visage: "ta routine visage",
+      corps: "ta routine corps",
+      cheveux: "ta routine cheveux",
+      "360": "ta routine 360°",
+    };
+    const routineLabel = routineLabelMap[chosenType] || "ta routine";
 
     const toggle = (slug) => setSelected((arr) => arr.includes(slug) ? arr.filter((x) => x !== slug) : [...arr, slug]);
 
@@ -304,7 +326,9 @@ export default function Routine360Page() {
         <div className="halo-pink -top-20 -right-20"/>
         <div className="max-w-5xl mx-auto relative">
           <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Routine → <span className="text-neutral-900 capitalize">{chosenType === "360" ? "360°" : chosenType}</span></p>
-          <h1 className="mt-2 text-3xl md:text-4xl font-bold text-neutral-900">Choisis tes <span className="editorial text-[#FEC4D2]">produits</span></h1>
+          <h1 className="mt-2 text-3xl md:text-4xl font-bold text-neutral-900">
+            Choisis tes <span className="editorial text-[#FEC4D2]">produits</span> qui constituent {routineLabel}
+          </h1>
           <p className="mt-2 text-neutral-600">Sélectionne minimum 3 produits.</p>
 
           {/* Budget banner */}

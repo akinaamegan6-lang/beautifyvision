@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import QuizStep from "../components/QuizStep";
 import { getQuestionsForProduct, SKIN_ANSWER_KEYS } from "../data/quizConfig";
 
-export default function QuizProduitPage() {
+function QuizProduitInner({ categorie, souscategorie, produit }) {
   const navigate = useNavigate();
-  const { categorie, souscategorie, produit } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const allQuestions = getQuestionsForProduct(categorie, produit);
-  const [currentIdx, setCurrentIdx] = useState(0);
+
+  const rawIdx = parseInt(searchParams.get("q") || "0", 10);
+  const currentIdx = Number.isNaN(rawIdx) ? 0 : Math.min(Math.max(rawIdx, 0), allQuestions.length - 1);
+
   const [answers, setAnswers] = useState({ product_answers: {} });
 
   const q = allQuestions[currentIdx];
@@ -22,11 +25,23 @@ export default function QuizProduitPage() {
     }
   };
 
+  // On avance, on empile une entrée d'historique (une par question) : le
+  // bouton retour du navigateur revient ainsi question par question.
+  const goToIndex = (idx) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("q", String(idx));
+    setSearchParams(next);
+  };
+
   const next = () => {
-    if (currentIdx < allQuestions.length - 1) setCurrentIdx(currentIdx + 1);
+    if (currentIdx < allQuestions.length - 1) goToIndex(currentIdx + 1);
     else navigate(`/resultats/${produit}`, { state: { answers, categorie, souscategorie } });
   };
-  const back = () => currentIdx > 0 && setCurrentIdx(currentIdx - 1);
+  // On réutilise l'historique natif plutôt que d'empiler une nouvelle entrée,
+  // pour rester cohérent avec le bouton retour du navigateur.
+  const back = () => {
+    if (currentIdx > 0) navigate(-1);
+  };
 
   return (
     <main className="bg-white min-h-screen px-6 py-12 md:py-20 relative" data-testid="quiz-page">
@@ -51,5 +66,20 @@ export default function QuizProduitPage() {
         />
       </div>
     </main>
+  );
+}
+
+export default function QuizProduitPage() {
+  const { categorie, souscategorie, produit } = useParams();
+  // La clé force un remontage complet (et donc une réinitialisation de la
+  // question courante et des réponses) chaque fois qu'on change de
+  // catégorie/sous-catégorie/produit en pleine navigation (ex: via le menu).
+  return (
+    <QuizProduitInner
+      key={`${categorie}/${souscategorie}/${produit}`}
+      categorie={categorie}
+      souscategorie={souscategorie}
+      produit={produit}
+    />
   );
 }

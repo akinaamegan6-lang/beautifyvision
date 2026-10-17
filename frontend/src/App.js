@@ -1,6 +1,7 @@
 import "@/App.css";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HomePage from "@/pages/HomePage";
@@ -22,6 +23,17 @@ import ContactPage from "@/pages/ContactPage";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 
+// Remonte en haut de page à chaque changement de route (sauf si on
+// revient en arrière/avant dans l'historique au sein d'une même page,
+// cf. la navigation question par question du quiz).
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function AppRouter() {
   const location = useLocation();
   // Synchronous detection of Emergent Google callback (#session_id=...)
@@ -31,6 +43,7 @@ function AppRouter() {
   return (
     <>
       <Header />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/quiz/:categorie/:souscategorie/:produit" element={<QuizProduitPage />} />

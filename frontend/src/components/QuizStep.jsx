@@ -20,11 +20,14 @@ export default function QuizStep({
       onChange(next);
     } else {
       onChange(v);
-      setTimeout(() => onNext?.(), 250);
     }
   };
 
   const isSelected = (v) => isMulti ? (selected || []).includes(v) : selected === v;
+
+  const canContinue = isMulti
+    ? Array.isArray(selected) && selected.length > 0
+    : selected !== undefined && selected !== null && selected !== "";
 
   return (
     <div className="max-w-3xl mx-auto" data-testid={`quiz-step-${question.key}`}>
@@ -77,16 +80,15 @@ export default function QuizStep({
         >
           <ChevronLeft size={16}/> Précédent
         </button>
-        {isMulti && (
-          <button
-            type="button"
-            onClick={onNext}
-            className="inline-flex items-center gap-2 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white px-8 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg"
-            data-testid="quiz-next"
-          >
-            Continuer →
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={!canContinue}
+          className="inline-flex items-center gap-2 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white px-8 py-3 rounded-full font-medium transition shadow-md hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+          data-testid="quiz-next"
+        >
+          Continuer →
+        </button>
       </div>
     </div>
   );
