@@ -204,10 +204,31 @@ async def list_products(
     return items
 
 
+# Produits a exclure du "Top" : leur photo source chez le marchand est
+# nativement minuscule (ex: 70x70px pour LA ROSEE Stick Corrector), donc
+# notre upscale CDN vers une grande vignette reste flou quoi qu'on fasse -
+# ce n'est pas reparable cote code, seul le marchand peut fournir une photo
+# plus grande. On les exclut du Top (ou la photo est affichee en grand) pour
+# qu'un produit avec une photo nette prenne leur place.
+LOW_RES_IMAGE_PRODUCTS = {
+    ("la rosee", "stick corrector anti-imperfections"),
+}
+
+
+def _normalize_for_exclusion(text: str) -> str:
+    import unicodedata
+    t = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    return t.strip().lower()
+
+
 @api_router.get("/products/top", response_model=List[Product])
 async def top_products(parent: str = "cosmetiques", limit: int = 10):
     catalog = await get_catalog()
     items = [p for p in catalog if p["parent"] == parent]
+    items = [
+        p for p in items
+        if (_normalize_for_exclusion(p["brand"]), _normalize_for_exclusion(re.sub(r"[,(].*$", "", p["name"]).strip())) not in LOW_RES_IMAGE_PRODUCTS
+    ]
     items.sort(key=lambda p: (-p["rating"], -p["reviews"]))
     # Le flux Awin liste souvent la meme reference en plusieurs variantes
     # (teinte, taille) sous un nom quasi identique : sans deduplication, le
