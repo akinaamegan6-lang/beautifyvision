@@ -89,6 +89,7 @@ export const LIFESTYLE_QUESTIONS = [
     key: "lifestyle",
     label: "Ton mode de vie au quotidien ?",
     multi: true,
+    allowNone: true,
     options: ["Exposition solaire fréquente", "Stress élevé", "Sommeil irrégulier", "Sport régulier", "Tabac", "Pollution urbaine quotidienne"]
       .map((v) => ({ value: v, label: v })),
   },
@@ -277,8 +278,8 @@ export const PROBLEM_QUESTIONS = {
   },
   "sensible": {
     questions: [
-      Q("reactions", "Réactions fréquentes ?", true, ["Tiraillements", "Rougeurs", "Démangeaisons", "Picotements après application de produits"]),
-      Q("sensible_a", "Sensible à ?", true, ["Parfum", "Alcool", "Actifs type rétinol ou AHA", "Climat, froid-chaud"]),
+      { ...Q("reactions", "Réactions fréquentes ?", true, ["Tiraillements", "Rougeurs", "Démangeaisons", "Picotements après application de produits"]), allowNone: true },
+      { ...Q("sensible_a", "Sensible à ?", true, ["Parfum", "Alcool", "Actifs type rétinol ou AHA", "Climat, froid-chaud"]), allowNone: true },
     ],
   },
   "sebum": {
@@ -339,25 +340,25 @@ const QC = (key, label, multi, options) => ({ key, label, multi, options: option
 export const CATEGORY_QUESTIONS = {
   visage: [
     QC("skin_type", "Quel est ton type de peau ?", false, ["Peau grasse", "Peau sèche", "Peau mixte", "Peau sensible", "Peau normale", "Peau mature", "Peau acnéique"]),
-    QC("skin_concerns", "Tes préoccupations principales ?", true, ["Acné / Imperfections", "Pores dilatés", "Taches & hyperpigmentation", "Teint terne", "Rides & anti-âge", "Rougeurs & couperose", "Sensibilité & réactivité", "Déshydratation", "Excès de sébum", "Cernes & poches"]),
+    { ...QC("skin_concerns", "Tes préoccupations principales ?", true, ["Acné / Imperfections", "Pores dilatés", "Taches & hyperpigmentation", "Teint terne", "Rides & anti-âge", "Rougeurs & couperose", "Sensibilité & réactivité", "Déshydratation", "Excès de sébum", "Cernes & poches"]), allowNone: true },
     QC("skin_ingredients", "Ingrédients à privilégier ou éviter ?", true, ["Sans paraben", "Sans silicone", "Vegan", "Cruelty-free", "Naturel / Bio", "Acide hyaluronique", "Rétinol", "Niacinamide", "Vitamine C", "Aucune préférence"]),
     ...LIFESTYLE_QUESTIONS,
   ],
   corps: [
     QC("body_type", "Type de peau corporelle ?", false, ["Sèche", "Normale", "Mixte", "Sensible", "Très sèche"]),
-    QC("body_concerns", "Tes préoccupations corps ?", true, ["Vergetures", "Cellulite", "Peau qui tiraille", "Démangeaisons", "Taches corporelles", "Cicatrices", "Acné corps", "Peau terne", "Transpiration excessive"]),
-    QC("body_ingredients", "Ingrédients préférés ?", true, ["Karité", "Argan", "Aloe vera", "Vitamine E", "Huile de coco", "Sans parfum", "Collagène", "Bio", "Vegan"]),
+    { ...QC("body_concerns", "Tes préoccupations corps ?", true, ["Vergetures", "Cellulite", "Peau qui tiraille", "Démangeaisons", "Taches corporelles", "Cicatrices", "Acné corps", "Peau terne", "Transpiration excessive"]), allowNone: true },
+    { ...QC("body_ingredients", "Ingrédients préférés ?", true, ["Karité", "Argan", "Aloe vera", "Vitamine E", "Huile de coco", "Sans parfum", "Collagène", "Bio", "Vegan"]), allowNone: true },
     ...LIFESTYLE_QUESTIONS,
   ],
   cheveux: [
     QC("hair_type", "Quel est ton type de cheveux ?", false, ["Raides", "Ondulés", "Bouclés", "Crépus", "Frisés"]),
     QC("hair_thickness", "Épaisseur ?", false, ["Fins", "Normaux", "Épais"]),
     QC("hair_scalp", "Type de cuir chevelu ?", false, ["Gras", "Sec", "Normal", "Sensible", "À pellicules"]),
-    QC("hair_concerns", "Tes préoccupations cheveux ?", true, ["Chute", "Casse", "Pointes sèches", "Pellicules", "Perte d'éclat", "Frisottis", "Cheveux colorés", "Cheveux abîmés", "Manque de volume"]),
-    QC("hair_ingredients", "Ingrédients préférés ?", true, ["Kératine", "Huile d'argan", "Coco", "Karité", "Aloe vera", "Sans sulfate", "Sans silicone", "Vegan", "Bio"]),
+    { ...QC("hair_concerns", "Tes préoccupations cheveux ?", true, ["Chute", "Casse", "Pointes sèches", "Pellicules", "Perte d'éclat", "Frisottis", "Cheveux colorés", "Cheveux abîmés", "Manque de volume"]), allowNone: true },
+    { ...QC("hair_ingredients", "Ingrédients préférés ?", true, ["Kératine", "Huile d'argan", "Coco", "Karité", "Aloe vera", "Sans sulfate", "Sans silicone", "Vegan", "Bio"]), allowNone: true },
     ...HAIR_LIFESTYLE_QUESTIONS,
     // Affichée uniquement pour les cheveux frisés/crépus (filtrée côté page).
-    QC("hair_porosity", "Quelle est ta porosité ?", false, ["Faible", "Moyenne", "Forte"]),
+    { ...QC("hair_porosity", "Quelle est ta porosité ?", false, ["Faible", "Moyenne", "Forte"]), allowNone: true },
   ],
 };
 
@@ -366,11 +367,11 @@ export const CATEGORY_QUESTIONS = {
 // qu'une seule fois, plutôt que de le répéter trois fois de suite.
 CATEGORY_QUESTIONS["360"] = [
   QC("skin_type", "Quel est ton type de peau ?", false, ["Peau grasse", "Peau sèche", "Peau mixte", "Peau sensible", "Peau normale", "Peau mature", "Peau acnéique"]),
-  QC("skin_concerns", "Tes préoccupations visage ?", true, ["Acné / Imperfections", "Pores dilatés", "Taches & hyperpigmentation", "Teint terne", "Rides & anti-âge", "Rougeurs & couperose", "Sensibilité & réactivité", "Déshydratation", "Excès de sébum", "Cernes & poches"]),
+  { ...QC("skin_concerns", "Tes préoccupations visage ?", true, ["Acné / Imperfections", "Pores dilatés", "Taches & hyperpigmentation", "Teint terne", "Rides & anti-âge", "Rougeurs & couperose", "Sensibilité & réactivité", "Déshydratation", "Excès de sébum", "Cernes & poches"]), allowNone: true },
   QC("body_type", "Type de peau corporelle ?", false, ["Sèche", "Normale", "Mixte", "Sensible", "Très sèche"]),
-  QC("body_concerns", "Tes préoccupations corps ?", true, ["Vergetures", "Cellulite", "Peau qui tiraille", "Démangeaisons", "Taches corporelles", "Cicatrices", "Acné corps", "Peau terne", "Transpiration excessive"]),
+  { ...QC("body_concerns", "Tes préoccupations corps ?", true, ["Vergetures", "Cellulite", "Peau qui tiraille", "Démangeaisons", "Taches corporelles", "Cicatrices", "Acné corps", "Peau terne", "Transpiration excessive"]), allowNone: true },
   QC("hair_type", "Quel est ton type de cheveux ?", false, ["Raides", "Ondulés", "Bouclés", "Crépus", "Frisés"]),
-  QC("hair_concerns", "Tes préoccupations cheveux ?", true, ["Chute", "Casse", "Pointes sèches", "Pellicules", "Perte d'éclat", "Frisottis", "Cheveux colorés", "Cheveux abîmés", "Manque de volume"]),
+  { ...QC("hair_concerns", "Tes préoccupations cheveux ?", true, ["Chute", "Casse", "Pointes sèches", "Pellicules", "Perte d'éclat", "Frisottis", "Cheveux colorés", "Cheveux abîmés", "Manque de volume"]), allowNone: true },
   ...LIFESTYLE_QUESTIONS,
 ];
 

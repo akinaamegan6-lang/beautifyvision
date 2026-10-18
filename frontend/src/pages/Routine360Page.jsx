@@ -149,6 +149,53 @@ export default function Routine360Page() {
     if (status === "auth" && step === 0) setStep(1);
   }, [status, step]);
 
+  // Recule d'une étape interne (utilisé par les boutons "Précédent" de la
+  // page ET par le bouton retour du navigateur, voir plus bas). Centralise
+  // ici la logique "quelle est l'étape précédente ?" pour chaque étape.
+  const goBackOneStep = () => {
+    if (budgetModalOpen) { setBudgetModalOpen(false); return; }
+    if (modalSlug) {
+      setModalSlug(null);
+      if (modalReturnStep != null) { setStep(modalReturnStep); setModalReturnStep(null); }
+      return;
+    }
+    if (step === 5) { setStep(3); return; }
+    if (step === 3) {
+      const qs = getCategoryQuestions(chosenType).filter(
+        (qq) => qq.key !== "hair_porosity" || ["Frisés", "Crépus"].includes(catAnswers.hair_type)
+      );
+      setCatQIdx(Math.max(qs.length - 1, 0));
+      setStep(2.5);
+      return;
+    }
+    if (step === 2.5) {
+      if (catQIdx > 0) { setCatQIdx(catQIdx - 1); return; }
+      setStep(chosenType === "visage" ? 2 : 1);
+      return;
+    }
+    if (step === 2) { setStep(1); return; }
+    // step === 1 : rien de plus à reculer en interne, voir le listener popstate.
+  };
+
+  // Bug remonté : dans la Routine 360°, le bouton retour du navigateur
+  // ramenait à l'accueil (perte de toute la progression) au lieu de revenir
+  // à l'étape précédente, car cette page ne pousse jamais d'entrée dans
+  // l'historique (tout se joue en state React). On "capture" donc le retour
+  // navigateur : on empile une entrée tampon à chaque étape, et un retour
+  // déclenche goBackOneStep() au lieu de quitter la page. Exception : à la
+  // toute première étape (step 1, aucune modale ouverte), on laisse le
+  // navigateur sortir normalement.
+  useEffect(() => {
+    window.history.pushState({ routine360: true }, "");
+    const handlePopState = () => {
+      if (step === 1 && !modalSlug && !budgetModalOpen) return;
+      goBackOneStep();
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, catQIdx, chosenType, modalSlug, budgetModalOpen]);
+
   // === Step 0 — Auth gate ===
   if (status === "loading") {
     return <main className="min-h-screen flex items-center justify-center"><p className="text-neutral-500">Chargement…</p></main>;
@@ -272,10 +319,7 @@ export default function Routine360Page() {
       if (catQIdx < questions.length - 1) setCatQIdx(catQIdx + 1);
       else setStep(3);
     };
-    const onBack = () => {
-      if (catQIdx > 0) setCatQIdx(catQIdx - 1);
-      else setStep(chosenType === "visage" ? 2 : 1);
-    };
+    const onBack = goBackOneStep;
     const titles = { visage: "Parle-nous de ta peau", corps: "Parle-nous de ton corps", cheveux: "Parle-nous de tes cheveux", "360": "Parle-nous de toi" };
     return (
       <main className="bg-white min-h-screen px-6 py-12 md:py-16 relative" data-testid="routine-step-catq">
@@ -357,6 +401,9 @@ export default function Routine360Page() {
             Choisis tes <span className="editorial text-[#FEC4D2]">produits</span> qui constituent {routineLabel}
           </h1>
           <p className="mt-2 text-neutral-600">Sélectionne minimum 3 produits.</p>
+          <button onClick={goBackOneStep} className="mt-3 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900" data-testid="routine-back-products">
+            <ChevronLeft size={14}/> Précédent
+          </button>
 
           {/* Budget banner */}
           <div className="mt-6 bg-[#FEC4D2]/10 border border-[#FEC4D2]/40 rounded-2xl px-5 py-4 flex items-center gap-4">
@@ -505,7 +552,7 @@ export default function Routine360Page() {
           <p className="mt-3 text-xs text-neutral-500">Résultats générés en quelques secondes.</p>
         </div>
 
-        <button onClick={() => setStep(3)} className="mt-8 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900">
+        <button onClick={goBackOneStep} className="mt-8 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900">
           <ChevronLeft size={14}/> Modifier ma sélection
         </button>
       </div>

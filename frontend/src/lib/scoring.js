@@ -126,7 +126,9 @@ const UNWANTED_INGREDIENT_MAP = {
   "Sans paraben":        { safeTag: "Sans paraben",  presence: ["paraben"] },
 };
 
-const IGNORED_INGREDIENT_LABELS = new Set(["Aucune connue", "Aucune préférence"]);
+// "__none__" = marqueur du bouton "Aucun ne me correspond" (QuizStep.jsx) :
+// une réponse neutre, à ignorer exactement comme "Aucune connue"/"Aucune préférence".
+const IGNORED_INGREDIENT_LABELS = new Set(["Aucune connue", "Aucune préférence", "__none__"]);
 
 function hasUnwantedSignal(product, presenceWords) {
   if (!presenceWords || !presenceWords.length) return false;

@@ -126,6 +126,25 @@ export default function AITryOnPage() {
   const [activeHotspot, setActiveHotspot] = useState(null);
   const fileRef = useRef(null);
 
+  // Bug remonté : le bouton retour du navigateur ramenait à l'accueil (photo
+  // et réponses perdues) au lieu de revenir à l'étape précédente. Même garde
+  // que sur Routine360Page / ProblemeRoutinePage : on empile une entrée
+  // tampon et un retour recule d'une étape en interne au lieu de quitter la
+  // page. Exception : à la toute première étape (step 1), on laisse le
+  // navigateur sortir normalement.
+  useEffect(() => {
+    window.history.pushState({ aiTryOn: true }, "");
+    const handlePopState = () => {
+      if (step === 1) return;
+      if (step === 2) { setStep(1); return; }
+      if (step === 3) { setStep(2); return; }
+      if (step === 4) { setStep(2); return; }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
   const handleFile = (file) => {
     if (!file) return;
     const reader = new FileReader();

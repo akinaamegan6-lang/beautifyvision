@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Sparkles, ArrowRight } from "lucide-react";
 import { api } from "../lib/api";
@@ -103,6 +103,23 @@ export default function ProblemeRoutinePage() {
       else setStage(1);
     }
   };
+
+  // Bug remonté : le bouton retour du navigateur ramenait à l'accueil (toute
+  // la progression perdue) au lieu de revenir à l'étape précédente du quiz,
+  // car cette page ne pousse jamais d'entrée dans l'historique. Même garde
+  // que sur Routine360Page : on empile une entrée tampon, et un retour
+  // déclenche handleBack() au lieu de quitter la page. Exception : à la
+  // toute première étape (stage 0), on laisse le navigateur sortir normalement.
+  useEffect(() => {
+    window.history.pushState({ problemeRoutine: true }, "");
+    const handlePopState = () => {
+      if (stage === 0) return;
+      handleBack();
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage, qIdx]);
 
   const renderProgress = () => {
     if (stage === 3) return null;

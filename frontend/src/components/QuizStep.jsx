@@ -13,10 +13,19 @@ export default function QuizStep({
   const isMulti = question.multi;
   const selected = isMulti ? (value || []) : value;
 
+  // Valeur spéciale pour le bouton "Aucun ne me correspond" (voir plus bas) :
+  // sélectionner une vraie option désélectionne ce marqueur, et vice-versa.
+  const NONE_VALUE = "__none__";
+
   const toggle = (v) => {
     if (isMulti) {
       const arr = selected || [];
-      const next = arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+      if (v === NONE_VALUE) {
+        onChange(arr.includes(NONE_VALUE) ? [] : [NONE_VALUE]);
+        return;
+      }
+      const withoutNone = arr.filter((x) => x !== NONE_VALUE);
+      const next = withoutNone.includes(v) ? withoutNone.filter((x) => x !== v) : [...withoutNone, v];
       onChange(next);
     } else {
       onChange(v);
@@ -68,6 +77,26 @@ export default function QuizStep({
             <span className="text-base font-medium">{opt.label}</span>
           </button>
         ))}
+        {/* Échappatoire pour les questions où rien ne correspond forcément
+            (style de vie, préoccupations, ingrédients…). Jamais affichée sur
+            les questions structurantes (type de peau/cheveux/corps) qui
+            servent de base au diagnostic produit — voir quizConfig.js. */}
+        {question.allowNone && (
+          <button
+            type="button"
+            onClick={() => toggle(NONE_VALUE)}
+            className={`col-span-2 md:col-span-3 min-h-[64px] px-5 py-4 rounded-2xl border-2 border-dashed text-center transition-all ${
+              isSelected(NONE_VALUE)
+                ? "bg-[#FEC4D2]/15 border-[#FEC4D2] text-neutral-900"
+                : "bg-neutral-50 border-neutral-300 text-neutral-500 hover:border-[#FEC4D2] hover:text-neutral-700"
+            }`}
+            data-testid={`quiz-option-${question.key}-none`}
+          >
+            <span className="text-sm font-medium">
+              {question.noneLabel || (isMulti ? "Aucun ne me correspond" : "Je ne sais pas / Non applicable")}
+            </span>
+          </button>
+        )}
       </div>
 
       <div className="mt-10 flex items-center justify-between">
