@@ -206,22 +206,24 @@ export async function detectZonePositions(photoDataUrl) {
 
     const toPos = ([x, y]) => ({ left: `${(x / W) * 100}%`, top: `${(y / H) * 100}%` });
 
-    // Cheeks/highlighter are each a single hotspot, not two. Averaging both
-    // sides together would collapse the point to the vertical midline of the
-    // face (near the nose) instead of landing on an actual cheek, so pick one
-    // side consistently — same approach the eyes/lashes/liner cluster uses
-    // naturally (R_EYE/L_EYE averaged together reads as "between the eyes",
-    // which is the intended single eye-area marker).
+    // Every zone here is a single hotspot, not two. Averaging both sides of
+    // the face together (e.g. R_EYE + L_EYE, or R_BROW + L_BROW) collapses
+    // the point to the vertical midline of the face (nose bridge / glabella)
+    // instead of landing on an actual eye, brow or cheek — confirmed as a
+    // real bug (dots bunching up in the middle of the face). So every
+    // paired-landmark zone consistently picks ONE side instead.
     const [cheekX, cheekY] = avgPts(lms, R_CHEEK, W, H);
+    const [eyeX, eyeY] = avgPts(lms, R_EYE, W, H);
+    const [browX, browY] = avgPts(lms, R_BROW, W, H);
 
     return {
       lips: toPos(avgPts(lms, LIPS, W, H)),
-      eyes: toPos(avgPts(lms, [...R_EYE, ...L_EYE], W, H)),
+      eyes: toPos([eyeX, eyeY]),
       // Eyeliner follows the upper lash line — same landmark cluster as "eyes".
-      liner: toPos(avgPts(lms, [...R_EYE, ...L_EYE], W, H)),
+      liner: toPos([eyeX, eyeY]),
       // Mascara coats the lashes themselves — same general area as the eyes.
-      lashes: toPos(avgPts(lms, [...R_EYE, ...L_EYE], W, H)),
-      brows: toPos(avgPts(lms, [...R_BROW, ...L_BROW], W, H)),
+      lashes: toPos([eyeX, eyeY]),
+      brows: toPos([browX, browY]),
       cheeks: toPos([cheekX, cheekY]),
       // Highlighter sits higher than blush (cheekbone/brow bone), so nudge the
       // cheek point upward rather than reusing the exact same spot as blush.
