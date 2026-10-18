@@ -118,7 +118,7 @@ export default function AITryOnPage() {
   const [skinTone, setSkinTone] = useState({ hex: "#E2BFA0", undertone: "neutral" });
   const [prompt, setPrompt] = useState("");
   const [presetId, setPresetId] = useState("natural");
-  const [budget, setBudget] = useState([0, 80]);
+  const [budget, setBudget] = useState(80);
   const [loadingStep, setLoadingStep] = useState(0);
   const [result, setResult] = useState(null);
   const [zonePositions, setZonePositions] = useState(null);
@@ -153,7 +153,7 @@ export default function AITryOnPage() {
       // 1. Selection des produits (IA cote backend si les cles sont configurees)
       const { products: selected, summary } = await selectProducts({
         undertone: skinTone.undertone,
-        budgetMax: budget[1],
+        budgetMax: budget,
         presetId,
         prompt: fullPrompt,
         skinToneHex: skinTone.hex,
@@ -264,19 +264,21 @@ export default function AITryOnPage() {
         <h3 className="mt-10 text-2xl font-semibold text-[#79C1E0]">Ou décris-le librement</h3>
         <Textarea
           value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={(e) => setPrompt(e.target.value.slice(0, 300))}
           rows={4}
+          maxLength={300}
           placeholder="Ex : je veux un fard à paupières terracotta et un rouge à lèvres nude avec un budget de 30 €"
           className="mt-4 border-[#FEC4D2]/40 focus-visible:ring-[#FEC4D2]"
           data-testid="free-prompt"
         />
+        <p className="mt-1.5 text-right text-xs text-neutral-400">{prompt.length}/300</p>
 
         <div className="mt-6">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-sm font-semibold text-[#79C1E0]">Budget max</h4>
-            <span className="text-sm text-neutral-700">{budget[0]} – {budget[1]}{budget[1] >= 200 ? "+" : ""} €</span>
+            <span className="text-sm text-neutral-700">0 – {budget}{budget >= 200 ? "+" : ""} €</span>
           </div>
-          <Slider value={budget} onValueChange={setBudget} min={0} max={200} step={5} data-testid="ai-budget-slider" />
+          <Slider value={[budget]} onValueChange={([v]) => setBudget(v)} min={0} max={200} step={5} data-testid="ai-budget-slider" />
         </div>
 
         <button
@@ -388,10 +390,10 @@ export default function AITryOnPage() {
       <div className="halo-pink -top-20 -right-20" />
       <div className="halo-blue top-1/2 -left-32" />
       <section className="px-6 py-16 relative">
-        {step === 1 && <Step1 />}
-        {step === 2 && <Step2 />}
-        {step === 3 && <Step3 />}
-        {step === 4 && result && <Step4 />}
+        {step === 1 && Step1()}
+        {step === 2 && Step2()}
+        {step === 3 && Step3()}
+        {step === 4 && result && Step4()}
         {step === 1 && (
           <div className="mt-12 flex justify-center">
             <button onClick={() => fileRef.current?.click()} className="inline-flex items-center gap-2 text-sm text-[#79C1E0] hover:underline" data-testid="manual-upload-btn">

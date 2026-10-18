@@ -445,7 +445,14 @@ async def ai_apply_makeup(req: ApplyMakeupRequest):
     if cheeks:
         prompt += f"- Cheeks: apply a noticeably visible {cheeks} blush with strong color payoff on the cheekbones.\n"
     if req.look_description:
-        prompt += f"Overall look: {req.look_description}.\n"
+        prompt += (
+            f"Overall look requested by the user, in their own words: \"{req.look_description}\".\n"
+            "Follow this description literally and precisely, including any unusual or specific "
+            "detail it mentions (an unconventional color, a small motif or drawing on a specific "
+            "spot, an asymmetric effect, etc.) — do not water it down or normalize it into a generic "
+            "makeup look. If this description conflicts with the zone colors above, prioritize what "
+            "the user explicitly asked for.\n"
+        )
     prompt += "Output a clean portrait, same framing, same person. The makeup should read as an obvious, deliberate transformation when compared to a bare face."
 
     client = genai.Client(api_key=GOOGLE_API_KEY)
