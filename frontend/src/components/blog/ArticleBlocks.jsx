@@ -36,7 +36,11 @@ export function Heading4Block({ text }) {
 }
 
 export function ParagraphBlock({ text }) {
-  return <p className="text-neutral-600 leading-relaxed mb-4">{text}</p>;
+  return (
+    <p className="text-neutral-600 leading-relaxed mb-4">
+      <RichText text={text} highlightClassName="text-neutral-900 font-semibold"/>
+    </p>
+  );
 }
 
 export function ImageBlock({ src, caption }) {
