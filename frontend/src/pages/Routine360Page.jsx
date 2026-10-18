@@ -311,12 +311,29 @@ export default function Routine360Page() {
         : chosenType === "cheveux" ? ["cheveux"]
         : ["skincare"];
 
-    // For "corps" route, filter skincare to body-only products
+    // La section "skincare" mélange des produits visage ET corps : on exclut
+    // les uns des autres selon le type de routine choisi (bug remonté : des
+    // produits visage apparaissaient en "routine corps", et vice-versa).
+    const BODY_ONLY_SLUGS = ["creme-corps", "huile-corps", "creme-solaire-corps"];
+    const isBodyOnly = (p) =>
+      BODY_ONLY_SLUGS.includes(p.slug) ||
+      p.label.toLowerCase().includes("corps") ||
+      p.label.toLowerCase().includes("mains") ||
+      p.label.toLowerCase().includes("pieds") ||
+      p.label.toLowerCase().includes("déo");
+    // Produits partagés entre visage et corps (nettoyant, brume) : utiles aux deux routines.
+    const SHARED_SLUGS = ["nettoyant", "brume"];
+
     const items = (sec) => {
       const all = ROUTINE_PRODUCTS.filter((p) => p.section === sec);
-      if (chosenType === "corps" && sec === "skincare") {
-        return all.filter((p) => ["nettoyant","creme-corps","huile-corps","creme-solaire-corps","brume"].includes(p.slug) || p.label.toLowerCase().includes("corps") || p.label.toLowerCase().includes("mains") || p.label.toLowerCase().includes("pieds") || p.label.toLowerCase().includes("déo"));
+      if (sec !== "skincare") return all;
+      if (chosenType === "corps") {
+        return all.filter((p) => isBodyOnly(p) || SHARED_SLUGS.includes(p.slug));
       }
+      if (chosenType === "visage") {
+        return all.filter((p) => !isBodyOnly(p));
+      }
+      // "360" (routine complète) : on garde tout, visage + corps.
       return all;
     };
 
