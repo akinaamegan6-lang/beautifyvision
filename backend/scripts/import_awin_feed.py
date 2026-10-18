@@ -195,6 +195,27 @@ FALLBACK_BY_PATH = {
     "cosmetique": ("creme-hydratante", "visage"),
 }
 
+# Zone du visage associee a chaque categorie "cosmetiques" (maquillage), pour
+# l'essayage IA (/ai/select-products, /ai/apply-makeup) : sans cette info les
+# produits ne peuvent pas etre rattaches a une zone (levres/yeux/joues/visage)
+# et le module IA affichait "0 produit utilise" meme quand la photo generee
+# etait correcte - ce champ etait laisse a None sur TOUS les produits importes.
+# Categories hors cosmetiques (skincare/cheveux) restent sans zone, non
+# utilisees par l'essayage IA (filtre sur parent == "cosmetiques").
+CATEGORY_ZONE = {
+    "mascara": "eyes",
+    "eyeliner": "eyes",
+    "palette-yeux": "eyes",
+    "sourcils": "eyes",
+    "highlighter": "cheeks",
+    "blush": "cheeks",
+    "contouring": "cheeks",
+    "poudre": "face",
+    "primer": "face",
+    "fond-de-teint-cosmetique": "face",
+    "rouge-a-levres": "lips",
+}
+
 
 def classify(product_name, description, merchant_category_path):
     # Le nom + la description ET le fil de categorie Awin (ex: "Maquillage >
@@ -400,7 +421,7 @@ def main():
                 "hair_types": hair_types,
                 "benefits": benefits,
                 "color_hex": None,
-                "zone": None,
+                "zone": CATEGORY_ZONE.get(slug),
                 "affiliate_url": affiliate_url,
                 "source": "awin",
                 "source_merchant": merchant,
