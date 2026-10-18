@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import RichText from "./RichText";
 import { slugifyHeading } from "./blogText";
@@ -90,10 +90,45 @@ export function IngredientsBlock({ items = [] }) {
 
 export function ProductsBlock({ items = [] }) {
   const scrollerRef = useRef(null);
+  // The nav buttons used to sit just OUTSIDE the scroller (-left-4/-right-4),
+  // which could get clipped by an ancestor as soon as the layout left no
+  // room past the content column's own edge (e.g. the right one landing in
+  // the gap right before the sidebar) — in practice this showed up as only
+  // the left arrow being visible. Keeping both buttons flush INSIDE the
+  // scroller's own bounding box (left-1/right-1) guarantees they're never
+  // clipped by anything outside this component.
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    updateScrollState();
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [updateScrollState, items]);
+
   const scrollBy = (dx) => scrollerRef.current?.scrollBy({ left: dx, behavior: "smooth" });
+
   return (
     <div className="relative my-6">
-      <button onClick={() => scrollBy(-260)} aria-label="Précédent" className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-[#FEC4D2]/50 shadow items-center justify-center hover:bg-[#FEC4D2]/10 transition">
+      <button
+        onClick={() => scrollBy(-260)}
+        aria-label="Précédent"
+        disabled={!canScrollLeft}
+        className={`hidden md:flex absolute left-1 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-[#FEC4D2]/50 shadow items-center justify-center transition ${canScrollLeft ? "hover:bg-[#FEC4D2]/10" : "opacity-30 pointer-events-none"}`}
+      >
         <ChevronLeft size={16}/>
       </button>
       <div ref={scrollerRef} className="flex gap-4 overflow-x-auto pb-2 scroll-smooth snap-x no-scrollbar">
@@ -110,11 +145,23 @@ export function ProductsBlock({ items = [] }) {
               <span className="text-neutral-400">({formatReviews(p.reviews)})</span>
             </div>
             <p className="text-base font-semibold text-neutral-900 mt-1.5">{p.price.toFixed(2)} €</p>
-            <button className="w-full mt-2.5 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-xs font-medium py-2 rounded-full transition">Voir le produit</button>
+            <a
+              href={p.affiliate_url || "#"}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="block w-full mt-2.5 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-xs font-medium py-2 rounded-full transition text-center"
+            >
+              Voir le produit
+            </a>
           </div>
         ))}
       </div>
-      <button onClick={() => scrollBy(260)} aria-label="Suivant" className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-[#FEC4D2]/50 shadow items-center justify-center hover:bg-[#FEC4D2]/10 transition">
+      <button
+        onClick={() => scrollBy(260)}
+        aria-label="Suivant"
+        disabled={!canScrollRight}
+        className={`hidden md:flex absolute right-1 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-[#FEC4D2]/50 shadow items-center justify-center transition ${canScrollRight ? "hover:bg-[#FEC4D2]/10" : "opacity-30 pointer-events-none"}`}
+      >
         <ChevronRight size={16}/>
       </button>
     </div>
