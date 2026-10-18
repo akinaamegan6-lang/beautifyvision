@@ -354,17 +354,29 @@ async def ai_select_products(req: AISelectRequest):
         "adaptés au teint et au look demandé. Tu réponds UNIQUEMENT en JSON valide, sans texte autour. "
         "Choisis jusqu'à 3 à 6 produits cosmétiques parmi la liste fournie qui forment un look cohérent, "
         "en couvrant les zones lips, eyes, lashes, brows, liner, cheeks, highlight et face quand c'est pertinent "
-        "(lashes = mascara, brows = sourcils, liner = eyeliner, highlight = highlighter, eyes = fard à paupières) — "
-        "MAIS RÈGLE ABSOLUE : pour une zone donnée, ne retiens un produit QUE si sa couleur réelle "
-        "(son champ color_hex d'origine dans la liste fournie) est raisonnablement proche de la couleur "
-        "demandée par l'utilisatrice pour cette zone. Si la demande évoque une couleur inhabituelle "
-        "(par exemple un rouge à lèvres vert ou jaune vif) et qu'AUCUN produit de la liste n'a une couleur "
-        "proche de celle-ci, N'INCLUS AUCUN PRODUIT pour cette zone plutôt que de proposer le produit le "
-        "plus proche en catégorie mais dont la couleur ne correspond pas du tout. Il est préférable de "
-        "renvoyer moins de produits mais tous réellement fidèles, plutôt que de faire croire qu'un produit "
-        "existant a une couleur qu'il n'a pas. "
+        "(lashes = mascara, brows = sourcils, liner = eyeliner, highlight = highlighter, eyes = fard à paupières). "
+        "IMPORTANT sur les preuves de couleur : beaucoup de produits réels de la liste n'ont PAS de champ "
+        "color_hex renseigné (il est souvent null) — c'est normal et ATTENDU, ce n'est PAS une raison de "
+        "refuser de répondre ou de renvoyer une liste vide. Pour juger si un produit correspond à la couleur "
+        "demandée pour une zone, utilise TOUTES les preuves disponibles : le champ color_hex quand il existe, "
+        "ET les mots de couleur présents dans le champ name du produit (ex. \"nude\", \"rouge\", \"corail\", "
+        "\"brun\", \"doré\", \"rosé\", \"prune\", \"bordeaux\", \"cuivré\", \"noir\", \"miel\", \"caramel\", etc.). "
+        "RÈGLE ABSOLUE : pour une zone donnée, ne retiens un produit QUE si au moins une de ces preuves "
+        "(color_hex proche OU mot de couleur dans le nom) confirme raisonnablement que sa couleur correspond "
+        "à la couleur demandée. Si la demande évoque une couleur inhabituelle (par exemple un rouge à lèvres "
+        "vert ou jaune vif) et qu'AUCUN produit de la liste n'a de preuve d'une couleur proche de celle-ci, "
+        "N'INCLUS AUCUN PRODUIT pour cette zone plutôt que de proposer le produit le plus proche en catégorie "
+        "mais dont la couleur ne correspond pas du tout — mais continue quand même à traiter normalement "
+        "toutes les AUTRES zones demandées. Si la demande est neutre ou classique pour une zone (ex. \"un look "
+        "naturel\", \"qui sublime mon teint\", sans couleur précise exigée), choisis le meilleur produit "
+        "disponible de cette catégorie même sans preuve de couleur explicite, et formule \"reason\" sans "
+        "prétendre avoir vérifié une teinte précise. Il est préférable de renvoyer moins de produits mais "
+        "tous réellement justifiés, plutôt que de faire croire qu'un produit existant a une couleur qu'il "
+        "n'a pas. Ne renvoie JAMAIS une liste globalement vide avec un refus total : fais toujours de ton "
+        "mieux zone par zone avec les informations disponibles, même partielles. "
         "Le champ color_hex de ta réponse doit toujours être recopié EXACTEMENT depuis le color_hex "
-        "d'origine du produit choisi dans la liste fournie, jamais une couleur inventée ou idéalisée. "
+        "d'origine du produit choisi dans la liste fournie quand il existe ; s'il est null dans la liste "
+        "fournie, renvoie null (jamais une couleur inventée ou idéalisée). "
         "IMPORTANT sur le budget : la liste de produits fournie contient À LA FOIS des produits dans le "
         "budget et des produits au-dessus du budget indiqué (regarde le champ price de chacun). La liste "
         "principale \"products\" ne doit QUE contenir des produits dont le prix respecte strictement le "
@@ -428,7 +440,7 @@ async def ai_select_products(req: AISelectRequest):
             cleaned.append(AISelectProduct(
                 product_id=pid,
                 zone=item.get("zone", "face"),
-                color_hex=item.get("color_hex", "#C68D78"),
+                color_hex=item.get("color_hex") or "#C68D78",
                 reason=item.get("reason", ""),
             ))
 
@@ -440,7 +452,7 @@ async def ai_select_products(req: AISelectRequest):
             cleaned_oob.append(AISelectProduct(
                 product_id=pid,
                 zone=item.get("zone", "face"),
-                color_hex=item.get("color_hex", "#C68D78"),
+                color_hex=item.get("color_hex") or "#C68D78",
                 reason=item.get("reason", ""),
             ))
         if len(cleaned_oob) >= 2:
