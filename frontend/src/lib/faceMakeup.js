@@ -170,3 +170,47 @@ export async function applyMakeup(photoDataUrl, colors) {
 
   return canvas.toDataURL("image/jpeg", 0.92);
 }
+
+/**
+ * Detects real face-landmark positions on a photo and returns, per makeup zone,
+ * the percentage position (relative to the image's own pixel dimensions) where
+ * a UI hotspot for that zone should be placed. Returns null if no face is found
+ * (e.g. the image doesn't show a clear front-facing face), so callers should
+ * fall back to generic/static positions in that case.
+ * @param {string} photoDataUrl - Full data URL of the photo to analyze
+ * @returns {Promise<{lips:{left:string,top:string}, eyes:{left:string,top:string}, cheeks:{left:string,top:string}, face:{left:string,top:string}}|null>}
+ */
+export async function detectZonePositions(photoDataUrl) {
+  const img = await new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => resolve(im);
+    im.onerror = reject;
+    im.src = photoDataUrl;
+  });
+
+  const W = img.naturalWidth || img.width;
+  const H = img.naturalHeight || img.height;
+
+  try {
+    const landmarker = await loadLandmarker();
+    const { faceLandmarks } = landmarker.detect(img);
+    const lms = faceLandmarks?.[0];
+
+    if (!lms || lms.length < 400) {
+      console.warn("No face landmarks detected — using fallback hotspot positions");
+      return null;
+    }
+
+    const toPos = ([x, y]) => ({ left: `${(x / W) * 100}%`, top: `${(y / H) * 100}%` });
+
+    return {
+      lips: toPos(avgPts(lms, LIPS, W, H)),
+      eyes: toPos(avgPts(lms, [...R_EYE, ...L_EYE], W, H)),
+      cheeks: toPos(avgPts(lms, [...R_CHEEK, ...L_CHEEK], W, H)),
+      face: toPos(pt(lms, 10, W, H)), // top of forehead
+    };
+  } catch (err) {
+    console.warn("Zone position detection failed — using fallback hotspot positions:", err);
+    return null;
+  }
+}

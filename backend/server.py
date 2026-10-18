@@ -431,19 +431,22 @@ async def ai_apply_makeup(req: ApplyMakeupRequest):
     cheeks = req.colors.get("cheeks", "")
 
     prompt = (
-        "Apply realistic makeup to the woman in this photo while keeping her face, identity, "
-        "skin tone, hair, background and pose perfectly intact. "
-        "Only modify the makeup zones described. Result must be photorealistic, soft, blended, natural.\n"
+        "Apply realistic, clearly visible makeup to the woman in this photo while keeping her face, "
+        "identity, skin tone, hair, background and pose perfectly intact. "
+        "Only modify the makeup zones described. The result must be photorealistic and well-blended, "
+        "but the makeup itself must be unmistakably visible at a glance — this is a full, well-applied "
+        "makeup look, not a barely-there or no-makeup-makeup look. Use full color payoff, not faded or "
+        "diluted pigment.\n"
     )
     if lips:
-        prompt += f"- Lips: apply a {lips} lipstick, smooth and well-defined.\n"
+        prompt += f"- Lips: apply a full-coverage {lips} lipstick, richly pigmented with clearly defined, clean edges.\n"
     if eyes:
-        prompt += f"- Eyes: apply soft {eyes} eyeshadow on the eyelids and subtle eyeliner.\n"
+        prompt += f"- Eyes: apply {eyes} eyeshadow with visible, saturated color across the eyelid, plus a clean, clearly visible eyeliner line.\n"
     if cheeks:
-        prompt += f"- Cheeks: blush of color {cheeks} on the cheekbones with a soft glow.\n"
+        prompt += f"- Cheeks: apply a noticeably visible {cheeks} blush with strong color payoff on the cheekbones.\n"
     if req.look_description:
         prompt += f"Overall look: {req.look_description}.\n"
-    prompt += "Output a clean portrait, same framing, same person."
+    prompt += "Output a clean portrait, same framing, same person. The makeup should read as an obvious, deliberate transformation when compared to a bare face."
 
     client = genai.Client(api_key=GOOGLE_API_KEY)
 

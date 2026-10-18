@@ -1,9 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Upload, Sparkles, RefreshCw, Save, Share2, ImagePlus } from "lucide-react";
 import { Slider } from "../components/ui/slider";
 import { Textarea } from "../components/ui/textarea";
 import { api } from "../lib/api";
-import { applyMakeup } from "../lib/faceMakeup";
+import { applyMakeup, detectZonePositions } from "../lib/faceMakeup";
 import { PRESET_LOOKS } from "../data/criteria";
 import ProductCard from "../components/ProductCard";
 import { toast } from "sonner";
@@ -121,6 +121,7 @@ export default function AITryOnPage() {
   const [budget, setBudget] = useState([0, 80]);
   const [loadingStep, setLoadingStep] = useState(0);
   const [result, setResult] = useState(null);
+  const [zonePositions, setZonePositions] = useState(null);
   const [activeHotspot, setActiveHotspot] = useState(null);
   const fileRef = useRef(null);
 
@@ -306,6 +307,20 @@ export default function AITryOnPage() {
     face:   { left: "50%", top: "20%" },
   };
 
+  // Fixed percentages above are only a fallback: as soon as the final image is
+  // ready, detect the real face and place hotspots on the actual lips/eyes/
+  // cheeks/forehead of that specific photo.
+  useEffect(() => {
+    let cancelled = false;
+    setZonePositions(null);
+    if (result?.image) {
+      detectZonePositions(result.image).then((pos) => {
+        if (!cancelled) setZonePositions(pos);
+      });
+    }
+    return () => { cancelled = true; };
+  }, [result?.image]);
+
   const Step4 = () => (
     <div className="grid lg:grid-cols-2 gap-10 max-w-7xl mx-auto">
       <div>
@@ -315,7 +330,7 @@ export default function AITryOnPage() {
         <div className="mt-6 relative rounded-3xl overflow-hidden border-2 border-[#FEC4D2]" data-testid="result-image">
           <img src={result.image} alt="Résultat" className="w-full aspect-[4/5] object-cover" />
           {result.products.map((p, i) => {
-            const pos = ZONE_POS[p.zone] || ZONE_POS.face;
+            const pos = zonePositions?.[p.zone] || ZONE_POS[p.zone] || ZONE_POS.face;
             return (
               <div key={p.id + i} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: pos.left, top: pos.top }}>
                 <button
