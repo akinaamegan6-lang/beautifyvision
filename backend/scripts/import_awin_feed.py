@@ -203,11 +203,11 @@ FALLBACK_BY_PATH = {
 # Categories hors cosmetiques (skincare/cheveux) restent sans zone, non
 # utilisees par l'essayage IA (filtre sur parent == "cosmetiques").
 CATEGORY_ZONE = {
-    "mascara": "eyes",
-    "eyeliner": "eyes",
+    "mascara": "lashes",
+    "eyeliner": "liner",
     "palette-yeux": "eyes",
-    "sourcils": "eyes",
-    "highlighter": "cheeks",
+    "sourcils": "brows",
+    "highlighter": "highlight",
     "blush": "cheeks",
     "contouring": "cheeks",
     "poudre": "face",

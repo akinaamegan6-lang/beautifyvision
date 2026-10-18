@@ -348,8 +348,9 @@ async def ai_select_products(req: AISelectRequest):
     system_msg = (
         "Tu es BeautifyVision AI, une experte beauté qui sélectionne des produits de maquillage "
         "adaptés au teint et au look demandé. Tu réponds UNIQUEMENT en JSON valide, sans texte autour. "
-        "Choisis jusqu'à 3 à 5 produits cosmétiques parmi la liste fournie qui forment un look cohérent, "
-        "en couvrant les zones lips, eyes, cheeks et face quand c'est pertinent — "
+        "Choisis jusqu'à 3 à 6 produits cosmétiques parmi la liste fournie qui forment un look cohérent, "
+        "en couvrant les zones lips, eyes, lashes, brows, liner, cheeks, highlight et face quand c'est pertinent "
+        "(lashes = mascara, brows = sourcils, liner = eyeliner, highlight = highlighter, eyes = fard à paupières) — "
         "MAIS RÈGLE ABSOLUE : pour une zone donnée, ne retiens un produit QUE si sa couleur réelle "
         "(son champ color_hex d'origine dans la liste fournie) est raisonnablement proche de la couleur "
         "demandée par l'utilisatrice pour cette zone. Si la demande évoque une couleur inhabituelle "
@@ -363,7 +364,7 @@ async def ai_select_products(req: AISelectRequest):
         "Format strict :\n"
         "{\n"
         '  "products": [\n'
-        '    {"product_id": "<id>", "zone": "lips|eyes|cheeks|face", "color_hex": "#RRGGBB (= couleur réelle du produit)", "reason": "<courte raison>"}\n'
+        '    {"product_id": "<id>", "zone": "lips|eyes|lashes|brows|liner|cheeks|highlight|face", "color_hex": "#RRGGBB (= couleur réelle du produit)", "reason": "<courte raison>"}\n'
         "  ],\n"
         '  "summary": "<résumé du look en 1 phrase>"\n'
         "}"
@@ -440,6 +441,10 @@ async def ai_apply_makeup(req: ApplyMakeupRequest):
     eyes = req.colors.get("eyes", "")
     cheeks = req.colors.get("cheeks", "")
     face = req.colors.get("face", "")
+    lashes = req.colors.get("lashes", "")
+    brows = req.colors.get("brows", "")
+    liner = req.colors.get("liner", "")
+    highlight = req.colors.get("highlight", "")
 
     prompt = (
         "Apply realistic, clearly visible makeup to the woman in this photo while keeping her face, "
@@ -460,6 +465,25 @@ async def ai_apply_makeup(req: ApplyMakeupRequest):
             f"- Face: apply a full-coverage {face} foundation. This must be OPAQUE, FULL coverage — "
             "completely conceal freckles, redness, dark spots and skin texture underneath for a smooth, "
             "even, flawless finish. Do not let any freckles or blemishes show through.\n"
+        )
+    if lashes:
+        prompt += (
+            "- Lashes: apply mascara for dramatically longer, thicker, more voluminous, clearly "
+            "separated eyelashes — the length/volume increase must be obvious, not a subtle touch-up.\n"
+        )
+    if brows:
+        prompt += (
+            "- Eyebrows: make them well-defined, neatly shaped and groomed, with a clear, deliberate "
+            "filled-in look (natural hair strokes, no harsh blocky shape) — clearly more structured "
+            "than a bare, un-groomed brow.\n"
+        )
+    if liner:
+        prompt += f"- Eyeliner: apply a crisp, clearly visible {liner} eyeliner line along the lash line (distinct from any eyeshadow).\n"
+    if highlight:
+        prompt += (
+            f"- Highlighter: apply a {highlight} highlighter with a visible luminous glow on the high "
+            "points of the face (top of cheekbones, brow bone, bridge of the nose) — the glow/shimmer "
+            "must be clearly noticeable, not flat.\n"
         )
     if req.look_description and ("couvr" in req.look_description.lower() or "coverage" in req.look_description.lower()):
         prompt += (

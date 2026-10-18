@@ -36,6 +36,9 @@ const L_EYE = [263, 466, 388, 387, 386, 385, 384, 398, 362];
 // Cheekbone clusters (one per side)
 const R_CHEEK = [50, 101, 116, 117, 118, 119, 100];
 const L_CHEEK = [280, 330, 345, 346, 347, 348, 329];
+// Eyebrow clusters (one per side)
+const R_BROW = [46, 53, 52, 65, 55, 70, 63, 105, 66, 107];
+const L_BROW = [276, 283, 282, 295, 285, 300, 293, 334, 296, 336];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function hexToRgb(hex) {
@@ -203,10 +206,20 @@ export async function detectZonePositions(photoDataUrl) {
 
     const toPos = ([x, y]) => ({ left: `${(x / W) * 100}%`, top: `${(y / H) * 100}%` });
 
+    const [cheeksX, cheeksY] = avgPts(lms, [...R_CHEEK, ...L_CHEEK], W, H);
+
     return {
       lips: toPos(avgPts(lms, LIPS, W, H)),
       eyes: toPos(avgPts(lms, [...R_EYE, ...L_EYE], W, H)),
-      cheeks: toPos(avgPts(lms, [...R_CHEEK, ...L_CHEEK], W, H)),
+      // Eyeliner follows the upper lash line — same landmark cluster as "eyes".
+      liner: toPos(avgPts(lms, [...R_EYE, ...L_EYE], W, H)),
+      // Mascara coats the lashes themselves — same general area as the eyes.
+      lashes: toPos(avgPts(lms, [...R_EYE, ...L_EYE], W, H)),
+      brows: toPos(avgPts(lms, [...R_BROW, ...L_BROW], W, H)),
+      cheeks: toPos([cheeksX, cheeksY]),
+      // Highlighter sits higher than blush (cheekbone/brow bone), so nudge the
+      // cheek point upward rather than reusing the exact same spot as blush.
+      highlight: toPos([cheeksX, cheeksY - (H * 0.09)]),
       face: toPos(pt(lms, 10, W, H)), // top of forehead
     };
   } catch (err) {

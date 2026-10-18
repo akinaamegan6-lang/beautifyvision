@@ -307,10 +307,14 @@ export default function AITryOnPage() {
   );
 
   const ZONE_POS = {
-    lips:   { left: "50%", top: "78%" },
-    eyes:   { left: "50%", top: "42%" },
-    cheeks: { left: "32%", top: "62%" },
-    face:   { left: "50%", top: "20%" },
+    lips:      { left: "50%", top: "78%" },
+    eyes:      { left: "50%", top: "42%" },
+    cheeks:    { left: "32%", top: "62%" },
+    face:      { left: "50%", top: "20%" },
+    lashes:    { left: "50%", top: "40%" },
+    brows:     { left: "50%", top: "34%" },
+    liner:     { left: "50%", top: "41%" },
+    highlight: { left: "68%", top: "58%" },
   };
 
   // Fixed percentages above are only a fallback: as soon as the final image is
