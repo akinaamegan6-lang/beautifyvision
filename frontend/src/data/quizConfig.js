@@ -197,6 +197,14 @@ export const PRODUCT_QUESTIONS = {
   "soin-cuir-chevelu": [
     Q("probleme", "Problème principal ?", false, ["Pellicules", "Excès de sébum", "Cuir chevelu sensible", "Démangeaisons"]),
   ],
+  "huile-corps": [
+    Q("moment", "Moment d'application ?", true, ["Après la douche", "Avant le coucher", "Peu importe"]),
+    Q("objectif", "Objectif principal ?", true, ["Hydratation intense", "Nourrir en profondeur", "Fermeté", "Anti-vergetures", "Peu importe"]),
+  ],
+  "creme-solaire-corps": [
+    Q("spf", "Indice de protection souhaité ?", false, ["SPF 30", "SPF 50", "Peu importe"]),
+    Q("texture", "Texture préférée ?", true, ["Légère / Fluide", "Riche", "Spray", "Peu importe"]),
+  ],
 };
 
 // Fallback generic questions when product type has no specific config
@@ -333,11 +341,13 @@ export const CATEGORY_QUESTIONS = {
     QC("skin_type", "Quel est ton type de peau ?", false, ["Peau grasse", "Peau sèche", "Peau mixte", "Peau sensible", "Peau normale", "Peau mature", "Peau acnéique"]),
     QC("skin_concerns", "Tes préoccupations principales ?", true, ["Acné / Imperfections", "Pores dilatés", "Taches & hyperpigmentation", "Teint terne", "Rides & anti-âge", "Rougeurs & couperose", "Sensibilité & réactivité", "Déshydratation", "Excès de sébum", "Cernes & poches"]),
     QC("skin_ingredients", "Ingrédients à privilégier ou éviter ?", true, ["Sans paraben", "Sans silicone", "Vegan", "Cruelty-free", "Naturel / Bio", "Acide hyaluronique", "Rétinol", "Niacinamide", "Vitamine C", "Aucune préférence"]),
+    ...LIFESTYLE_QUESTIONS,
   ],
   corps: [
     QC("body_type", "Type de peau corporelle ?", false, ["Sèche", "Normale", "Mixte", "Sensible", "Très sèche"]),
     QC("body_concerns", "Tes préoccupations corps ?", true, ["Vergetures", "Cellulite", "Peau qui tiraille", "Démangeaisons", "Taches corporelles", "Cicatrices", "Acné corps", "Peau terne", "Transpiration excessive"]),
     QC("body_ingredients", "Ingrédients préférés ?", true, ["Karité", "Argan", "Aloe vera", "Vitamine E", "Huile de coco", "Sans parfum", "Collagène", "Bio", "Vegan"]),
+    ...LIFESTYLE_QUESTIONS,
   ],
   cheveux: [
     QC("hair_type", "Quel est ton type de cheveux ?", false, ["Raides", "Ondulés", "Bouclés", "Crépus", "Frisés"]),
@@ -345,16 +355,23 @@ export const CATEGORY_QUESTIONS = {
     QC("hair_scalp", "Type de cuir chevelu ?", false, ["Gras", "Sec", "Normal", "Sensible", "À pellicules"]),
     QC("hair_concerns", "Tes préoccupations cheveux ?", true, ["Chute", "Casse", "Pointes sèches", "Pellicules", "Perte d'éclat", "Frisottis", "Cheveux colorés", "Cheveux abîmés", "Manque de volume"]),
     QC("hair_ingredients", "Ingrédients préférés ?", true, ["Kératine", "Huile d'argan", "Coco", "Karité", "Aloe vera", "Sans sulfate", "Sans silicone", "Vegan", "Bio"]),
+    ...HAIR_LIFESTYLE_QUESTIONS,
     // Affichée uniquement pour les cheveux frisés/crépus (filtrée côté page).
     QC("hair_porosity", "Quelle est ta porosité ?", false, ["Faible", "Moyenne", "Forte"]),
   ],
 };
 
-// Pour Routine 360° on combine les 3 catégories
+// Pour Routine 360° on combine les éléments structurants des 3 catégories
+// (type de peau/corps/cheveux + préoccupations) et n'interroge le style de vie
+// qu'une seule fois, plutôt que de le répéter trois fois de suite.
 CATEGORY_QUESTIONS["360"] = [
-  ...CATEGORY_QUESTIONS.visage.slice(0, 2),
-  ...CATEGORY_QUESTIONS.corps.slice(0, 1),
-  ...CATEGORY_QUESTIONS.cheveux.slice(0, 2),
+  QC("skin_type", "Quel est ton type de peau ?", false, ["Peau grasse", "Peau sèche", "Peau mixte", "Peau sensible", "Peau normale", "Peau mature", "Peau acnéique"]),
+  QC("skin_concerns", "Tes préoccupations visage ?", true, ["Acné / Imperfections", "Pores dilatés", "Taches & hyperpigmentation", "Teint terne", "Rides & anti-âge", "Rougeurs & couperose", "Sensibilité & réactivité", "Déshydratation", "Excès de sébum", "Cernes & poches"]),
+  QC("body_type", "Type de peau corporelle ?", false, ["Sèche", "Normale", "Mixte", "Sensible", "Très sèche"]),
+  QC("body_concerns", "Tes préoccupations corps ?", true, ["Vergetures", "Cellulite", "Peau qui tiraille", "Démangeaisons", "Taches corporelles", "Cicatrices", "Acné corps", "Peau terne", "Transpiration excessive"]),
+  QC("hair_type", "Quel est ton type de cheveux ?", false, ["Raides", "Ondulés", "Bouclés", "Crépus", "Frisés"]),
+  QC("hair_concerns", "Tes préoccupations cheveux ?", true, ["Chute", "Casse", "Pointes sèches", "Pellicules", "Perte d'éclat", "Frisottis", "Cheveux colorés", "Cheveux abîmés", "Manque de volume"]),
+  ...LIFESTYLE_QUESTIONS,
 ];
 
 export function getCategoryQuestions(typeKey) {
@@ -380,6 +397,8 @@ export const ROUTINE_PRODUCTS = [
   { slug: "brume", label: "Brume", category: "brume", emoji: "💨", section: "skincare", det: "ta" },
   { slug: "creme-solaire", label: "Crème solaire visage", category: "creme-solaire-visage", emoji: "☀️", section: "skincare", det: "ta" },
   { slug: "soin-levres", label: "Soin lèvres", category: "soin-levres", emoji: "💋", section: "skincare", det: "ton" },
+  { slug: "huile-corps", label: "Huile corps", category: "huile-corps", emoji: "🌟", section: "skincare", det: "ton" },
+  { slug: "creme-solaire-corps", label: "Crème solaire corps", category: "creme-solaire-corps", emoji: "☀️", section: "skincare", det: "ta" },
   // Maquillage
   { slug: "fond-de-teint", label: "Fond de teint", category: "fond-de-teint-cosmetique", emoji: "🌹", section: "maquillage", det: "ton" },
   { slug: "correcteur", label: "Correcteur", category: "fond-de-teint-cosmetique", emoji: "🩷", section: "maquillage", det: "ton" },

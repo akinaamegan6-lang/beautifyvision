@@ -139,6 +139,8 @@ export default function Routine360Page() {
   // "ouvrait" bien la personnalisation, mais Valider mes preferences la
   // renvoyait a l'etape precedente au lieu de revenir sur son recap.
   const [modalReturnStep, setModalReturnStep] = useState(null);
+  const [budgetModalOpen, setBudgetModalOpen] = useState(false);
+  const [draftBudget, setDraftBudget] = useState({ min: 20, max: 80 });
   const [catAnswers, setCatAnswers] = useState({});
   const [catQIdx, setCatQIdx] = useState(0);
 
@@ -313,7 +315,7 @@ export default function Routine360Page() {
     const items = (sec) => {
       const all = ROUTINE_PRODUCTS.filter((p) => p.section === sec);
       if (chosenType === "corps" && sec === "skincare") {
-        return all.filter((p) => ["nettoyant","creme-corps","gommage","huile-visage","creme-solaire","brume"].includes(p.slug) || p.label.toLowerCase().includes("corps") || p.label.toLowerCase().includes("mains") || p.label.toLowerCase().includes("pieds") || p.label.toLowerCase().includes("déo"));
+        return all.filter((p) => ["nettoyant","creme-corps","huile-corps","creme-solaire-corps","brume"].includes(p.slug) || p.label.toLowerCase().includes("corps") || p.label.toLowerCase().includes("mains") || p.label.toLowerCase().includes("pieds") || p.label.toLowerCase().includes("déo"));
       }
       return all;
     };
@@ -443,10 +445,37 @@ export default function Routine360Page() {
           })}
         </div>
 
-        <div className="mt-6 bg-[#FEC4D2]/10 border border-[#FEC4D2]/40 rounded-3xl p-6 text-center">
+        <div className="mt-6 bg-[#FEC4D2]/10 border border-[#FEC4D2]/40 rounded-3xl p-6 text-center relative">
           <p className="text-xs uppercase tracking-wider text-neutral-500">Budget total</p>
           <p className="mt-1 text-3xl font-bold">{budget.min} € — {budget.max} €</p>
+          <button
+            onClick={() => { setDraftBudget(budget); setBudgetModalOpen(true); }}
+            className="absolute top-4 right-5 text-[#79C1E0] hover:text-[#0c3d52] transition"
+            aria-label="Modifier le budget"
+            data-testid="recap-edit-budget"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4.5l5 5"/><path d="M16 3 4 15v5h5L21 8z"/></svg>
+          </button>
         </div>
+
+        <Dialog open={budgetModalOpen} onOpenChange={setBudgetModalOpen}>
+          <DialogContent className="max-w-sm" data-testid="budget-edit-modal">
+            <h3 className="text-lg font-bold mb-4">Modifie ton <span className="editorial">budget</span></h3>
+            <div className="flex items-center gap-2">
+              <input type="number" value={draftBudget.min} onChange={(e) => setDraftBudget({ ...draftBudget, min: Number(e.target.value) })} className="w-24 px-3 py-2 border border-neutral-200 rounded-xl text-sm" data-testid="budget-edit-min"/>
+              <span className="text-neutral-400">€ →</span>
+              <input type="number" value={draftBudget.max} onChange={(e) => setDraftBudget({ ...draftBudget, max: Number(e.target.value) })} className="w-24 px-3 py-2 border border-neutral-200 rounded-xl text-sm" data-testid="budget-edit-max"/>
+              <span className="text-neutral-400">€</span>
+            </div>
+            <button
+              onClick={() => { setBudget(draftBudget); setBudgetModalOpen(false); }}
+              className="w-full bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 py-3 rounded-full font-medium transition mt-5"
+              data-testid="budget-edit-save"
+            >
+              Valider →
+            </button>
+          </DialogContent>
+        </Dialog>
 
         <div className="mt-10 text-center">
           <button
