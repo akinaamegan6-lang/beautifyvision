@@ -172,6 +172,7 @@ export default function AITryOnPage() {
       // sinon repli sur l'overlay local MediaPipe + Canvas (gratuit mais
       // moins realiste) pour que la page reste fonctionnelle entre-temps.
       let imageUrl;
+      let usedRealAi = true;
       try {
         const base64Only = photoDataUrl.split(",")[1] || photoDataUrl;
         const { data } = await api.post("/ai/apply-makeup", {
@@ -181,7 +182,10 @@ export default function AITryOnPage() {
         });
         imageUrl = `data:${data.mime_type};base64,${data.image_base64}`;
       } catch (err) {
+        usedRealAi = false;
+        const detail = err?.response?.data?.detail || err?.message || "erreur inconnue";
         console.warn("Application IA (backend) indisponible, repli sur l'overlay local :", err);
+        toast.error(`Génération IA indisponible (${detail}) — rendu de secours affiché, moins fidèle à la description.`);
         imageUrl = await applyMakeup(photoDataUrl, colors);
       }
 
@@ -196,7 +200,7 @@ export default function AITryOnPage() {
         )
       );
 
-      setResult({ image: imageUrl, products: details.filter(Boolean), summary });
+      setResult({ image: imageUrl, products: details.filter(Boolean), summary, usedRealAi });
       setStep(4);
     } catch (e) {
       console.error("Generate error:", e);
@@ -329,6 +333,11 @@ export default function AITryOnPage() {
         <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Résultat</p>
         <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#FEC4D2]">Ton <span className="editorial text-neutral-900">look</span></h2>
         <p className="mt-2 text-sm text-neutral-600">{result?.summary}</p>
+        {result && !result.usedRealAi && (
+          <p className="mt-1 text-xs text-amber-600 font-medium">
+            ⚠ Rendu de secours (IA indisponible) — ne reflète pas forcément ta description exacte.
+          </p>
+        )}
         <div className="mt-6 relative rounded-3xl overflow-hidden border-2 border-[#FEC4D2]" data-testid="result-image">
           <img src={result.image} alt="Résultat" className="w-full aspect-[4/5] object-cover" />
           {result.products.map((p, i) => {
