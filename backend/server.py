@@ -181,6 +181,7 @@ class AISelectProduct(BaseModel):
 
 class AISelectResponse(BaseModel):
     products: List[AISelectProduct]
+    out_of_budget: List[AISelectProduct] = []
     summary: str
 
 
@@ -324,9 +325,12 @@ async def ai_select_products(req: AISelectRequest):
     if not ANTHROPIC_API_KEY:
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY missing")
 
-    # Candidate pool: cosmetiques within budget
+    # Candidate pool: all cosmetiques products, in and out of budget. We keep
+    # over-budget items in the pool (rather than filtering them out entirely)
+    # so Claude can optionally surface a good out-of-budget option per zone,
+    # instead of simply never knowing such a product exists.
     catalog = await get_catalog()
-    candidates = [p for p in catalog if p["parent"] == "cosmetiques" and p["price"] <= req.budget_max]
+    candidates = [p for p in catalog if p["parent"] == "cosmetiques"]
     # Keep useful fields only to limit token count
     slim = [
         {
@@ -361,10 +365,22 @@ async def ai_select_products(req: AISelectRequest):
         "existant a une couleur qu'il n'a pas. "
         "Le champ color_hex de ta réponse doit toujours être recopié EXACTEMENT depuis le color_hex "
         "d'origine du produit choisi dans la liste fournie, jamais une couleur inventée ou idéalisée. "
+        "IMPORTANT sur le budget : la liste de produits fournie contient À LA FOIS des produits dans le "
+        "budget et des produits au-dessus du budget indiqué (regarde le champ price de chacun). La liste "
+        "principale \"products\" ne doit QUE contenir des produits dont le prix respecte strictement le "
+        "budget max indiqué. En plus de cette liste principale, si pour une zone demandée tu ne trouves "
+        "un bon produit (couleur proche) QUE au-dessus du budget, tu peux le proposer séparément dans "
+        "\"out_of_budget\" (0 à 2 produits maximum), avec le même format, pour que l'utilisatrice sache "
+        "qu'une meilleure option existe mais dépasse son budget. Ne mets JAMAIS dans \"out_of_budget\" un "
+        "produit qui est déjà dans \"products\", et ne mets dans \"out_of_budget\" que des produits dont "
+        "le prix dépasse réellement le budget max. "
         "Format strict :\n"
         "{\n"
         '  "products": [\n'
         '    {"product_id": "<id>", "zone": "lips|eyes|lashes|brows|liner|cheeks|highlight|face", "color_hex": "#RRGGBB (= couleur réelle du produit)", "reason": "<courte raison>"}\n'
+        "  ],\n"
+        '  "out_of_budget": [\n'
+        '    {"product_id": "<id>", "zone": "...", "color_hex": "#RRGGBB", "reason": "<pourquoi, en mentionnant que c\'est hors budget>"}\n'
         "  ],\n"
         '  "summary": "<résumé du look en 1 phrase>"\n'
         "}"
@@ -395,14 +411,20 @@ async def ai_select_products(req: AISelectRequest):
 
     parsed = _extract_json(response)
     products = parsed.get("products", [])
+    oob_products = parsed.get("out_of_budget", [])
     summary = parsed.get("summary", "Look personnalisé BeautifyVision")
 
-    # Validate product_ids exist
-    valid_ids = {p["id"] for p in catalog}
+    # Validate product_ids exist, and cross-check prices against the actual
+    # catalog so we never trust the model's own notion of what's in/out of
+    # budget: a "products" entry must truly be within budget, and an
+    # "out_of_budget" entry must truly be above it.
+    price_by_id = {p["id"]: p["price"] for p in catalog}
+    valid_ids = set(price_by_id.keys())
+
     cleaned = []
     for item in products:
         pid = item.get("product_id")
-        if pid in valid_ids:
+        if pid in valid_ids and price_by_id[pid] <= req.budget_max:
             cleaned.append(AISelectProduct(
                 product_id=pid,
                 zone=item.get("zone", "face"),
@@ -410,12 +432,26 @@ async def ai_select_products(req: AISelectRequest):
                 reason=item.get("reason", ""),
             ))
 
+    cleaned_ids = {p.product_id for p in cleaned}
+    cleaned_oob = []
+    for item in oob_products:
+        pid = item.get("product_id")
+        if pid in valid_ids and pid not in cleaned_ids and price_by_id[pid] > req.budget_max:
+            cleaned_oob.append(AISelectProduct(
+                product_id=pid,
+                zone=item.get("zone", "face"),
+                color_hex=item.get("color_hex", "#C68D78"),
+                reason=item.get("reason", ""),
+            ))
+        if len(cleaned_oob) >= 2:
+            break
+
     if not cleaned:
-        # Fallback: pick top-rated covering zones
+        # Fallback: pick top-rated covering zones, within budget
         seen_zones = set()
         for p in sorted(candidates, key=lambda x: -x.get("rating", 0)):
             z = p.get("zone")
-            if z and z not in seen_zones:
+            if z and z not in seen_zones and p["price"] <= req.budget_max:
                 cleaned.append(AISelectProduct(
                     product_id=p["id"],
                     zone=z,
@@ -426,7 +462,7 @@ async def ai_select_products(req: AISelectRequest):
             if len(cleaned) >= 4:
                 break
 
-    return AISelectResponse(products=cleaned, summary=summary)
+    return AISelectResponse(products=cleaned, out_of_budget=cleaned_oob, summary=summary)
 
 
 @api_router.post("/ai/apply-makeup", response_model=ApplyMakeupResponse)

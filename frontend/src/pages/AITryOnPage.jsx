@@ -46,7 +46,7 @@ async function selectProducts({ undertone, budgetMax, presetId, prompt, skinTone
       undertone,
       budget_max: budgetMax || 200,
     });
-    return { products: data.products, summary: data.summary };
+    return { products: data.products, outOfBudget: data.out_of_budget || [], summary: data.summary };
   } catch (err) {
     console.warn("Selection IA (backend) indisponible, repli sur la selection locale :", err);
   }
@@ -91,6 +91,7 @@ async function selectProducts({ undertone, budgetMax, presetId, prompt, skinTone
   const presetLabel = PRESET_LOOKS.find((p) => p.id === presetId)?.label || "";
   return {
     products: selected,
+    outOfBudget: [],
     summary: presetLabel ? `Look "${presetLabel}" · sous-ton ${undertone}` : `Sous-ton ${undertone}`,
   };
 }
@@ -151,7 +152,7 @@ export default function AITryOnPage() {
       const fullPrompt = `${presetText}. ${prompt}`.trim();
 
       // 1. Selection des produits (IA cote backend si les cles sont configurees)
-      const { products: selected, summary } = await selectProducts({
+      const { products: selected, outOfBudget, summary } = await selectProducts({
         undertone: skinTone.undertone,
         budgetMax: budget,
         presetId,
@@ -199,8 +200,21 @@ export default function AITryOnPage() {
             .catch(() => null)
         )
       );
+      const outOfBudgetDetails = await Promise.all(
+        (outOfBudget || []).map((s) =>
+          api.get(`/products/${s.product_id}`)
+            .then((r) => ({ ...r.data, zone: s.zone, color_hex: s.color_hex, reason: s.reason }))
+            .catch(() => null)
+        )
+      );
 
-      setResult({ image: imageUrl, products: details.filter(Boolean), summary, usedRealAi });
+      setResult({
+        image: imageUrl,
+        products: details.filter(Boolean),
+        outOfBudget: outOfBudgetDetails.filter(Boolean),
+        summary,
+        usedRealAi,
+      });
       setStep(4);
     } catch (e) {
       console.error("Generate error:", e);
@@ -394,6 +408,19 @@ export default function AITryOnPage() {
             {result.products.reduce((sum, p) => sum + (p.price || 0), 0).toFixed(2)} €
           </span>
         </div>
+
+        {result.outOfBudget?.length > 0 && (
+          <div className="mt-8" data-testid="out-of-budget-section">
+            <h4 className="text-lg font-semibold text-[#79C1E0]">Hors budget</h4>
+            <p className="mt-1 text-sm text-neutral-600 leading-relaxed">
+              Ces produits iraient encore mieux avec ce look, mais dépassent le budget que tu as choisi.
+              Ils ne sont pas comptés dans le total ci-dessus.
+            </p>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {result.outOfBudget.map((p) => <ProductCard key={p.id} product={p} />)}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
