@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Check, X, AlertTriangle, ChevronRight, Sparkles, ChevronLeft } from "lucide-react";
 import { ROUTINE_PRODUCTS, SKIN_PROBLEMS, BUDGET_RANGES, TEINT_SLUGS, getProductQuestions, getCategoryQuestions } from "../data/quizConfig";
-import { TYPE_HERO_IMAGE, getProductImage } from "../data/imageAssets";
+import { TYPE_HERO_IMAGE, getProductImage, BUDGET_ICON } from "../data/imageAssets";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "../components/AuthModal";
 import QuizStep from "../components/QuizStep";
@@ -407,7 +407,7 @@ export default function Routine360Page() {
 
           {/* Budget banner */}
           <div className="mt-6 bg-[#FEC4D2]/10 border border-[#FEC4D2]/40 rounded-2xl px-5 py-4 flex items-center gap-4">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#8b3a52" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="12" cy="12" r="2.4"/></svg>
+            <img src={BUDGET_ICON} alt="" className="w-[34px] h-[34px]" />
             <div className="flex-1">
               <p className="text-sm font-semibold">Budget total pour ta routine</p>
               <div className="mt-1 flex items-center gap-2">

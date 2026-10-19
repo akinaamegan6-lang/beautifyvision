@@ -7,6 +7,8 @@ export const TYPE_HERO_IMAGE = {
 
 export const NO_PRODUCT_IMAGE = "/icone/no-imga.png";
 
+export const BUDGET_ICON = "/icone/budget.png";
+
 // Visuels générés (ChatGPT, conversation "Modification interface site"), un
 // par catégorie de produit de la Routine 360°. On complète cette liste au fur
 // et à mesure que de nouveaux visuels sont générés ; tant qu'une catégorie n'y
@@ -28,7 +30,28 @@ export const CATEGORY_IMAGE = {
   "creme-solaire": "/image/cat-creme-solaire.png",
   "soin-levres": "/image/cat-soin-levres.png",
   "huile-corps": "/image/cat-huile-corps.png",
-  // "creme-solaire-corps": en attente de génération (limite ChatGPT atteinte)
+  "creme-solaire-corps": "/image/cat-creme-solaire-corps.png",
+  // Maquillage
+  "fond-de-teint": "/image/cat-fond-de-teint.png",
+  "correcteur": "/image/cat-correcteur.png",
+  "poudre": "/image/cat-poudre.png",
+  "blush": "/image/cat-blush.png",
+  "bronzer": "/image/cat-bronzer.png",
+  "highlighter": "/image/cat-highlighter.png",
+  "palette-yeux": "/image/cat-palette-yeux.png",
+  "mascara": "/image/cat-mascara.png",
+  "eyeliner": "/image/cat-eyeliner.png",
+  "rouge-a-levres": "/image/cat-rouge-a-levres.png",
+  "gloss": "/image/cat-gloss.png",
+  "sourcils": "/image/cat-sourcils.png",
+  "primer": "/image/cat-primer.png",
+  // Cheveux
+  "shampoing": "/image/cat-shampoing.png",
+  "apres-shampoing": "/image/cat-apres-shampoing.png",
+  "masque-cheveux": "/image/cat-masque-cheveux.png",
+  "huile-cheveux": "/image/cat-huile-cheveux.png",
+  "serum-cheveux": "/image/cat-serum-cheveux.png",
+  "spray-coiffant": "/image/cat-spray-coiffant.png",
 };
 
 export function getProductImage(slug) {
