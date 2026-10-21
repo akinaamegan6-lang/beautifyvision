@@ -11,6 +11,13 @@ const AFTER_IMG = "https://customer-assets.emergentagent.com/job_makeup-match-te
 
 const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
+// Les 3 étapes illustrées du bloc « Le Configurateur » (images dans /public/image).
+const CONFIGURATEUR_STEPS = [
+  { src: "/image/configurateur-quiz.png", alt: "Répondre au quiz sur son téléphone", label: "Réponds au quiz" },
+  { src: "/image/configurateur-criteres.png", alt: "Affiner ses critères avec des curseurs", label: "Affine tes critères" },
+  { src: "/image/configurateur-produit.png", alt: "Trouver le produit parfait", label: "Trouve ton produit" },
+];
+
 // Produits réels mis en avant dans le hero (flux Awin / Perfumeria Comas) : un bleu (La Roche-Posay), un rose (Nuxe).
 const HERO_PRODUCTS = {
   bleu: {
@@ -221,14 +228,16 @@ export default function HomePage() {
               </p>
 
               <div className="mt-7 bg-[#FEC4D2]/[0.04] border border-[#FEC4D2]/30 rounded-2xl p-5">
-                <div className="flex items-center justify-between text-xs text-neutral-500 mb-3">
-                  <span>Diagnostic en cours...</span>
-                  <span>6 étapes</span>
-                </div>
+                <p className="text-center text-sm md:text-[0.95rem] font-medium text-neutral-700 leading-snug mb-4">
+                  Réponds au quiz, <span className="editorial text-[#79C1E0]">affine tes critères</span>, trouve le produit parfait.
+                </p>
                 <div className="grid grid-cols-3 gap-3">
-                  {[0,1,2].map(i => (
-                    <div key={i} className="aspect-[3/4] rounded-xl bg-white border border-[#FEC4D2]/40 flex items-center justify-center">
-                      <div className="w-8 h-8 rounded-full bg-[#FEC4D2]/40"/>
+                  {CONFIGURATEUR_STEPS.map((step) => (
+                    <div key={step.src} className="rounded-xl bg-white border border-[#FEC4D2]/40 overflow-hidden flex flex-col">
+                      <div className="aspect-[3/4]">
+                        <img src={step.src} alt={step.alt} loading="lazy" className="w-full h-full object-cover"/>
+                      </div>
+                      <p className="px-2 py-2 text-center text-[11px] sm:text-xs font-medium text-neutral-600 leading-tight">{step.label}</p>
                     </div>
                   ))}
                 </div>
