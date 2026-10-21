@@ -27,7 +27,7 @@ export default function ArticleCard({ article }) {
           alt={title}
           loading="lazy"
           onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
-          className="w-full h-full object-cover group-hover:scale-105 transition duration-700 will-change-transform"
+          className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
         />
         {cat && (
           <span className="absolute top-3 left-3 bg-white/95 text-[#79C1E0] text-[10px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm">

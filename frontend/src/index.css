@@ -88,27 +88,25 @@ html, body {
 ::-webkit-scrollbar-thumb { background: #FEC4D2; border-radius: 999px; }
 
 /* Card hover lift */
-/* Effet de survol des cartes.
-   Avant : translateY(-4px). Sur Safari (et sur tout navigateur), quand la souris
-   est sur le bord bas de la carte, la carte monte, la souris se retrouve hors
-   de la carte, la carte redescend, etc. : d'ou le tremblement. On agrandit
-   maintenant legerement la carte depuis son centre (scale) : ses bords ne
-   s'eloignent jamais de la souris, donc plus de va-et-vient. La couche est
-   aussi promue sur le GPU (translateZ / backface-visibility) pour eviter le
-   scintillement des coins arrondis sur Safari. Le survol n'existe que sur les
-   appareils avec une vraie souris (pas de "survol colle" au toucher). */
+/* Effet de survol des cartes (version sans mouvement de la carte).
+   Les versions precedentes deplaçaient (translateY) puis agrandissaient (scale)
+   la carte au survol. Sur Safari, cela faisait trembler les cartes. On ne
+   deplace donc plus la carte : le survol ajoute seulement un halo rose et une
+   bordure plus marquee, et les photos a l'interieur zooment doucement. La zone
+   survolee ne bouge jamais, donc plus de va-et-vient, et Safari n'a plus de
+   transformation de la carte a recalculer. "isolation: isolate" force un calque
+   propre pour les coins arrondis, ce qui evite le scintillement du zoom des
+   photos a l'interieur sur Safari. Le survol n'existe que sur les appareils
+   avec une vraie souris (pas de "survol colle" au toucher). */
 .card-lift {
-  transition: transform .3s cubic-bezier(.22,.61,.36,1), box-shadow .3s ease, border-color .3s ease;
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
+  transition: box-shadow .3s ease, border-color .3s ease;
 }
+.card-lift, .card-lift .overflow-hidden { isolation: isolate; }
 @media (hover: hover) and (pointer: fine) {
-  .card-lift:hover { transform: translateZ(0) scale(1.02); box-shadow: 0 18px 40px -16px rgba(254,196,210,0.55); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .card-lift, .card-lift:hover { transition: box-shadow .2s ease, border-color .2s ease; transform: none; }
+  .card-lift:hover {
+    box-shadow: 0 0 0 3px rgba(254,196,210,0.35), 0 18px 40px -16px rgba(254,196,210,0.55);
+    border-color: #FEC4D2;
+  }
 }
 
 /* Mega menu animation */
