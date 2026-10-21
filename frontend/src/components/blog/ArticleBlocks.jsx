@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductRating from "../ProductRating";
 import RichText from "./RichText";
 import { slugifyHeading } from "./blogText";
-import { NO_PRODUCT_IMAGE } from "../../data/imageAssets";
+import { NO_PRODUCT_IMAGE, swapIfPlaceholder } from "../../data/imageAssets";
 
 const LIGHTBULB_ICON = "/icone/nos-conseilles-picto.png";
 
@@ -135,7 +135,7 @@ export function ProductsBlock({ items = [] }) {
         {items.map((p, i) => (
           <div key={i} className="shrink-0 w-44 snap-start bg-white border border-[#FEC4D2]/30 rounded-2xl p-4">
             <div className="aspect-square rounded-xl bg-gradient-to-br from-[#FEC4D2]/10 to-[#79C1E0]/10 overflow-hidden mb-3 flex items-center justify-center">
-              <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} className={p.image ? "w-full h-full object-cover" : "w-1/2 h-1/2 object-contain"}/>
+              <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} className={p.image ? "w-full h-full object-cover" : "w-1/2 h-1/2 object-contain"} onLoad={(e) => swapIfPlaceholder(e, "w-1/2 h-1/2 object-contain")} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; e.currentTarget.className = "w-1/2 h-1/2 object-contain"; }}/>
             </div>
             <p className="text-[10px] uppercase tracking-wider text-neutral-500">{p.brand}</p>
             <p className="text-sm font-semibold text-neutral-900 line-clamp-2 min-h-[2.4em] mt-0.5">{p.name}</p>

@@ -1,6 +1,6 @@
 import { Heart } from "lucide-react";
 import { useWishlist } from "../hooks/useWishlist";
-import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
+import { NO_PRODUCT_IMAGE, swapIfPlaceholder } from "../data/imageAssets";
 import ProductRating from "./ProductRating";
 
 export default function ProductCard({ product, rank }) {
@@ -32,7 +32,7 @@ export default function ProductCard({ product, rank }) {
           alt={product.name}
           loading="lazy"
           className="w-full h-full object-contain group-hover:scale-105 transition duration-700"
-          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
+          onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
         />
       </div>
       <p className="text-xs uppercase tracking-wider text-neutral-500">{product.brand}</p>

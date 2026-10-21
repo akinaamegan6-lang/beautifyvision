@@ -7,6 +7,31 @@ export const TYPE_HERO_IMAGE = {
 
 export const NO_PRODUCT_IMAGE = "/icone/no-imga.png";
 
+// Le CDN Awin (images2.productserve.com) renvoie parfois, au lieu de la photo,
+// un petit GIF "No image available" de 70x70 px (image valide : le navigateur
+// ne declenche donc pas d'erreur). Les vraies photos font 600x600. Quand on
+// detecte ce placeholder, on essaie d'abord la photo directement chez le
+// marchand (son adresse est dans le parametre url= du lien Awin), puis, si elle
+// n'existe pas non plus, on affiche notre pictogramme.
+export function swapIfPlaceholder(e, className) {
+  const img = e.currentTarget;
+  if (!(img.naturalWidth === 70 && img.naturalHeight === 70 && img.src.includes("productserve.com"))) return;
+  const toPictogram = () => {
+    img.onerror = null;
+    img.src = NO_PRODUCT_IMAGE;
+    if (className) img.className = className;
+  };
+  let direct = null;
+  try {
+    const raw = new URL(img.src).searchParams.get("url");
+    if (raw) direct = raw.startsWith("ssl:") ? `https://${raw.slice(4)}` : `http://${raw}`;
+  } catch { /* adresse illisible : on passe directement au pictogramme */ }
+  if (!direct) return toPictogram();
+  img.onerror = toPictogram;
+  img.src = direct;
+}
+
+
 export const BUDGET_ICON = "/icone/budget.png";
 
 // Visuels générés (ChatGPT, conversation "Modification interface site"), un

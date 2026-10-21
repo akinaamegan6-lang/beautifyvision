@@ -4,7 +4,7 @@ import { Save, Share2, Sparkles, ChevronDown, ExternalLink } from "lucide-react"
 import { api } from "../lib/api";
 import { rankProducts, splitByMatchQuality, MIN_GOOD_MATCH_SCORE } from "../lib/scoring";
 import { getRoutineProductBySlug, routineIdealTitle, SKIN_PROBLEMS } from "../data/quizConfig";
-import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
+import { NO_PRODUCT_IMAGE, swapIfPlaceholder } from "../data/imageAssets";
 import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
 import ProductRating from "../components/ProductRating";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ function AlternativeCard({ product, index }) {
   return (
     <div className="bg-white border border-[#FEC4D2]/50 rounded-2xl p-4 flex items-center gap-4">
       <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 overflow-hidden shrink-0 p-2">
-        <img src={product.image || NO_PRODUCT_IMAGE} alt={product.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
+        <img src={product.image || NO_PRODUCT_IMAGE} alt={product.name} className="w-full h-full object-contain" onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[10px] uppercase tracking-wider text-[#79C1E0] font-semibold">Alternative n°{index}</p>
@@ -72,7 +72,7 @@ function ProductSection({ slug, recommendations }) {
       <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} {routineIdealTitle(meta)}</h3>
       <div className="bg-white border-2 border-[#FEC4D2] rounded-3xl overflow-hidden grid md:grid-cols-[280px_1fr]">
         <div className="bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 p-6">
-          <img src={best.image || NO_PRODUCT_IMAGE} alt={best.name} className="w-full h-56 md:h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
+          <img src={best.image || NO_PRODUCT_IMAGE} alt={best.name} className="w-full h-56 md:h-full object-contain" onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
         </div>
         <div className="p-6 md:p-7 flex flex-col">
           <div className="flex items-start justify-between gap-4">
@@ -216,7 +216,7 @@ export default function ResultatsRoutinePage() {
               {allBest.map((p) => (
                 <div key={p.id} className="shrink-0 w-44 bg-white border border-[#FEC4D2]/60 rounded-2xl p-3">
                   <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 mb-2 p-2">
-                    <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
+                    <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} className="w-full h-full object-contain" onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
                   </div>
                   <p className="text-[10px] uppercase tracking-wider text-neutral-500 truncate">{p.brand}</p>
                   <p className="text-xs font-medium text-neutral-900 line-clamp-2 min-h-[2.4em]">{p.name}</p>

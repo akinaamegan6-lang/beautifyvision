@@ -1,6 +1,6 @@
 import { ExternalLink, Sparkles } from "lucide-react";
 import ProductRating from "./ProductRating";
-import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
+import { NO_PRODUCT_IMAGE, swapIfPlaceholder } from "../data/imageAssets";
 
 export default function ProductRecommendationCard({ product, badge = "RecommandÃ© pour toi" }) {
   const score = product._score ?? 90;
@@ -16,7 +16,7 @@ export default function ProductRecommendationCard({ product, badge = "RecommandÃ
           src={product.image || NO_PRODUCT_IMAGE}
           alt={product.name}
           className="w-full h-64 md:h-full object-contain"
-          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
+          onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
         />
       </div>
       <div className="p-7 md:p-10 flex flex-col">

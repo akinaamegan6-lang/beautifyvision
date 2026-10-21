@@ -1,7 +1,7 @@
 import { Heart, ExternalLink } from "lucide-react";
 import ProductRating from "./ProductRating";
 import { useWishlist } from "../hooks/useWishlist";
-import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
+import { NO_PRODUCT_IMAGE, swapIfPlaceholder } from "../data/imageAssets";
 
 export default function HorizontalProductCard({ product }) {
   const { has, toggle } = useWishlist();
@@ -17,7 +17,7 @@ export default function HorizontalProductCard({ product }) {
           alt={product.name}
           loading="lazy"
           className="w-full h-64 md:h-full object-contain group-hover:scale-105 transition duration-700"
-          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
+          onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
         />
       </div>
 
