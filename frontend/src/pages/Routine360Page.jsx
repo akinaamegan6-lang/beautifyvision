@@ -247,7 +247,7 @@ export default function Routine360Page() {
             {TYPES.map((t) => (
               <button key={t.key} onClick={() => choose(t.key)} className="group bg-white border border-[#FEC4D2]/40 hover:border-[#FEC4D2] rounded-3xl overflow-hidden text-left card-lift transition" data-testid={`type-${t.key}`}>
                 <div className="h-56 md:h-64 overflow-hidden bg-neutral-100">
-                  <img src={t.image} alt={t.label} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-700"/>
+                  <img src={t.image} alt={t.label} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-700 will-change-transform"/>
                 </div>
                 <div className="p-6 flex items-center gap-4">
                   <t.Icon/>

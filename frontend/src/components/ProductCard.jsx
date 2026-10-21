@@ -31,7 +31,7 @@ export default function ProductCard({ product, rank }) {
           src={product.image || NO_PRODUCT_IMAGE}
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-contain group-hover:scale-105 transition duration-700"
+          className="w-full h-full object-contain group-hover:scale-105 transition duration-700 will-change-transform"
           onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}
         />
       </div>
