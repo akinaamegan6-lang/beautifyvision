@@ -115,6 +115,9 @@ function detectSkinToneFromImage(img) {
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function AITryOnPage() {
   const [step, setStep] = useState(1); // 1 upload, 2 describe, 3 loading, 4 result
+
+  // Remonte en haut à chaque changement d'étape (évite d'arriver au milieu/en bas de la page suivante)
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [step]);
   const [photoDataUrl, setPhotoDataUrl] = useState(null);
   const [skinTone, setSkinTone] = useState({ hex: "#E2BFA0", undertone: "neutral" });
   const [prompt, setPrompt] = useState("");

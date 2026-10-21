@@ -26,7 +26,7 @@ export default function HomePage() {
   return (
     <main className="bg-white overflow-x-hidden">
       {/* ===== HERO ===== */}
-      <section className="relative px-6 pt-16 pb-32" data-testid="hero-section">
+      <section className="relative px-6 pt-12 md:pt-16 pb-12 md:pb-32" data-testid="hero-section">
         <div className="halo-pink -top-32 -left-32" />
         <div className="halo-blue top-20 -right-10" />
         <div className="max-w-7xl mx-auto grid lg:grid-cols-[1fr_1.1fr] lg:grid-rows-[auto_1fr] gap-x-10 gap-y-8 relative z-10">
@@ -63,16 +63,23 @@ export default function HomePage() {
                 <span className="underline underline-offset-4 decoration-neutral-300 group-hover:decoration-[#79C1E0] transition">Voir comment ça marche</span>
               </a>
             </div>
-            <div className="mt-10 flex flex-wrap items-start gap-x-6 gap-y-5 text-sm text-neutral-600">
-              <div className="flex items-start gap-2 w-[95px]"><img src="/icone/etoiles.png" alt="" className="w-5 h-5 object-contain shrink-0"/> <span>100% gratuit</span></div>
-              <div className="flex items-start gap-2 w-[110px]"><img src="/icone/feuille.png" alt="" className="w-5 h-5 object-contain shrink-0"/> <span>Sans inscription</span></div>
-              <div className="flex items-start gap-2 w-[130px]"><img src="/icone/vrai.png" alt="" className="w-5 h-5 object-contain shrink-0"/> <span>Recommandations personnalisées</span></div>
-              <div className="flex items-start gap-2 w-[130px]"><img src="/icone/coeur.png" alt="" className="w-5 h-5 object-contain shrink-0"/> <span>Des produits fiables et adaptés</span></div>
+            <div className="mt-10 grid grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-5 text-sm text-neutral-600">
+              {[
+                ["/icone/etoiles.png", "100% gratuit"],
+                ["/icone/feuille.png", "Sans inscription"],
+                ["/icone/vrai.png", "Recommandations personnalisées"],
+                ["/icone/coeur.png", "Des produits fiables et adaptés"],
+              ].map(([icon, label]) => (
+                <div key={label} className="flex items-start gap-2 min-w-0">
+                  <img src={icon} alt="" className="w-5 h-5 object-contain shrink-0 mt-0.5"/>
+                  <span className="min-w-0 [overflow-wrap:anywhere]">{label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Bloc B — visuel (mobile: 2e, desktop: col-2 rows-1+2) */}
-          <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 relative animate-fade-in flex justify-center lg:justify-end lg:-mr-6 xl:-mr-16">
+          <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 relative animate-fade-in flex justify-center lg:justify-end pt-14 pb-14 sm:pt-16 sm:pb-16 lg:pt-0 lg:pb-0 lg:-mr-6 xl:-mr-16">
             <div className="absolute -inset-16 bg-gradient-to-br from-[#FEC4D2]/40 via-[#FEC4D2]/10 to-[#79C1E0]/35 rounded-full blur-3xl -z-10" />
 
             <p className="handwritten absolute -left-2 md:left-4 top-4 md:top-8 text-xl md:text-2xl lg:text-[1.7rem] text-neutral-700 leading-snug -rotate-3 z-20 hidden sm:block">
@@ -84,7 +91,7 @@ export default function HomePage() {
             </div>
 
             {/* Widget — sérum */}
-            <div className="absolute top-6 sm:top-10 right-0 md:-right-4 xl:-right-10 bg-white rounded-2xl shadow-xl p-3.5 flex items-center gap-3 w-56 md:w-64 z-20 card-lift">
+            <div className="absolute top-0 lg:top-10 right-0 md:-right-4 xl:-right-10 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift">
               <img src="/image/serum-hero-section.png" alt="Sérum hydratant Hyalu B5" className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-neutral-900 truncate">Sérum hydratant</p>
@@ -95,7 +102,7 @@ export default function HomePage() {
             </div>
 
             {/* Widget — crème */}
-            <div className="absolute bottom-20 sm:bottom-28 -left-2 md:-left-10 xl:-left-16 bg-white rounded-2xl shadow-xl p-3.5 flex items-center gap-3 w-56 md:w-64 z-20 card-lift">
+            <div className="absolute bottom-0 lg:bottom-28 left-0 md:-left-6 xl:-left-16 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift">
               <img src="/image/creme-hero-section.png" alt="Crème apaisante Cicaplast Baume B5+" className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-neutral-900 truncate">Crème apaisante</p>
@@ -132,7 +139,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section id="how-it-works" className="px-6 py-24 bg-[#FEC4D2]/[0.04] scroll-mt-24" data-testid="how-it-works">
+      <section id="how-it-works" className="px-6 py-14 md:py-24 bg-[#FEC4D2]/[0.04] scroll-mt-24" data-testid="how-it-works">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Le concept</p>
           <h2 className="mt-3 text-3xl md:text-5xl font-bold text-[#79C1E0]">

@@ -8,6 +8,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Empêche tout défilement horizontal parasite (halos, pastilles débordantes).
+   `clip` (et non `hidden`) pour ne pas casser le header sticky. */
+html, body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+main {
+  overflow-x: clip;
+}
+
 html, body {
   margin: 0;
   font-family: 'Poppins', sans-serif;

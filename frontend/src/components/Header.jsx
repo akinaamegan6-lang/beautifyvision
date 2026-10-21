@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Heart, Sparkles, User, ChevronDown, LogOut } from "lucide-react";
+import { Heart, Sparkles, User, ChevronDown, LogOut, Menu, X } from "lucide-react";
 import { api } from "../lib/api";
 import { useWishlist } from "../hooks/useWishlist";
 import { SKIN_PROBLEMS } from "../data/quizConfig";
@@ -12,6 +12,8 @@ export default function Header() {
   const [open, setOpen] = useState(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState(null);
   const closeTimer = useRef(null);
 
   const startCloseTimer = () => {
@@ -25,7 +27,15 @@ export default function Header() {
   const { user, logout } = useAuth();
   const loc = useLocation();
 
-  useEffect(() => { setOpen(null); setProfileOpen(false); }, [loc.pathname]);
+  useEffect(() => { setOpen(null); setProfileOpen(false); setMobileOpen(false); setMobileSection(null); }, [loc.pathname]);
+
+  // Bloque le scroll de la page derrière le menu mobile ouvert
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [mobileOpen]);
   useEffect(() => {
     api.get("/categories").then(r => setCategories(r.data)).catch(() => setCategories({}));
   }, []);
@@ -82,6 +92,16 @@ export default function Header() {
               </div>
             )}
           </div>
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="lg:hidden p-2 hover:text-[#79C1E0] transition"
+            aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={mobileOpen}
+            data-testid="burger-btn"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
           <Link to="/essayage-ia" className="hidden md:inline-flex items-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white px-4 py-2.5 rounded-full text-sm font-medium transition shadow-sm hover:shadow-md whitespace-nowrap shrink-0" data-testid="try-ai-cta">
             <Sparkles size={14}/> Essayer l'IA
           </Link>
@@ -90,6 +110,55 @@ export default function Header() {
           </Link>
         </div>
       </div>
+
+      {/* Menu mobile / tablette (burger) */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden absolute left-0 right-0 top-full bg-white border-b border-[#FEC4D2]/40 shadow-xl max-h-[calc(100vh-70px)] overflow-y-auto"
+          data-testid="mobile-menu"
+        >
+          <nav className="px-6 py-4 flex flex-col">
+            {navItems.map((it) => {
+              const expanded = mobileSection === it.key;
+              const items = it.key === "problemes"
+                ? SKIN_PROBLEMS.map((p) => ({ slug: p.slug, label: p.label, to: `/probleme/${p.slug}` }))
+                : (categories[it.key]?.products || []).map((p) => ({ slug: p.slug, label: p.label, to: `/quiz/${it.key}/general/${p.slug}` }));
+              return (
+                <div key={it.key} className="border-b border-neutral-100">
+                  <button
+                    type="button"
+                    onClick={() => setMobileSection(expanded ? null : it.key)}
+                    className="w-full flex items-center justify-between py-3.5 text-base font-medium text-neutral-800"
+                    aria-expanded={expanded}
+                    data-testid={`mobile-menu-${it.key}`}
+                  >
+                    {it.label}
+                    <ChevronDown size={18} className={`transition ${expanded ? "rotate-180" : ""}`} />
+                  </button>
+                  {expanded && (
+                    <ul className="pb-3 grid grid-cols-2 gap-x-4">
+                      {items.map((p) => (
+                        <li key={p.slug}>
+                          <Link to={p.to} className="block py-2 text-sm text-neutral-600 hover:text-[#79C1E0] transition">{p.label}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+            <Link to="/blog" className="py-3.5 text-base font-bold text-neutral-900 border-b border-neutral-100" data-testid="mobile-menu-blog">Blog</Link>
+            <div className="pt-4 pb-2 flex flex-col sm:flex-row gap-3">
+              <Link to="/routine-360" className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#FEC4D2] text-neutral-900 px-4 py-3 rounded-full text-sm font-semibold">
+                <Sparkles size={14}/> Routine 360°
+              </Link>
+              <Link to="/essayage-ia" className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#79C1E0] text-white px-4 py-3 rounded-full text-sm font-medium">
+                <Sparkles size={14}/> Essayer l'IA
+              </Link>
+            </div>
+          </nav>
+        </div>
+      )}
 
       {/* Mega menu */}
       {open && (

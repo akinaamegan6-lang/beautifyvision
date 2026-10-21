@@ -33,8 +33,8 @@ export default function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-[#79C1E0] mb-4">Suis-nous</h4>
           <div className="flex gap-3">
-            <a href="#" className="w-10 h-10 rounded-full border border-[#FEC4D2] flex items-center justify-center text-[#FEC4D2] hover:bg-[#FEC4D2] hover:text-white transition" aria-label="Instagram"><Instagram size={16}/></a>
-            <a href="#" className="w-10 h-10 rounded-full border border-[#79C1E0] flex items-center justify-center text-[#79C1E0] hover:bg-[#79C1E0] hover:text-white transition" aria-label="Twitter"><Twitter size={16}/></a>
+            <a href="#" onClick={(e) => e.preventDefault()} className="w-10 h-10 rounded-full border border-[#FEC4D2] flex items-center justify-center text-[#FEC4D2] hover:bg-[#FEC4D2] hover:text-white transition" aria-label="Instagram"><Instagram size={16}/></a>
+            <a href="#" onClick={(e) => e.preventDefault()} className="w-10 h-10 rounded-full border border-[#79C1E0] flex items-center justify-center text-[#79C1E0] hover:bg-[#79C1E0] hover:text-white transition" aria-label="Twitter"><Twitter size={16}/></a>
           </div>
           <Link to="/essayage-ia" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[#79C1E0] hover:underline">
             <Sparkles size={14}/> Essayer l'IA

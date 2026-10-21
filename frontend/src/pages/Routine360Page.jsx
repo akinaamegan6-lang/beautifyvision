@@ -144,6 +144,9 @@ export default function Routine360Page() {
   const [catAnswers, setCatAnswers] = useState({});
   const [catQIdx, setCatQIdx] = useState(0);
 
+  // Remonte en haut à chaque changement d'étape (évite d'arriver au milieu/en bas de la page suivante)
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [step, catQIdx]);
+
   // Auto-advance when user logs in
   useEffect(() => {
     if (status === "auth" && step === 0) setStep(1);
@@ -494,14 +497,14 @@ export default function Routine360Page() {
               if (Array.isArray(v)) tags.push(...v); else if (v) tags.push(v);
             });
             return (
-              <div key={slug} className="flex items-center gap-5 px-6 py-5" data-testid={`recap-row-${slug}`}>
-                <img src={getProductImage(slug)} alt="" className="w-10 h-10 object-contain"/>
-                <span className="font-semibold text-sm min-w-[120px]">{meta?.label}</span>
-                <div className="flex flex-wrap gap-1.5 flex-1">
+              <div key={slug} className="flex items-center gap-3 sm:gap-5 px-4 sm:px-6 py-5" data-testid={`recap-row-${slug}`}>
+                <img src={getProductImage(slug)} alt="" className="w-10 h-10 object-contain shrink-0"/>
+                <span className="font-semibold text-sm w-[100px] sm:w-[140px] shrink-0 break-words">{meta?.label}</span>
+                <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">
                   {tags.slice(0, 3).map((t) => <span key={t} className="text-[10px] bg-[#FEC4D2]/40 text-neutral-800 px-2 py-1 rounded-full">{t}</span>)}
                   {tags.length === 0 && <span className="text-xs italic text-neutral-400">Aucune personnalisation</span>}
                 </div>
-                <button onClick={() => { setStep(3); setModalSlug(slug); setModalReturnStep(5); }} className="text-[#79C1E0] hover:text-[#0c3d52] transition" aria-label="Modifier" data-testid={`recap-edit-${slug}`}>
+                <button onClick={() => { setStep(3); setModalSlug(slug); setModalReturnStep(5); }} className="text-[#79C1E0] hover:text-[#0c3d52] transition shrink-0 p-1" aria-label="Modifier" data-testid={`recap-edit-${slug}`}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4.5l5 5"/><path d="M16 3 4 15v5h5L21 8z"/></svg>
                 </button>
               </div>

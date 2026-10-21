@@ -1,7 +1,7 @@
 import "@/App.css";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HomePage from "@/pages/HomePage";
@@ -27,10 +27,13 @@ import { AuthProvider } from "@/context/AuthContext";
 // revient en arrière/avant dans l'historique au sein d'une même page,
 // cf. la navigation question par question du quiz).
 function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+  const { pathname, search } = useLocation();
+  // useLayoutEffect + "instant" : pas d'animation (html a scroll-behavior:smooth)
+  // et pas de flash de la nouvelle page à l'ancienne position de scroll.
+  // `search` : le quiz change de question via ?q=N sans changer de pathname.
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname, search]);
   return null;
 }
 

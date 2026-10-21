@@ -36,6 +36,9 @@ export default function ProblemeRoutinePage() {
   const [zonesPrecises, setZonesPrecises] = useState([]);
   const [problemAnswers, setProblemAnswers] = useState({});
   const [qIdx, setQIdx] = useState(0);
+
+  // Remonte en haut à chaque changement d'étape (évite d'arriver au milieu/en bas de la page suivante)
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [stage, qIdx]);
   const [ranked, setRanked] = useState([]);
   const [loading, setLoading] = useState(false);
 
