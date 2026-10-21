@@ -67,6 +67,34 @@ def dedupe_variants(items):
     return deduped
 
 
+product_ratings_col = db["product_ratings"]
+
+
+def rating_key(p) -> str:
+    """Cle stable d'un produit pour les notes.
+
+    On utilise l'identifiant Awin du produit (parametre p= du lien affilie)
+    quand il existe : c'est le meme pour une fiche du catalogue et pour la
+    meme fiche integree dans un article de blog (qui n'a pas d'id propre).
+    """
+    m = re.search(r"[?&]p=(\d+)", p.get("affiliate_url", "") or "")
+    if m:
+        return f"aw{m.group(1)}"
+    return f"id{p.get('id', '')}"
+
+
+async def ratings_stats(keys: Optional[List[str]] = None) -> dict:
+    """Moyenne (1 decimale) et nombre de notes par cle produit."""
+    pipeline = []
+    if keys is not None:
+        pipeline.append({"$match": {"key": {"$in": keys}}})
+    pipeline.append({"$group": {"_id": "$key", "avg": {"$avg": "$stars"}, "count": {"$sum": 1}}})
+    out = {}
+    async for row in product_ratings_col.aggregate(pipeline):
+        out[row["_id"]] = {"rating": round(row["avg"], 1), "reviews": row["count"]}
+    return out
+
+
 async def get_catalog():
     """Catalogue de produits servi par l'API.
 
@@ -77,10 +105,21 @@ async def get_catalog():
     """
     items = await products_col.find({}).to_list(length=20000)
     if not items:
-        return CATALOG
+        items = [dict(p) for p in CATALOG]
+    else:
+        for it in items:
+            it.pop("_id", None)
+        items = dedupe_variants(items)
+    # Les notes affichees sont UNIQUEMENT celles laissees par les visiteuses
+    # (collection product_ratings). Les anciennes valeurs par defaut (4.0 / 0
+    # avis) du flux et du catalogue de demo sont ecrasees : 0 note tant que
+    # personne n'a note le produit.
+    stats = await ratings_stats()
     for it in items:
-        it.pop("_id", None)
-    return dedupe_variants(items)
+        s = stats.get(rating_key(it))
+        it["rating"] = s["rating"] if s else 0.0
+        it["reviews"] = s["reviews"] if s else 0
+    return items
 
 
 app = FastAPI()
@@ -293,6 +332,48 @@ async def get_product(product_id: str):
         if p["id"] == product_id:
             return p
     raise HTTPException(status_code=404, detail="Product not found")
+
+
+# ============ Notes des produits (donnees par les visiteuses) ============
+RATING_KEY_RE = re.compile(r"^(aw\d{1,20}|id[A-Za-z0-9_\-]{1,64})$")
+
+
+class RatingStats(BaseModel):
+    rating: float = 0.0
+    reviews: int = 0
+
+
+class RatingSubmit(BaseModel):
+    key: str
+    stars: int
+    voter_id: str
+
+
+@api_router.get("/ratings", response_model=dict)
+async def get_ratings(keys: str = ""):
+    wanted = [k for k in keys.split(",") if RATING_KEY_RE.match(k)][:60]
+    stats = await ratings_stats(wanted) if wanted else {}
+    return {k: stats.get(k, {"rating": 0.0, "reviews": 0}) for k in wanted}
+
+
+@api_router.post("/ratings", response_model=RatingStats)
+async def submit_rating(req: RatingSubmit):
+    if not RATING_KEY_RE.match(req.key):
+        raise HTTPException(status_code=400, detail="Produit invalide")
+    if not 1 <= req.stars <= 5:
+        raise HTTPException(status_code=400, detail="La note doit etre comprise entre 1 et 5")
+    voter = req.voter_id.strip()
+    if not 8 <= len(voter) <= 64:
+        raise HTTPException(status_code=400, detail="Identifiant invalide")
+    now = datetime.now(timezone.utc).isoformat()
+    # Une seule note par visiteuse et par produit : revoter remplace la note.
+    await product_ratings_col.update_one(
+        {"key": req.key, "voter_id": voter},
+        {"$set": {"stars": req.stars, "updated_at": now}, "$setOnInsert": {"created_at": now}},
+        upsert=True,
+    )
+    stats = await ratings_stats([req.key])
+    return stats.get(req.key, {"rating": float(req.stars), "reviews": 1})
 
 
 # ============ AI Endpoints ============

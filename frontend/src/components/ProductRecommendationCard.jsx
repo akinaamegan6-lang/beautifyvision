@@ -1,10 +1,10 @@
-import { Star, ExternalLink, Sparkles } from "lucide-react";
+import { ExternalLink, Sparkles } from "lucide-react";
+import ProductRating from "./ProductRating";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 
 export default function ProductRecommendationCard({ product, badge = "Recommand√© pour toi" }) {
   const score = product._score ?? 90;
   const reasons = product._reasons || [];
-  const filled = Math.round(product.rating || 0);
 
   return (
     <div className="relative bg-white border-2 border-[#FEC4D2] rounded-3xl overflow-hidden grid md:grid-cols-[1fr_1.2fr] gap-0 shadow-[0_30px_80px_-40px_rgba(254,196,210,0.6)]" data-testid="recommendation-card">
@@ -31,13 +31,7 @@ export default function ProductRecommendationCard({ product, badge = "Recommand√
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 mt-3">
-          {[0,1,2,3,4].map(i => (
-            <Star key={i} size={14} className={i < filled ? "fill-[#FEC4D2] text-[#FEC4D2]" : "text-[#FEC4D2]/40"} />
-          ))}
-          <span className="ml-1 text-sm font-semibold">{product.rating}</span>
-          <span className="text-xs text-neutral-500">({product.reviews} avis)</span>
-        </div>
+        <ProductRating product={product} stars5 size="md" className="mt-3" />
 
         <div className="flex flex-wrap gap-2 mt-4">
           {(product.tags || []).slice(0, 4).map((t) => (

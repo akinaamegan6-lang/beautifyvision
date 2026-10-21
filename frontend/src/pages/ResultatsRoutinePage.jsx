@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Save, Share2, Sparkles, ChevronDown, Star, ExternalLink } from "lucide-react";
+import { Save, Share2, Sparkles, ChevronDown, ExternalLink } from "lucide-react";
 import { api } from "../lib/api";
 import { rankProducts, splitByMatchQuality, MIN_GOOD_MATCH_SCORE } from "../lib/scoring";
 import { getRoutineProductBySlug, SKIN_PROBLEMS } from "../data/quizConfig";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
+import ProductRating from "../components/ProductRating";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
@@ -66,7 +67,6 @@ function ProductSection({ slug, recommendations }) {
     );
   }
 
-  const filled = Math.round(best.rating || 0);
   return (
     <section className="mb-14" data-testid={`routine-section-${slug}`}>
       <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
@@ -88,10 +88,7 @@ function ProductSection({ slug, recommendations }) {
               <p className="text-[10px] text-neutral-500">compatibilité</p>
             </div>
           </div>
-          <div className="flex items-center gap-1 mt-2">
-            {[0,1,2,3,4].map(i => <Star key={i} size={12} className={i < filled ? "fill-[#FEC4D2] text-[#FEC4D2]" : "text-[#FEC4D2]/40"}/>)}
-            <span className="ml-1 text-xs">{best.rating} ({best.reviews})</span>
-          </div>
+          <ProductRating product={best} stars5 size="sm" className="mt-2" />
           <div className="flex flex-wrap gap-1.5 mt-3">
             {(best.tags || []).slice(0, 3).map((t) => (
               <span key={t} className="text-[10px] bg-[#FEC4D2]/40 text-neutral-800 px-2 py-1 rounded-full">{t}</span>

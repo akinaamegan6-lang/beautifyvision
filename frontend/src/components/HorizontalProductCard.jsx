@@ -1,11 +1,11 @@
-import { Heart, Star, ExternalLink } from "lucide-react";
+import { Heart, ExternalLink } from "lucide-react";
+import ProductRating from "./ProductRating";
 import { useWishlist } from "../hooks/useWishlist";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 
 export default function HorizontalProductCard({ product }) {
   const { has, toggle } = useWishlist();
   const inWishlist = has(product.id);
-  const filled = Math.round(product.rating || 0);
   return (
     <div
       className="group relative bg-white border border-[#FEC4D2] rounded-3xl overflow-hidden flex flex-col md:flex-row card-lift"
@@ -36,13 +36,7 @@ export default function HorizontalProductCard({ product }) {
           ))}
         </div>
 
-        <div className="flex items-center gap-1.5 mt-4">
-          {[0,1,2,3,4].map(i => (
-            <Star key={i} size={14} className={i < filled ? "fill-[#FEC4D2] text-[#FEC4D2]" : "text-[#FEC4D2]/40"} />
-          ))}
-          <span className="ml-1 text-sm font-semibold text-neutral-900">{product.rating}</span>
-          <span className="text-xs text-neutral-500">({product.reviews})</span>
-        </div>
+        <ProductRating product={product} stars5 size="md" className="mt-4" />
 
         <div className="mt-auto pt-6 flex items-center justify-end gap-3">
           <button

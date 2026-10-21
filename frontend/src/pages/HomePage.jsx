@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, Search, Settings2, CheckCircle2, ArrowRight, Star, BarChart3, Play } from "lucide-react";
+import { Sparkles, Search, Settings2, CheckCircle2, ArrowRight, BarChart3, Play } from "lucide-react";
 import { api } from "../lib/api";
 import ProductCard from "../components/ProductCard";
+import ProductRating from "../components/ProductRating";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1763192902738-a3e17d5f9015?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwbWFrZXVwJTIwcG9ydHJhaXQlMjBnbG93fGVufDB8fHx8MTc3ODQ0NzQwNHww&ixlib=rb-4.1.0&q=85";
@@ -310,10 +311,7 @@ export default function HomePage() {
                       </div>
                       <p className="text-[10px] uppercase tracking-wider text-neutral-500 text-center">{p.brand}</p>
                       <h3 className="text-xs md:text-sm font-medium text-neutral-900 text-center line-clamp-2 mt-1">{p.name}</h3>
-                      <div className="flex items-center justify-center gap-1 mt-1.5">
-                        <Star size={12} className="fill-[#FEC4D2] text-[#FEC4D2]"/>
-                        <span className="text-xs font-medium">{p.rating}</span>
-                      </div>
+                      <ProductRating product={p} size="xs" className="mt-1.5 justify-start md:justify-center" />
                       <p className="text-sm font-semibold text-center mt-1">{p.price.toFixed(2)} €</p>
                       <a href={p.affiliate_url || "#"} target="_blank" rel="noreferrer" className="block text-center text-[10px] md:text-xs mt-2 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 rounded-full px-3 py-1.5 transition" data-testid={`podium-cta-${p.id}`}>Voir le produit</a>
                     </div>

@@ -1,6 +1,7 @@
-import { Heart, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useWishlist } from "../hooks/useWishlist";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
+import ProductRating from "./ProductRating";
 
 export default function ProductCard({ product, rank }) {
   const { has, toggle } = useWishlist();
@@ -36,11 +37,7 @@ export default function ProductCard({ product, rank }) {
       </div>
       <p className="text-xs uppercase tracking-wider text-neutral-500">{product.brand}</p>
       <h3 className="text-base font-medium text-neutral-900 mt-1 line-clamp-2 min-h-[2.8em]">{product.name}</h3>
-      <div className="flex items-center gap-2 mt-2 text-sm">
-        <Star size={14} className="fill-[#FEC4D2] text-[#FEC4D2]" />
-        <span className="font-medium">{product.rating}</span>
-        <span className="text-neutral-400 text-xs">({product.reviews})</span>
-      </div>
+      <ProductRating product={product} className="mt-2" />
       <div className="flex flex-wrap gap-1.5 mt-3">
         {(product.tags || []).slice(0, 3).map((t) => (
           <span key={t} className="text-[10px] uppercase tracking-wider bg-[#FEC4D2]/15 text-neutral-700 px-2 py-1 rounded-full">{t}</span>

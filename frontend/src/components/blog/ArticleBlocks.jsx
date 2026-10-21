@@ -1,15 +1,11 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import ProductRating from "../ProductRating";
 import RichText from "./RichText";
 import { slugifyHeading } from "./blogText";
 import { NO_PRODUCT_IMAGE } from "../../data/imageAssets";
 
 const LIGHTBULB_ICON = "/icone/nos-conseilles-picto.png";
-
-function formatReviews(n) {
-  if (n >= 1000) return `${(n / 1000).toFixed(1).replace(".", ",")}k`;
-  return `${n}`;
-}
 
 export function Heading2Block({ text }) {
   return (
@@ -143,11 +139,7 @@ export function ProductsBlock({ items = [] }) {
             </div>
             <p className="text-[10px] uppercase tracking-wider text-neutral-500">{p.brand}</p>
             <p className="text-sm font-semibold text-neutral-900 line-clamp-2 min-h-[2.4em] mt-0.5">{p.name}</p>
-            <div className="flex items-center gap-1 mt-1.5 text-xs">
-              <Star size={12} className="fill-[#FEC4D2] text-[#FEC4D2]"/>
-              <span className="font-medium">{p.rating}</span>
-              <span className="text-neutral-400">({formatReviews(p.reviews)})</span>
-            </div>
+            <ProductRating product={p} size="xs" className="mt-1.5" />
             <p className="text-base font-semibold text-neutral-900 mt-1.5">{p.price.toFixed(2)} €</p>
             <a
               href={p.affiliate_url || "#"}
