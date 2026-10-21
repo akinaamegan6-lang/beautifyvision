@@ -15,7 +15,7 @@ export default function ProductRecommendationCard({ product, badge = "Recommand√
         <img
           src={productImgSrc(product.image)}
           alt={product.name}
-          className="w-full h-64 md:h-full object-contain"
+          className="w-full h-64 md:h-full object-contain mix-blend-multiply"
           onLoad={swapIfPlaceholder} onError={productImgError(product.image)}
         />
       </div>
