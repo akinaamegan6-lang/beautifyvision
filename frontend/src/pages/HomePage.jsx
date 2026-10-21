@@ -4,7 +4,7 @@ import { Sparkles, Search, Settings2, CheckCircle2, ArrowRight, BarChart3, Play 
 import { api } from "../lib/api";
 import ProductCard from "../components/ProductCard";
 import ProductRating from "../components/ProductRating";
-import { NO_PRODUCT_IMAGE, swapIfPlaceholder } from "../data/imageAssets";
+import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1763192902738-a3e17d5f9015?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwbWFrZXVwJTIwcG9ydHJhaXQlMjBnbG93fGVufDB8fHx8MTc3ODQ0NzQwNHww&ixlib=rb-4.1.0&q=85";
 const BEFORE_IMG = "https://customer-assets.emergentagent.com/job_makeup-match-test/artifacts/u8viubvz_d633f23b-733d-43d5-9640-021d3f2a937f.png";
@@ -127,7 +127,7 @@ export default function HomePage() {
               data-testid="hero-product-bleu"
               title={HERO_PRODUCTS.bleu.title}
             >
-              <img src={HERO_PRODUCTS.bleu.image} alt={HERO_PRODUCTS.bleu.title} className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
+              <img src={productImgSrc(HERO_PRODUCTS.bleu.image)} alt={HERO_PRODUCTS.bleu.title} className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-neutral-900 truncate">{HERO_PRODUCTS.bleu.label}</p>
                 <p className="text-sm text-neutral-500 truncate">{HERO_PRODUCTS.bleu.name}</p>
@@ -145,7 +145,7 @@ export default function HomePage() {
               data-testid="hero-product-rose"
               title={HERO_PRODUCTS.rose.title}
             >
-              <img src={HERO_PRODUCTS.rose.image} alt={HERO_PRODUCTS.rose.title} className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
+              <img src={productImgSrc(HERO_PRODUCTS.rose.image)} alt={HERO_PRODUCTS.rose.title} className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-neutral-900 truncate">{HERO_PRODUCTS.rose.label}</p>
                 <p className="text-sm text-neutral-500 truncate">{HERO_PRODUCTS.rose.name}</p>
@@ -307,7 +307,7 @@ export default function HomePage() {
                   <div key={p.id} className={`flex flex-col items-center ${isFirst ? "" : "mb-0"}`}>
                     <div className="bg-white border-2 border-[#FEC4D2] rounded-2xl p-3 md:p-4 w-full max-w-[180px] mb-3 card-lift">
                       <div className="aspect-square rounded-xl bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 overflow-hidden mb-2 p-3">
-                        <img src={p.image || NO_PRODUCT_IMAGE} alt={p.name} className="w-full h-full object-contain" onLoad={swapIfPlaceholder} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
+                        <img src={productImgSrc(p.image)} alt={p.name} className="w-full h-full object-contain" onLoad={swapIfPlaceholder} onError={productImgError(p.image)}/>
                       </div>
                       <p className="text-[10px] uppercase tracking-wider text-neutral-500 text-center">{p.brand}</p>
                       <h3 className="text-xs md:text-sm font-medium text-neutral-900 text-center line-clamp-2 mt-1">{p.name}</h3>

@@ -7,28 +7,49 @@ export const TYPE_HERO_IMAGE = {
 
 export const NO_PRODUCT_IMAGE = "/icone/no-imga.png";
 
-// Le CDN Awin (images2.productserve.com) renvoie parfois, au lieu de la photo,
-// un petit GIF "No image available" de 70x70 px (image valide : le navigateur
-// ne declenche donc pas d'erreur). Les vraies photos font 600x600. Quand on
-// detecte ce placeholder, on essaie d'abord la photo directement chez le
-// marchand (son adresse est dans le parametre url= du lien Awin), puis, si elle
-// n'existe pas non plus, on affiche notre pictogramme.
-export function swapIfPlaceholder(e, className) {
-  const img = e.currentTarget;
-  if (!(img.naturalWidth === 70 && img.naturalHeight === 70 && img.src.includes("productserve.com"))) return;
-  const toPictogram = () => {
+// Photos produits : on charge d'abord la photo directement chez le marchand
+// (son adresse est dans le parametre url= du lien du CDN Awin, ex.
+// url=ssl:perfumeriacomas.com/...). Le CDN Awin (images2.productserve.com)
+// renvoie en effet trop souvent, selon le produit, un petit GIF "No image
+// available" de 70x70 px a la place de la vraie photo (image "valide" : pas
+// d'erreur cote navigateur). Ordre d'essai : photo du marchand, puis CDN Awin,
+// puis notre pictogramme.
+export function merchantImageUrl(url) {
+  if (!url || !url.includes("productserve.com")) return url || "";
+  try {
+    const raw = new URL(url).searchParams.get("url");
+    if (raw) return raw.startsWith("ssl:") ? `https://${raw.slice(4)}` : `https://${raw}`;
+  } catch { /* adresse illisible : on garde l'adresse d'origine */ }
+  return url;
+}
+
+export function productImgSrc(url) {
+  return url ? merchantImageUrl(url) : NO_PRODUCT_IMAGE;
+}
+
+export function productImgError(originalUrl, className) {
+  return (e) => {
+    const img = e.currentTarget;
+    if (originalUrl && !img.dataset.triedCdn && img.src !== originalUrl) {
+      img.dataset.triedCdn = "1";
+      img.src = originalUrl;
+      return;
+    }
     img.onerror = null;
     img.src = NO_PRODUCT_IMAGE;
     if (className) img.className = className;
   };
-  let direct = null;
-  try {
-    const raw = new URL(img.src).searchParams.get("url");
-    if (raw) direct = raw.startsWith("ssl:") ? `https://${raw.slice(4)}` : `http://${raw}`;
-  } catch { /* adresse illisible : on passe directement au pictogramme */ }
-  if (!direct) return toPictogram();
-  img.onerror = toPictogram;
-  img.src = direct;
+}
+
+// Dernier filet : si le CDN Awin (essaye apres la photo du marchand) renvoie
+// son placeholder 70x70, on affiche notre pictogramme.
+export function swapIfPlaceholder(e, className) {
+  const img = e.currentTarget;
+  if (img.naturalWidth === 70 && img.naturalHeight === 70 && img.src.includes("productserve.com")) {
+    img.onerror = null;
+    img.src = NO_PRODUCT_IMAGE;
+    if (className) img.className = className;
+  }
 }
 
 
