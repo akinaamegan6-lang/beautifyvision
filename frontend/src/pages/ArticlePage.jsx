@@ -132,12 +132,19 @@ export default function ArticlePage() {
       <section className="px-6 py-14" data-testid="article-content">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-[1fr_320px] gap-12">
           <article className="min-w-0">
+            {/* Mobile / tablette : le sommaire s'affiche tout en haut, avant le contenu */}
+            <div className="lg:hidden mb-8">
+              <TableOfContents blocks={article.blocks}/>
+            </div>
             {(article.blocks || []).map((block, i) => <ArticleBlock key={i} block={block}/>)}
             <CommentsSection articleId={article.id}/>
           </article>
 
           <aside className="space-y-6 lg:sticky lg:top-24 self-start" data-testid="article-sidebar">
-            <TableOfContents blocks={article.blocks}/>
+            {/* Desktop : sommaire dans la colonne latérale */}
+            <div className="hidden lg:block">
+              <TableOfContents blocks={article.blocks}/>
+            </div>
 
             <div className="bg-[#79C1E0]/10 rounded-2xl p-5" data-testid="routine-cta-block">
               <h3 className="text-base font-bold text-neutral-900">Crée ta routine skincare personnalisée</h3>
