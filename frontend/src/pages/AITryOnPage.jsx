@@ -251,7 +251,7 @@ export default function AITryOnPage() {
       <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Essayage IA · Étape 1</p>
       <h1 className="mt-3 text-4xl md:text-5xl font-bold text-[#FEC4D2]">Upload ta <span className="editorial text-neutral-900">photo</span></h1>
       <p className="mt-3 text-neutral-600 leading-relaxed">Photo de face, éclairage naturel, sans maquillage de préférence.</p>
-      <p className="mt-1 text-xs text-neutral-500">Ta photo est envoyée de façon sécurisée uniquement pour générer ton essai maquillage, et n'est pas conservée.</p>
+      <p className="mt-1 text-xs text-neutral-500">Ta photo n'est pas conservée.</p>
       <label
         htmlFor="photo-upload"
         className="mt-10 block border-2 border-dashed border-[#FEC4D2] rounded-3xl p-16 cursor-pointer hover:bg-[#FEC4D2]/5 transition"

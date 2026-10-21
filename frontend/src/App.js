@@ -1,7 +1,7 @@
 import "@/App.css";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HomePage from "@/pages/HomePage";
@@ -22,6 +22,8 @@ import CommentCaMarchePage from "@/pages/CommentCaMarchePage";
 import ContactPage from "@/pages/ContactPage";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
+import CookieBanner from "@/components/CookieBanner";
+import { installAwinConsentLinks } from "@/lib/consent";
 
 // Remonte en haut de page à chaque changement de route (sauf si on
 // revient en arrière/avant dans l'historique au sein d'une même page,
@@ -39,6 +41,8 @@ function ScrollToTop() {
 
 function AppRouter() {
   const location = useLocation();
+  // Ajoute le choix cookies (cons=0/1) aux liens Awin au moment du clic.
+  useEffect(() => installAwinConsentLinks(), []);
   // Synchronous detection of Emergent Google callback (#session_id=...)
   if (location.hash?.includes("session_id=")) {
     return <AuthCallback />;
@@ -66,6 +70,7 @@ function AppRouter() {
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
       <Footer />
+      <CookieBanner />
     </>
   );
 }

@@ -1,10 +1,11 @@
 // Contenu des pages legales (Mentions legales, Politique de confidentialite, CGU).
 // Redige a partir des obligations LCEN (mentions legales), des recommandations
-// CNIL (donnees personnelles / cookies) et du contrat d'exploitation du
-// Programme Partenaires Amazon (mention de divulgation obligatoire).
+// CNIL (donnees personnelles / cookies), du contrat d'exploitation du
+// Programme Partenaires Amazon (mention de divulgation obligatoire) et des
+// conditions du reseau d'affiliation Awin (consentement aux cookies de suivi).
 
 export const CONTACT_EMAIL = "contact@beautifyvision.fr";
-export const LAST_UPDATED = "24 septembre 2026";
+export const LAST_UPDATED = "21 octobre 2026";
 
 export const MENTIONS_LEGALES_SECTIONS = [
   {
@@ -52,10 +53,11 @@ export const MENTIONS_LEGALES_SECTIONS = [
   },
   {
     title: "Liens externes et affiliation",
-    summary: "Informations sur les liens vers des sites tiers et la participation au programme d'affiliation Amazon.",
+    summary: "Informations sur les liens vers des sites tiers et la participation aux programmes d'affiliation Amazon et Awin.",
     body: [
       { type: "p", text: "Le Site peut contenir des liens hypertextes vers des sites tiers (marques, boutiques partenaires, réseaux sociaux). Beautify Vision n'exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu." },
       { type: "p", text: "Beautify Vision participe au Programme Partenaires d'Amazon EU, un programme d'affiliation conçu pour permettre à des sites de percevoir une rémunération grâce à la création de liens vers Amazon.fr. En tant que Partenaire Amazon, Beautify Vision réalise un bénéfice sur les achats remplissant les conditions requises, sans coût supplémentaire pour l'acheteur." },
+      { type: "p", text: "Beautify Vision participe également au réseau d'affiliation Awin, dont plusieurs marchands partenaires (notamment Perfumeria Comas) proposent les produits présentés sur le Site. Lorsque tu achètes un produit après avoir cliqué sur un lien affilié, Beautify Vision peut percevoir une commission, sans coût supplémentaire pour toi." },
     ],
   },
   {
@@ -92,9 +94,12 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
         items: [
           "Données de compte : e-mail, nom, mot de passe (stocké de façon chiffrée), ou informations transmises par Google si tu te connectes via Google.",
           "Données d'usage du diagnostic beauté : réponses au quiz, teinte de peau sélectionnée, préférences indiquées pour générer tes recommandations.",
-          "Photo pour l'essayage virtuel : si tu utilises cette fonctionnalité, ta photo est transmise de façon sécurisée à notre prestataire d'intelligence artificielle pour générer le rendu, puis n'est pas conservée sur nos serveurs.",
+          "Photo pour l'essayage virtuel : si tu utilises cette fonctionnalité, ta photo est transmise de façon sécurisée à nos prestataires d'intelligence artificielle pour générer le rendu. Elle n'est pas conservée : elle n'est enregistrée ni sur nos serveurs ni dans notre base de données.",
           "Liste de favoris (wishlist) : conservée localement dans ton navigateur.",
           "Commentaires publiés sur le blog : prénom et texte du commentaire, affichés publiquement sous l'article concerné.",
+          "Notes des produits : la note de 1 à 5 que tu laisses, associée à un identifiant anonyme généré aléatoirement dans ton navigateur. Cet identifiant ne contient ni ton nom ni ton e-mail et permet seulement de limiter à une note par personne et par produit.",
+          "Formulaire de contact : prénom, nom, adresse e-mail, objet et contenu de ton message, que tu nous transmets volontairement.",
+          "Choix concernant les cookies : ton choix (accepté ou refusé) et sa date, enregistrés dans ton navigateur.",
         ],
       },
     ],
@@ -110,6 +115,9 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
           "Générer tes recommandations produits et tes diagnostics beauté personnalisés.",
           "Faire fonctionner l'essayage virtuel par intelligence artificielle.",
           "Permettre la publication de commentaires sur le blog.",
+          "Calculer et afficher la note moyenne des produits à partir des notes laissées par les lectrices.",
+          "Répondre aux messages envoyés via le formulaire de contact.",
+          "Mesurer les achats réalisés via nos liens d'affiliation, si tu l'as accepté, afin de percevoir notre rémunération.",
           "Assurer la sécurité et le bon fonctionnement du Site.",
         ],
       },
@@ -124,7 +132,8 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
         items: [
           "Exécution du contrat : pour la création de compte et la fourniture du service que tu demandes (diagnostics, essayages, recommandations).",
           "Intérêt légitime : pour améliorer et sécuriser le Site.",
-          "Consentement : lorsque tu choisis volontairement de nous transmettre une photo pour l'essayage virtuel, ou de publier un commentaire.",
+          "Consentement : lorsque tu choisis volontairement de nous transmettre une photo pour l'essayage virtuel, de publier un commentaire, ou d'accepter le suivi d'affiliation via le bandeau cookies.",
+          "Intérêt légitime : pour répondre à ton message de contact, et pour afficher des notes de produits limitées à une par personne.",
         ],
       },
     ],
@@ -135,7 +144,18 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
     body: [
       { type: "p", text: "Tes données sont hébergées par Vercel Inc. (hébergement du Site) et stockées dans une base de données MongoDB Atlas." },
       { type: "p", text: "Pour générer les recommandations et les essayages virtuels, certaines informations (préférences beauté, ou ta photo si tu utilises l'essayage virtuel) sont transmises à nos prestataires d'intelligence artificielle (Anthropic et Google), uniquement le temps du traitement de ta demande." },
+      { type: "p", text: "Si tu te connectes avec Google, l'authentification passe par un service d'authentification tiers (auth.emergentagent.com), qui nous transmet uniquement les informations nécessaires à la création de ton compte." },
+      { type: "p", text: "Les messages envoyés via le formulaire de contact transitent par le service FormSubmit (formsubmit.co), qui les transmet par e-mail à Beautify Vision." },
+      { type: "p", text: "Lorsque tu cliques sur un lien affilié, tu quittes le Site et tu es redirigé·e vers Awin puis vers le site du marchand, ou directement vers Amazon. Ces acteurs traitent alors tes données sous leur propre responsabilité, selon leurs politiques de confidentialité respectives." },
       { type: "p", text: "Beautify Vision ne vend ni ne loue tes données personnelles à des tiers à des fins commerciales." },
+    ],
+  },
+  {
+    title: "Transferts de données hors de l'Union européenne",
+    summary: "Certains de nos prestataires sont situés hors de l'Union européenne.",
+    body: [
+      { type: "p", text: "Certains de nos prestataires (Vercel, Anthropic, Google, FormSubmit, et le fournisseur de la base de données MongoDB Atlas selon la région d'hébergement) peuvent traiter des données en dehors de l'Union européenne, notamment aux États-Unis." },
+      { type: "p", text: "Ces transferts sont encadrés par les garanties prévues par le RGPD, par exemple les clauses contractuelles types de la Commission européenne ou le cadre de protection des données UE-États-Unis (Data Privacy Framework), lorsque le prestataire y adhère." },
     ],
   },
   {
@@ -143,7 +163,9 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
     summary: "Combien de temps tes données sont conservées.",
     body: [
       { type: "p", text: "Les données de ton compte sont conservées tant que celui-ci est actif. Tu peux demander la suppression de ton compte et de tes données à tout moment." },
-      { type: "p", text: "Les photos transmises pour l'essayage virtuel ne sont pas conservées : elles sont traitées puis supprimées immédiatement après génération du résultat." },
+      { type: "p", text: "Les photos transmises pour l'essayage virtuel ne sont pas conservées : elles ne sont enregistrées ni sur nos serveurs ni dans notre base de données, et sont traitées uniquement le temps de générer le résultat." },
+      { type: "p", text: "Les messages envoyés via le formulaire de contact sont conservés le temps nécessaire pour te répondre, puis au maximum 12 mois après notre dernier échange." },
+      { type: "p", text: "Les notes de produits sont conservées tant que le produit est présenté sur le Site. Elles ne sont pas rattachées à ton compte ni à ton identité. Ton choix concernant les cookies est conservé 6 mois dans ton navigateur, puis le bandeau te le redemande." },
       { type: "p", text: "Les commentaires publiés sur le blog sont conservés jusqu'à leur suppression, par toi ou par Beautify Vision." },
     ],
   },
@@ -158,11 +180,22 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
   },
   {
     title: "Cookies et traceurs",
-    summary: "Ce que nous stockons dans ton navigateur, et pourquoi.",
+    summary: "Ce que nous stockons dans ton navigateur, le suivi d'affiliation et comment gérer ton choix.",
     body: [
-      { type: "p", text: "Beautify Vision n'utilise aucun cookie publicitaire, ni aucun outil de mesure d'audience ou de traçage à des fins commerciales." },
-      { type: "p", text: "Le Site utilise uniquement le stockage local de ton navigateur (localStorage) pour deux usages strictement nécessaires à son fonctionnement : garder ta session de connexion active, et mémoriser ta liste de favoris. Conformément aux recommandations de la CNIL, ces éléments sont exemptés de consentement préalable car indispensables au service que tu demandes." },
-      { type: "p", text: "Les liens vers Amazon présents sur le Site sont des liens d'affiliation : ils ne déposent aucun cookie sur beautifyvision.fr, mais Amazon peut déposer ses propres cookies une fois que tu es redirigé·e vers son site, dans les conditions prévues par sa propre politique de confidentialité." },
+      { type: "p", text: "Beautify Vision n'utilise aucun cookie publicitaire ni outil de mesure d'audience ou de traçage à des fins commerciales." },
+      { type: "p", text: "Le Site utilise le stockage local de ton navigateur (localStorage) pour des usages nécessaires à son fonctionnement, exemptés de consentement selon les recommandations de la CNIL :" },
+      {
+        type: "ul",
+        items: [
+          "ta session de connexion, pour rester connecté·e ;",
+          "ta liste de favoris (wishlist) ;",
+          "un identifiant anonyme et la liste de tes notes, pour limiter à une note par personne et par produit ;",
+          "ton choix concernant les cookies, conservé 6 mois.",
+        ],
+      },
+      { type: "p", text: "Suivi d'affiliation Awin : quand tu cliques sur un lien produit affilié, Awin peut déposer un cookie de suivi qui permet d'attribuer ton achat à Beautify Vision, et donc de nous rémunérer, sans surcoût pour toi. Ce cookie n'est déposé que si tu l'as accepté dans le bandeau affiché lors de ta première visite. Si tu refuses, ou si tu n'as pas encore fait de choix, nos liens indiquent à Awin de ne déposer aucun cookie : le site fonctionne exactement de la même façon, mais ton achat ne nous est pas attribué." },
+      { type: "p", text: "Liens Amazon : nos liens vers Amazon contiennent un identifiant de partenaire dans l'adresse du lien. Beautify Vision ne dépose aucun cookie lors du clic, mais Amazon peut déposer ses propres cookies une fois que tu es sur son site, dans les conditions prévues par sa politique de confidentialité." },
+      { type: "p", text: "Tu peux modifier ou retirer ton choix à tout moment avec le lien « Gérer mes cookies » en bas de chaque page." },
     ],
   },
   {
@@ -211,10 +244,28 @@ export const CGU_SECTIONS = [
   },
   {
     title: "Recommandations produits et affiliation",
-    summary: "Le fonctionnement des recommandations produits et la participation de Beautify Vision au programme d'affiliation Amazon.",
+    summary: "Le fonctionnement des recommandations produits et la participation de Beautify Vision aux programmes d'affiliation Amazon et Awin.",
     body: [
       { type: "p", text: "Beautify Vision n'est pas vendeur des produits présentés sur le Site : les achats s'effectuent directement auprès des marques ou plateformes partenaires (dont Amazon), qui restent seules responsables de la vente, de la livraison et du service après-vente." },
       { type: "p", text: "Beautify Vision participe au Programme Partenaires d'Amazon EU. En tant que Partenaire Amazon, Beautify Vision réalise un bénéfice sur les achats remplissant les conditions requises, sans coût supplémentaire pour toi." },
+      { type: "p", text: "Beautify Vision participe également au réseau d'affiliation Awin. Si tu achètes un produit après avoir cliqué sur un lien affilié, Beautify Vision peut percevoir une commission, sans coût supplémentaire pour toi. Le suivi de ces achats est soumis à ton choix dans le bandeau cookies, comme expliqué dans la Politique de confidentialité." },
+      { type: "p", text: "Les prix, disponibilités et caractéristiques des produits peuvent évoluer : seules les informations affichées sur le site du marchand au moment de l'achat font foi." },
+    ],
+  },
+  {
+    title: "Notes des produits",
+    summary: "Les règles applicables aux notes laissées par les lectrices sur les produits.",
+    body: [
+      { type: "p", text: "Tu peux noter un produit de 1 à 5 étoiles, sans créer de compte. La note moyenne et le nombre de notes affichés sur le Site sont calculés uniquement à partir des notes laissées par les lectrices de Beautify Vision." },
+      { type: "p", text: "Ces notes sont des avis de lectrices : elles ne sont pas vérifiées, et rien ne permet de confirmer que la personne a acheté ou utilisé le produit. Une seule note par personne et par produit est prise en compte : si tu notes de nouveau un produit, ta nouvelle note remplace la précédente." },
+      { type: "p", text: "Beautify Vision se réserve le droit de supprimer toute note qui semblerait frauduleuse, automatisée ou abusive. Il est interdit de publier de fausses notes ou d'en faire publier en échange d'une contrepartie." },
+    ],
+  },
+  {
+    title: "Formulaire de contact",
+    summary: "Ce qui se passe quand tu nous écris via le formulaire de contact.",
+    body: [
+      { type: "p", text: `Les messages envoyés via le formulaire de contact sont transmis par e-mail à Beautify Vision (${CONTACT_EMAIL}). Le traitement de ces données est détaillé dans la Politique de confidentialité.` },
     ],
   },
   {

@@ -1,5 +1,6 @@
 import { Instagram, Facebook, Youtube, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { openCookieSettings } from "../lib/consent";
 
 // Icône TikTok (lucide-react n'en fournit pas) — même style trait que les autres icônes.
 function TikTokIcon({ size = 16 }) {
@@ -44,6 +45,7 @@ export default function Footer() {
             <li><Link to="/cgu" className="hover:text-[#FEC4D2]">CGU</Link></li>
             <li><Link to="/politique-de-confidentialite" className="hover:text-[#FEC4D2]">Politique de confidentialité</Link></li>
             <li><Link to="/mentions-legales" className="hover:text-[#FEC4D2]">Mentions légales</Link></li>
+            <li><button type="button" onClick={openCookieSettings} className="hover:text-[#FEC4D2]" data-testid="manage-cookies">Gérer mes cookies</button></li>
           </ul>
         </div>
         <div>
