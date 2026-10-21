@@ -13,3 +13,12 @@
 | inline-barriere-cutanee-routine.png | https://www.pexels.com/photo/crop-ethnic-woman-applying-moisturizing-cream-on-cheek-7269488/ | Anete Lusina |
 
 Images recadrées en 16:9 (1672×941). Inchangées : routine petit budget, sous-ton de peau, niacinamide, PDRN, skincare coréenne.
+
+## Cartes « Visage » et « Corps » (page Routine 360°)
+
+| Fichier | Photo Pexels | Photographe |
+|---|---|---|
+| categorie-visage.png | https://www.pexels.com/photo/a-woman-with-facial-cream-on-her-cheek-8946864/ | KoolShooters |
+| categorie-corps.png | https://www.pexels.com/photo/a-woman-with-a-skincare-product-on-her-back-6731839/ | cottonbro studio |
+
+`categorie-cheveux.png` est inchangée.
