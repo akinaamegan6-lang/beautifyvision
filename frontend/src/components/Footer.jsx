@@ -1,5 +1,21 @@
-import { Instagram, Twitter, Sparkles } from "lucide-react";
+import { Instagram, Facebook, Youtube, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+
+// Icône TikTok (lucide-react n'en fournit pas) — même style trait que les autres icônes.
+function TikTokIcon({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+  );
+}
+
+const SOCIALS = [
+  { label: "Instagram", href: "https://www.instagram.com/beautify_vision_fr", Icon: Instagram, color: "#FEC4D2" },
+  { label: "Facebook", href: "https://www.facebook.com/share/19gtdCAoGJ/", Icon: Facebook, color: "#79C1E0" },
+  { label: "TikTok", href: "https://www.tiktok.com/@beautify.vision", Icon: TikTokIcon, color: "#FEC4D2" },
+  { label: "YouTube", href: "https://youtube.com/@beautifyvision", Icon: Youtube, color: "#79C1E0" },
+];
 
 export default function Footer() {
   return (
@@ -32,9 +48,24 @@ export default function Footer() {
         </div>
         <div>
           <h4 className="text-sm font-semibold text-[#79C1E0] mb-4">Suis-nous</h4>
-          <div className="flex gap-3">
-            <a href="#" onClick={(e) => e.preventDefault()} className="w-10 h-10 rounded-full border border-[#FEC4D2] flex items-center justify-center text-[#FEC4D2] hover:bg-[#FEC4D2] hover:text-white transition" aria-label="Instagram"><Instagram size={16}/></a>
-            <a href="#" onClick={(e) => e.preventDefault()} className="w-10 h-10 rounded-full border border-[#79C1E0] flex items-center justify-center text-[#79C1E0] hover:bg-[#79C1E0] hover:text-white transition" aria-label="Twitter"><Twitter size={16}/></a>
+          <div className="flex flex-wrap gap-3">
+            {SOCIALS.map(({ label, href, Icon, color }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="w-10 h-10 rounded-full border flex items-center justify-center transition hover:text-white"
+                style={{ borderColor: color, color }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = color; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; e.currentTarget.style.color = color; }}
+                data-testid={`social-${label.toLowerCase()}`}
+              >
+                <Icon size={16} />
+              </a>
+            ))}
           </div>
           <Link to="/essayage-ia" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[#79C1E0] hover:underline">
             <Sparkles size={14}/> Essayer l'IA

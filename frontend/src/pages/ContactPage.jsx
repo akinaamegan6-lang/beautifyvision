@@ -16,15 +16,42 @@ const inputClass =
   "w-full px-4 py-3 rounded-2xl border border-neutral-200 bg-white text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#79C1E0]/40 focus:border-[#79C1E0] transition";
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ prenom: "", nom: "", objet: OBJETS[0], message: "" });
+  const [form, setForm] = useState({ prenom: "", nom: "", email: "", objet: OBJETS[0], message: "" });
+  const [sending, setSending] = useState(false);
 
   const update = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  // Les messages sont envoyés par e-mail à CONTACT_EMAIL via le service FormSubmit
+  // (aucune clé à configurer). Le champ "_honey" est un piège anti-spam : s'il est rempli, on ignore l'envoi.
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.prenom.trim() || !form.nom.trim() || !form.message.trim()) return;
-    toast.success("Ton message a bien été pris en compte, merci ! On te répond au plus vite.");
-    setForm({ prenom: "", nom: "", objet: OBJETS[0], message: "" });
+    if (sending) return;
+    if (!form.prenom.trim() || !form.nom.trim() || !form.email.trim() || !form.message.trim()) return;
+    if (e.target.elements._honey && e.target.elements._honey.value) return;
+    setSending(true);
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: `[Beautify Vision] ${form.objet} — ${form.prenom} ${form.nom}`,
+          _template: "table",
+          _captcha: "false",
+          name: `${form.prenom} ${form.nom}`,
+          email: form.email,
+          objet: form.objet,
+          message: form.message,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || String(data.success) === "false") throw new Error(data.message || "send_failed");
+      toast.success("Ton message a bien été envoyé, merci ! On te répond au plus vite.");
+      setForm({ prenom: "", nom: "", email: "", objet: OBJETS[0], message: "" });
+    } catch (err) {
+      toast.error(`Oups, l'envoi a échoué. Tu peux nous écrire directement à ${CONTACT_EMAIL}.`);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -80,6 +107,22 @@ export default function ContactPage() {
             </div>
 
             <div>
+              <label htmlFor="contact-email" className="block text-sm font-semibold text-neutral-800 mb-2">
+                Adresse e-mail
+              </label>
+              <input
+                id="contact-email"
+                type="email"
+                required
+                value={form.email}
+                onChange={update("email")}
+                placeholder="ton@email.fr"
+                className={inputClass}
+                data-testid="contact-input-email"
+              />
+            </div>
+
+            <div>
               <label htmlFor="contact-objet" className="block text-sm font-semibold text-neutral-800 mb-2">
                 Objet de la demande
               </label>
@@ -112,12 +155,15 @@ export default function ContactPage() {
               />
             </div>
 
+            <input type="text" name="_honey" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ display: "none" }} />
+
             <button
               type="submit"
-              className="inline-flex items-center gap-2 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 px-6 py-3 rounded-full text-sm font-semibold transition shadow-sm hover:shadow-md"
+              disabled={sending}
+              className="inline-flex items-center gap-2 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 px-6 py-3 rounded-full text-sm font-semibold transition shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
               data-testid="contact-submit"
             >
-              Envoyer le message <Send size={16}/>
+              {sending ? "Envoi..." : "Envoyer le message"} <Send size={16}/>
             </button>
 
             <p className="text-xs text-neutral-500 pt-1">

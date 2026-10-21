@@ -3,7 +3,7 @@
 // CNIL (donnees personnelles / cookies) et du contrat d'exploitation du
 // Programme Partenaires Amazon (mention de divulgation obligatoire).
 
-export const CONTACT_EMAIL = "contactbeautifyvision@gmail.com";
+export const CONTACT_EMAIL = "contact@beautifyvision.fr";
 export const LAST_UPDATED = "24 septembre 2026";
 
 export const MENTIONS_LEGALES_SECTIONS = [
@@ -11,14 +11,14 @@ export const MENTIONS_LEGALES_SECTIONS = [
     title: "Éditeur du site",
     summary: "Informations sur l'éditeur du site Beautify Vision : identité, adresse, contact.",
     body: [
-      { type: "p", text: "Le site beautifyvision.fr (« le Site ») est édité par Akina Mégan, entrepreneure individuelle (auto-entrepreneur), exerçant sous le nom commercial Beautify Vision." },
+      { type: "p", text: "Le site beautifyvision.fr (« le Site ») est édité par Graziela Amegan, entrepreneure individuelle (auto-entrepreneur), exerçant sous le nom commercial Beautify Vision." },
       {
         type: "ul",
         items: [
           "Adresse : 78400 Chatou, France",
           "SIRET : 105 479 539 00022",
           `E-mail : ${CONTACT_EMAIL}`,
-          "Directeur de la publication : Akina Mégan",
+          "Directeur de la publication : Graziela Amegan",
         ],
       },
     ],
