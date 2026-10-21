@@ -385,20 +385,20 @@ export function getCategoryQuestions(typeKey) {
 export const ROUTINE_PRODUCTS = [
   // Skincare
   { slug: "nettoyant", label: "Savon/Nettoyant", category: "nettoyant", emoji: "🧼", section: "skincare", det: "ton" },
-  { slug: "eau-micellaire", label: "Eau micellaire", category: "nettoyant", emoji: "💧", section: "skincare", det: "ton" },
+  { slug: "eau-micellaire", label: "Eau micellaire", category: "nettoyant", emoji: "💧", section: "skincare", det: "ton", fem: true },
   { slug: "tonique", label: "Tonique", category: "brume", emoji: "🌿", section: "skincare", det: "ton" },
   { slug: "serum", label: "Sérum", category: "serum", emoji: "🧪", section: "skincare", det: "ton" },
   { slug: "creme-visage", label: "Crème visage", category: "creme-hydratante", emoji: "🧴", section: "skincare", det: "ta" },
   { slug: "contour-yeux", label: "Contour des yeux", category: "contour-yeux", emoji: "👁️", section: "skincare", det: "ton" },
   { slug: "masque", label: "Masque", category: "masque", emoji: "🎭", section: "skincare", det: "ton" },
   { slug: "exfoliant", label: "Exfoliant", category: "exfoliant", emoji: "✨", section: "skincare", det: "ton" },
-  { slug: "huile-visage", label: "Huile visage", category: "huile-visage", emoji: "🌟", section: "skincare", det: "ton" },
+  { slug: "huile-visage", label: "Huile visage", category: "huile-visage", emoji: "🌟", section: "skincare", det: "ton", fem: true },
   { slug: "creme-corps", label: "Crème corps", category: "creme-corps", emoji: "🌸", section: "skincare", det: "ta" },
   { slug: "demaquillant", label: "Démaquillant", category: "nettoyant", emoji: "🧖", section: "skincare", det: "ton" },
   { slug: "brume", label: "Brume", category: "brume", emoji: "💨", section: "skincare", det: "ta" },
   { slug: "creme-solaire", label: "Crème solaire visage", category: "creme-solaire-visage", emoji: "☀️", section: "skincare", det: "ta" },
   { slug: "soin-levres", label: "Soin lèvres", category: "soin-levres", emoji: "💋", section: "skincare", det: "ton" },
-  { slug: "huile-corps", label: "Huile corps", category: "huile-corps", emoji: "🌟", section: "skincare", det: "ton" },
+  { slug: "huile-corps", label: "Huile corps", category: "huile-corps", emoji: "🌟", section: "skincare", det: "ton", fem: true },
   { slug: "creme-solaire-corps", label: "Crème solaire corps", category: "creme-solaire-corps", emoji: "☀️", section: "skincare", det: "ta" },
   // Maquillage
   { slug: "fond-de-teint", label: "Fond de teint", category: "fond-de-teint-cosmetique", emoji: "🌹", section: "maquillage", det: "ton" },
@@ -418,10 +418,26 @@ export const ROUTINE_PRODUCTS = [
   { slug: "shampoing", label: "Shampoing", category: "shampoing", emoji: "🧴", section: "cheveux", det: "ton" },
   { slug: "apres-shampoing", label: "Après-shampoing", category: "apres-shampoing", emoji: "💧", section: "cheveux", det: "ton" },
   { slug: "masque-cheveux", label: "Masque cheveux", category: "masque-cheveux", emoji: "🎭", section: "cheveux", det: "ton" },
-  { slug: "huile-cheveux", label: "Huile cheveux", category: "huile-cheveux", emoji: "✨", section: "cheveux", det: "ton" },
+  { slug: "huile-cheveux", label: "Huile cheveux", category: "huile-cheveux", emoji: "✨", section: "cheveux", det: "ton", fem: true },
   { slug: "serum-cheveux", label: "Sérum cheveux", category: "serum-cheveux", emoji: "🌟", section: "cheveux", det: "ton" },
   { slug: "spray-coiffant", label: "Spray coiffant", category: "spray-coiffant", emoji: "💨", section: "cheveux", det: "ton" },
 ];
+
+// Titre accorde en genre et en nombre : "Ta brume idéale", "Ton sérum idéal",
+// "Ton huile corps idéale", "Tes sourcils idéaux".
+export function routineIdealTitle(meta) {
+  if (!meta) return "Ton produit idéal";
+  const det = meta.det || "ton";
+  const adj = det === "tes" ? "idéaux" : det === "ta" || meta.fem ? "idéale" : "idéal";
+  return `${det.charAt(0).toUpperCase()}${det.slice(1)} ${meta.label.toLowerCase()} ${adj}`;
+}
+
+// "de brume", "d'eau micellaire", "d'huile corps" (elision devant voyelle / h muet)
+export function deLabel(label = "produit") {
+  const l = label.toLowerCase();
+  const first = l.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return /^([aeiouy]|hu)/.test(first) ? `d'${l}` : `de ${l}`;
+}
 
 export function getRoutineProductBySlug(slug) {
   return ROUTINE_PRODUCTS.find((p) => p.slug === slug);

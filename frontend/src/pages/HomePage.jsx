@@ -141,7 +141,7 @@ export default function HomePage() {
               href={HERO_PRODUCTS.rose.url}
               target="_blank"
               rel="sponsored noopener noreferrer"
-              className="absolute bottom-0 lg:bottom-28 left-0 md:-left-6 xl:-left-16 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift"
+              className="absolute bottom-0 lg:bottom-28 left-0 md:-left-6 lg:left-4 xl:left-0 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift"
               data-testid="hero-product-rose"
               title={HERO_PRODUCTS.rose.title}
             >

@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import { deLabel } from "../data/quizConfig";
 
 // Message affiche quand aucun produit de la base ne correspond vraiment aux
 // criteres de la personne (score sous MIN_GOOD_MATCH_SCORE, cf. lib/scoring.js).
@@ -6,7 +7,7 @@ import { Sparkles } from "lucide-react";
 // (meme hors-sujet, ex: un peigne demelant ou un crayon khol) comme "ton
 // match parfait". Le ton reste volontairement leger / pas culpabilisant : on
 // ne dit jamais a la personne qu'elle a "rien" ou que la demande a echoue.
-export default function NoGoodMatchMessage({ productLabel = "produit" }) {
+export default function NoGoodMatchMessage({ productLabel = "produit", plural = false }) {
   return (
     <div
       className="max-w-2xl mx-auto text-center rounded-[2rem] border-2 border-dashed border-[#79C1E0]/50 bg-[#79C1E0]/5 px-6 py-10 md:py-12"
@@ -14,7 +15,7 @@ export default function NoGoodMatchMessage({ productLabel = "produit" }) {
     >
       <Sparkles size={28} className="text-[#79C1E0] mx-auto" />
       <p className="mt-4 text-lg md:text-xl font-semibold text-neutral-900">
-        On n'a pas encore de {productLabel} qui coche vraiment toutes tes cases.
+        On n'a pas encore {deLabel(productLabel)} qui {plural ? "cochent" : "coche"} vraiment toutes tes cases.
       </p>
       <p className="mt-2 text-sm text-neutral-600 leading-relaxed">
         Notre sélection ne contient pour l'instant aucun produit qui respecte pleinement tous tes critères.

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Save, Share2, Sparkles, ChevronDown, ExternalLink } from "lucide-react";
 import { api } from "../lib/api";
 import { rankProducts, splitByMatchQuality, MIN_GOOD_MATCH_SCORE } from "../lib/scoring";
-import { getRoutineProductBySlug, SKIN_PROBLEMS } from "../data/quizConfig";
+import { getRoutineProductBySlug, routineIdealTitle, SKIN_PROBLEMS } from "../data/quizConfig";
 import { NO_PRODUCT_IMAGE } from "../data/imageAssets";
 import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
 import ProductRating from "../components/ProductRating";
@@ -40,7 +40,7 @@ function ProductSection({ slug, recommendations }) {
   if (recommendations.length === 0) {
     return (
       <div className="mb-12">
-        <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-2">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
+        <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-2">{meta?.emoji} {routineIdealTitle(meta)}</h3>
         <p className="text-sm text-neutral-500 italic">Aucun produit trouvé dans notre base pour cette catégorie.</p>
       </div>
     );
@@ -56,8 +56,8 @@ function ProductSection({ slug, recommendations }) {
   if (!best) {
     return (
       <div className="mb-14" data-testid={`routine-section-${slug}`}>
-        <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
-        <NoGoodMatchMessage productLabel={meta?.label.toLowerCase() || "produit"}/>
+        <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} {routineIdealTitle(meta)}</h3>
+        <NoGoodMatchMessage productLabel={meta?.label.toLowerCase() || "produit"} plural={meta?.det === "tes"}/>
         {alternatives.slice(0, 3).length > 0 && (
           <div className="mt-4 space-y-2">
             {alternatives.slice(0, 3).map((p, i) => <AlternativeCard key={p.id} product={p} index={i + 1}/>)}
@@ -69,7 +69,7 @@ function ProductSection({ slug, recommendations }) {
 
   return (
     <section className="mb-14" data-testid={`routine-section-${slug}`}>
-      <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} Ton {meta?.label.toLowerCase()} idéal</h3>
+      <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} {routineIdealTitle(meta)}</h3>
       <div className="bg-white border-2 border-[#FEC4D2] rounded-3xl overflow-hidden grid md:grid-cols-[280px_1fr]">
         <div className="bg-gradient-to-br from-[#FEC4D2]/15 to-[#79C1E0]/10 p-6">
           <img src={best.image || NO_PRODUCT_IMAGE} alt={best.name} className="w-full h-56 md:h-full object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = NO_PRODUCT_IMAGE; }}/>
