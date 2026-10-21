@@ -9,9 +9,9 @@ import QuizStep from "../components/QuizStep";
 import ShadePicker from "../components/ShadePicker";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 
-const VisageIcon = () => <img src="/icone/visage.png" alt="Visage" className="w-8 h-8 object-contain"/>;
-const CorpsIcon = () => <img src="/icone/corps.png" alt="Corps" className="w-8 h-8 object-contain"/>;
-const CheveuxIcon = () => <img src="/icone/cheveux.png" alt="Cheveux" className="w-8 h-8 object-contain"/>;
+const VisageIcon = () => <img src="/icone/visage.png" alt="Visage" className="w-14 h-14 object-contain shrink-0"/>;
+const CorpsIcon = () => <img src="/icone/corps.png" alt="Corps" className="w-14 h-14 object-contain shrink-0"/>;
+const CheveuxIcon = () => <img src="/icone/cheveux.png" alt="Cheveux" className="w-14 h-14 object-contain shrink-0"/>;
 
 const TYPES = [
   { key: "visage", label: "Visage", subtitle: "Skincare & Maquillage", image: TYPE_HERO_IMAGE.visage, Icon: VisageIcon },
@@ -250,9 +250,7 @@ export default function Routine360Page() {
                   <img src={t.image} alt={t.label} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-700"/>
                 </div>
                 <div className="p-6 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#FEC4D2]/15 flex items-center justify-center shrink-0">
-                    <t.Icon/>
-                  </div>
+                  <t.Icon/>
                   <div>
                     <h3 className="text-xl font-bold">{t.label}</h3>
                     <p className="text-sm text-neutral-500 mt-0.5">{t.subtitle}</p>
