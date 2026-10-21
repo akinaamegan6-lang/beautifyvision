@@ -11,6 +11,26 @@ const AFTER_IMG = "https://customer-assets.emergentagent.com/job_makeup-match-te
 
 const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
+// Produits réels mis en avant dans le hero (flux Awin / Perfumeria Comas) : un bleu (La Roche-Posay), un rose (Nuxe).
+const HERO_PRODUCTS = {
+  bleu: {
+    label: "Lotion purifiante",
+    name: "Effaclar Lotion",
+    brand: "La Roche-Posay",
+    title: "La Roche-Posay Effaclar Lotion astringente 200 ml",
+    image: "https://images2.productserve.com/?w=600&h=600&bg=transparent&trim=5&t=letterbox&url=ssl%3Aperfumeriacomas.com%2Fcdnassets%2Fproducts%2F16205-1_s.webp&feedId=97867&k=c8b1d124d79b0d64107a0aa1d79a59ec3559801c",
+    url: "https://www.awin1.com/pclick.php?p=39179009231&a=2923665&m=105475",
+  },
+  rose: {
+    label: "Soin de nuit",
+    name: "Prodigieuse Boost",
+    brand: "Nuxe",
+    title: "Nuxe Crème Prodigieuse Boost, baume de nuit 50 ml",
+    image: "https://images2.productserve.com/?w=600&h=600&bg=transparent&trim=5&t=letterbox&url=ssl%3Aperfumeriacomas.com%2Fcdnassets%2Fproducts%2F92857-1_s.webp&feedId=97867&k=d50010b81904944b5daa15173430b39eed04fb19",
+    url: "https://www.awin1.com/pclick.php?p=40861935905&a=2923665&m=105475",
+  },
+};
+
 export default function HomePage() {
   const [top, setTop] = useState([]);
   const month = MONTHS[new Date().getMonth()];
@@ -90,27 +110,41 @@ export default function HomePage() {
               <img src="/image/fille-hero-section.png" alt="Femme appliquant sa routine skincare BeautifyVision" className="w-full h-full object-cover"/>
             </div>
 
-            {/* Widget — sérum */}
-            <div className="absolute top-0 lg:top-10 right-0 md:-right-4 xl:-right-10 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift">
-              <img src="/image/serum-hero-section.png" alt="Sérum hydratant Hyalu B5" className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
+            {/* Widget — produit bleu (La Roche-Posay Effaclar) — lien affilié */}
+            <a
+              href={HERO_PRODUCTS.bleu.url}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="absolute top-0 lg:top-10 right-0 md:-right-4 xl:-right-10 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift"
+              data-testid="hero-product-bleu"
+              title={HERO_PRODUCTS.bleu.title}
+            >
+              <img src={HERO_PRODUCTS.bleu.image} alt={HERO_PRODUCTS.bleu.title} className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-neutral-900 truncate">Sérum hydratant</p>
-                <p className="text-sm text-neutral-500 truncate">Hyalu B5</p>
-                <p className="text-xs text-neutral-400 truncate">La Belle Rose</p>
+                <p className="text-sm font-semibold text-neutral-900 truncate">{HERO_PRODUCTS.bleu.label}</p>
+                <p className="text-sm text-neutral-500 truncate">{HERO_PRODUCTS.bleu.name}</p>
+                <p className="text-xs text-neutral-400 truncate">{HERO_PRODUCTS.bleu.brand}</p>
               </div>
               <ArrowRight size={16} className="text-[#79C1E0] shrink-0 ml-auto"/>
-            </div>
+            </a>
 
-            {/* Widget — crème */}
-            <div className="absolute bottom-0 lg:bottom-28 left-0 md:-left-6 xl:-left-16 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift">
-              <img src="/image/creme-hero-section.png" alt="Crème apaisante Cicaplast Baume B5+" className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
+            {/* Widget — produit rose (Nuxe Prodigieuse Boost) — lien affilié */}
+            <a
+              href={HERO_PRODUCTS.rose.url}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="absolute bottom-0 lg:bottom-28 left-0 md:-left-6 xl:-left-16 bg-white rounded-2xl shadow-xl p-3 sm:p-3.5 flex items-center gap-3 w-52 sm:w-56 md:w-64 z-20 card-lift"
+              data-testid="hero-product-rose"
+              title={HERO_PRODUCTS.rose.title}
+            >
+              <img src={HERO_PRODUCTS.rose.image} alt={HERO_PRODUCTS.rose.title} className="w-14 h-14 object-contain rounded-lg bg-neutral-50 shrink-0"/>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-neutral-900 truncate">Crème apaisante</p>
-                <p className="text-sm text-neutral-500 truncate">Cicaplast Baume B5+</p>
-                <p className="text-xs text-neutral-400 truncate">La Belle Rose</p>
+                <p className="text-sm font-semibold text-neutral-900 truncate">{HERO_PRODUCTS.rose.label}</p>
+                <p className="text-sm text-neutral-500 truncate">{HERO_PRODUCTS.rose.name}</p>
+                <p className="text-xs text-neutral-400 truncate">{HERO_PRODUCTS.rose.brand}</p>
               </div>
               <ArrowRight size={16} className="text-[#79C1E0] shrink-0 ml-auto"/>
-            </div>
+            </a>
 
             {/* Widget — promesses BeautifyVision */}
             <div className="absolute top-1/2 -translate-y-1/4 right-0 md:-right-6 xl:-right-20 bg-white rounded-2xl shadow-xl p-5 w-64 z-20 card-lift hidden sm:block">
