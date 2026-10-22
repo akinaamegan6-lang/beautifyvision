@@ -118,6 +118,20 @@ export const MENU_SLUG_IMAGE = {
   "beurre-corporel": "creme-corps",
 };
 
+// Visuels propres au menu (catégories absentes de la Routine 360°).
+export const MENU_ONLY_IMAGE = {
+  "soin-mains": "/image/cat-soin-mains.webp",
+  "soin-pieds": "/image/cat-soin-pieds.webp",
+  "deodorant": "/image/cat-deodorant.webp",
+  "autobronzant": "/image/cat-autobronzant.webp",
+  "vergetures": "/image/cat-vergetures.webp",
+  "gel-douche": "/image/cat-gel-douche.webp",
+  "shampoing-sec": "/image/cat-shampoing-sec.webp",
+  "soin-anti-chute": "/image/cat-soin-anti-chute.webp",
+  "soin-cheveux-colores": "/image/cat-soin-cheveux-colores.webp",
+  "soin-cuir-chevelu": "/image/cat-soin-cuir-chevelu.webp",
+};
+
 export function getMenuProductImage(slug) {
-  return CATEGORY_IMAGE[slug] || CATEGORY_IMAGE[MENU_SLUG_IMAGE[slug]] || NO_PRODUCT_IMAGE;
+  return MENU_ONLY_IMAGE[slug] || CATEGORY_IMAGE[slug] || CATEGORY_IMAGE[MENU_SLUG_IMAGE[slug]] || NO_PRODUCT_IMAGE;
 }
