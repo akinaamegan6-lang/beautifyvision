@@ -103,3 +103,21 @@ export const CATEGORY_IMAGE = {
 export function getProductImage(slug) {
   return CATEGORY_IMAGE[slug] || NO_PRODUCT_IMAGE;
 }
+
+// Catégories du MENU (slugs de l'API /categories) -> visuel. Les slugs du menu
+// diffèrent parfois de ceux de la Routine 360° (ex. "creme-hydratante" ici,
+// "creme-visage" dans la routine). Sans visuel dédié -> pictogramme maison.
+export const MENU_SLUG_IMAGE = {
+  "creme-hydratante": "creme-visage",
+  "creme-solaire-visage": "creme-solaire",
+  "fond-de-teint-cosmetique": "fond-de-teint",
+  "contouring": "bronzer",
+  "demaquillant-cosm": "eau-micellaire",
+  "gommage-corps": "exfoliant",
+  "lait-corporel": "creme-corps",
+  "beurre-corporel": "creme-corps",
+};
+
+export function getMenuProductImage(slug) {
+  return CATEGORY_IMAGE[slug] || CATEGORY_IMAGE[MENU_SLUG_IMAGE[slug]] || NO_PRODUCT_IMAGE;
+}

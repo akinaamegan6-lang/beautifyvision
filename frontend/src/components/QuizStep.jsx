@@ -67,14 +67,14 @@ export default function QuizStep({
             key={opt.value}
             type="button"
             onClick={() => toggle(opt.value)}
-            className={`min-h-[80px] px-5 py-5 rounded-2xl border-2 text-left transition-all ${
+            className={`min-h-[80px] min-w-0 px-3 sm:px-5 py-5 rounded-2xl border-2 text-left transition-all [overflow-wrap:anywhere] [hyphens:auto] ${
               isSelected(opt.value)
                 ? "bg-[#FEC4D2]/15 border-[#FEC4D2] text-neutral-900 shadow-[0_8px_24px_-12px_rgba(254,196,210,0.6)]"
                 : "bg-white border-neutral-200 text-neutral-700 hover:border-[#FEC4D2]"
             }`}
             data-testid={`quiz-option-${question.key}-${opt.value}`}
           >
-            <span className="text-base font-medium">{opt.label}</span>
+            <span className="block text-[15px] sm:text-base font-medium leading-snug break-words">{String(opt.label).replace(/\//g, "/\u200b")}</span>
           </button>
         ))}
         {/* Échappatoire pour les questions où rien ne correspond forcément

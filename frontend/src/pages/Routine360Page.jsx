@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Check, X, AlertTriangle, ChevronRight, Sparkles, ChevronLeft } from "lucide-react";
 import { ROUTINE_PRODUCTS, SKIN_PROBLEMS, BUDGET_RANGES, TEINT_SLUGS, getProductQuestions, getCategoryQuestions } from "../data/quizConfig";
-import { TYPE_HERO_IMAGE, getProductImage, BUDGET_ICON } from "../data/imageAssets";
+import { TYPE_HERO_IMAGE, getProductImage, getMenuProductImage, BUDGET_ICON } from "../data/imageAssets";
+import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "../components/AuthModal";
 import QuizStep from "../components/QuizStep";
@@ -23,6 +24,64 @@ const VISAGE_SUB = [
   { key: "skincare", label: "Routine Skincare", subtitle: "Nettoyant, sérum, crème…", desc: "Uniquement les soins pour ta peau" },
   { key: "complet", label: "Routine Visage & Maquillage", subtitle: "Skincare + Fond de teint, rouge à lèvres…", desc: "Soin + maquillage du quotidien" },
 ];
+
+
+// Recherche d'un SEUL produit (au lieu d'une routine complète) : mêmes
+// catégories que le menu du site (API /categories), chacune lance le même quiz
+// produit que le menu : /quiz/{parent}/general/{slug}.
+const SINGLE_PRODUCT_TEXT = {
+  visage: "Tu es à la recherche juste d'un produit en particulier pour ton visage ?",
+  corps: "Ou tu cherches seulement un produit en particulier pour ton corps ?",
+  cheveux: "Ou tu cherches seulement un produit en particulier pour tes cheveux ?",
+};
+
+function SingleProductSection({ type, groups }) {
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    api.get("/categories").then((r) => { if (alive) setCategories(r.data); }).catch(() => { if (alive) setCategories({}); });
+    return () => { alive = false; };
+  }, []);
+  const shown = (groups || []).map((g) => ({ ...g, products: categories?.[g.parent]?.products || [] })).filter((g) => g.products.length);
+  if (!shown.length) return null;
+  return (
+    <section className="mt-14 pt-10 border-t border-neutral-100" data-testid={`single-product-${type}`}>
+      <p className="text-neutral-700 text-base md:text-lg">
+        {SINGLE_PRODUCT_TEXT[type]}{" "}
+        <span className="text-neutral-500">Sélectionne le produit que tu souhaites. Réponds au quiz et nous trouverons le match parfait pour toi.</span>
+      </p>
+      {shown.map((g) => (
+        <div key={g.parent} className="mt-6">
+          {g.title && <h3 className="text-lg font-semibold text-[#79C1E0] mb-3">{g.title}</h3>}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {g.products.map((p) => (
+              <button key={p.slug} type="button" onClick={() => navigate(`/quiz/${g.parent}/general/${p.slug}`)}
+                className="min-w-0 rounded-2xl border-2 border-neutral-200 bg-white hover:border-[#FEC4D2] p-4 flex flex-col items-center gap-2 text-center transition"
+                data-testid={`single-product-tile-${p.slug}`}>
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-white flex items-center justify-center">
+                  <img src={getMenuProductImage(p.slug)} alt="" loading="lazy" className="w-full h-full object-contain p-1"/>
+                </div>
+                <span className="text-sm font-medium text-neutral-800 break-words [overflow-wrap:anywhere] leading-snug">{p.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+const SINGLE_GROUPS = {
+  visage: [{ parent: "visage", title: "Visage" }, { parent: "cosmetiques", title: "Maquillage" }],
+  corps: [{ parent: "corps", title: null }],
+  cheveux: [{ parent: "cheveux", title: null }],
+};
+
+const INTRO_COPY = {
+  corps: { noun: "corps", title: "Ta routine corps", button: "Lancer le quiz pour créer ma routine corps" },
+  cheveux: { noun: "cheveux", title: "Ta routine cheveux", button: "Lancer le quiz pour créer ma routine cheveux" },
+};
 
 // Filter modal for one product
 function ProductFilterModal({ slug, open, onClose, onSave, budgetTotal }) {
@@ -74,7 +133,7 @@ function ProductFilterModal({ slug, open, onClose, onSave, budgetTotal }) {
                   const isActive = q.multi ? (answers[q.key] || []).includes(opt.value) : answers[q.key] === opt.value;
                   return (
                     <button key={opt.value} type="button" onClick={() => toggleChip(q.key, opt.value, q.multi)}
-                      className={`px-4 py-2 rounded-full text-xs border transition ${isActive ? "bg-[#FEC4D2] border-[#FEC4D2] text-neutral-900" : "bg-white border-neutral-200 text-neutral-700 hover:border-[#FEC4D2]"}`}
+                      className={`px-4 py-2 rounded-full text-xs border transition max-w-full break-words ${isActive ? "bg-[#FEC4D2] border-[#FEC4D2] text-neutral-900" : "bg-white border-neutral-200 text-neutral-700 hover:border-[#FEC4D2]"}`}
                       data-testid={`modal-chip-${q.key}-${opt.value}`}
                     >{opt.label}</button>
                   );
@@ -123,7 +182,7 @@ export default function Routine360Page() {
   const probleme = searchParams.get("probleme");
   const problemLabel = SKIN_PROBLEMS.find(p => p.slug === probleme)?.label;
 
-  const [step, setStep] = useState(1); // 0 auth, 1 type, 2 subtype (visage), 2.5 cat-questions, 3 products, 5 recap
+  const [step, setStep] = useState(1); // 0 auth, 1 type, 2 subtype (visage), 2.5 cat-questions, 3 products, 5 recap (1.5 = intro corps/cheveux)
   const [authOpen, setAuthOpen] = useState(false);
   const [chosenType, setChosenType] = useState(null);
   const [chosenSub, setChosenSub] = useState(null);
@@ -173,10 +232,10 @@ export default function Routine360Page() {
     }
     if (step === 2.5) {
       if (catQIdx > 0) { setCatQIdx(catQIdx - 1); return; }
-      setStep(chosenType === "visage" ? 2 : 1);
+      setStep(chosenType === "visage" ? 2 : chosenType === "corps" || chosenType === "cheveux" ? 1.5 : 1);
       return;
     }
-    if (step === 2) { setStep(1); return; }
+    if (step === 2 || step === 1.5) { setStep(1); return; }
     // step === 1 : rien de plus à reculer en interne, voir le listener popstate.
   };
 
@@ -230,7 +289,7 @@ export default function Routine360Page() {
       setCatQIdx(0);
       setCatAnswers({});
       if (k === "visage") setStep(2);
-      else setStep(2.5);
+      else setStep(1.5);
     };
     return (
       <main className="bg-white min-h-screen px-6 py-16 md:py-20 relative" data-testid="routine-step-type">
@@ -278,6 +337,30 @@ export default function Routine360Page() {
     );
   }
 
+  // === Step 1.5 — Corps / Cheveux : routine complète OU un seul produit ===
+  if (step === 1.5 && INTRO_COPY[chosenType]) {
+    const c = INTRO_COPY[chosenType];
+    return (
+      <main className="bg-white min-h-screen px-6 py-16 md:py-20 relative" data-testid="routine-step-intro">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-xs uppercase tracking-[0.25em] text-[#79C1E0]">Routine → <span className="text-neutral-900 capitalize">{chosenType}</span></p>
+          <h1 className="mt-2 text-xl md:text-2xl font-bold text-neutral-900">{c.title} <span className="editorial text-[#FEC4D2]">sur mesure</span></h1>
+          <p className="mt-2 text-neutral-600 mb-8 text-sm md:text-base">
+            Une routine complète réunit plusieurs produits choisis selon ton profil pour {c.noun === "corps" ? "ton corps" : "tes cheveux"}, avec un budget réparti entre eux. Si tu ne cherches qu'un seul produit, c'est juste en dessous.
+          </p>
+          <button onClick={() => setStep(2.5)} className="w-full bg-white border border-[#FEC4D2]/40 hover:border-[#FEC4D2] rounded-3xl p-6 md:p-8 text-center card-lift transition" data-testid="intro-start-routine">
+            <h3 className="text-lg md:text-xl font-bold break-words">{c.button}</h3>
+            <p className="text-xs italic text-neutral-400 mt-2">Quelques questions, puis tu choisis les produits de ta routine</p>
+          </button>
+          <SingleProductSection type={chosenType} groups={SINGLE_GROUPS[chosenType]} />
+          <button onClick={() => setStep(1)} className="mt-8 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900">
+            <ChevronLeft size={14}/> Retour
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   // === Step 2 — Visage sub-choice ===
   if (step === 2 && chosenType === "visage") {
     return (
@@ -295,6 +378,7 @@ export default function Routine360Page() {
               </button>
             ))}
           </div>
+          <SingleProductSection type="visage" groups={SINGLE_GROUPS.visage} />
           <button onClick={() => setStep(1)} className="mt-8 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900">
             <ChevronLeft size={14}/> Retour
           </button>
