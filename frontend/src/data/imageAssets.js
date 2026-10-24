@@ -113,13 +113,13 @@ export const MENU_SLUG_IMAGE = {
   "fond-de-teint-cosmetique": "fond-de-teint",
   "contouring": "bronzer",
   "demaquillant-cosm": "eau-micellaire",
-  "gommage-corps": "exfoliant",
-  "lait-corporel": "creme-corps",
-  "beurre-corporel": "creme-corps",
 };
 
 // Visuels propres au menu (catégories absentes de la Routine 360°).
 export const MENU_ONLY_IMAGE = {
+  "gommage-corps": "/image/cat-gommage-corps.webp",
+  "lait-corporel": "/image/cat-lait-corporel.webp",
+  "beurre-corporel": "/image/cat-beurre-corporel.webp",
   "soin-mains": "/image/cat-soin-mains.webp",
   "soin-pieds": "/image/cat-soin-pieds.webp",
   "deodorant": "/image/cat-deodorant.webp",
