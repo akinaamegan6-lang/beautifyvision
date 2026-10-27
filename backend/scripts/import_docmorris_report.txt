@@ -1,0 +1,188 @@
+IMPORT DOCMORRIS FR (SIMULATION, rien n'est ecrit en base)
+  251380  lignes lues
+  185783  ecartees : rayon hors categories du site (parfums, hommes, sante, bebe, orthopedie...)
+     208  ecartees : sans photo valide
+    1962  ecartees : outil/accessoire/coffret
+     225  ecartees : soin medical
+     273  ecartees : pas du maquillage (serum cils, huile, soin...)
+    1994  ecartees : non classifiees
+     148  ecartees : complement alimentaire
+     293  ecartees : homme/rasage
+      50  ecartees : prix aberrant (< 1 EUR)
+      44  ecartees : parfum
+   60400  candidats apres filtres
+   29739  doublons internes DocMorris fusionnes (meme produit, contenance, teinte ou liste plusieurs fois)
+    1193  quasi-doublons internes DocMorris fusionnes
+   29468  produits DocMorris uniques
+    3774  produits deja presents (ancien flux)
+     352  ecartes car deja presents (Comas/Hairlust/base)
+   29116  PRODUITS A IMPORTER
+    2255    dont noms ecrits en espagnol (a verifier)
+   29116  avant limite par categorie
+   29116  PRODUITS IMPORTES APRES LIMITE
+     641  importes mais ressemblant a un produit existant (a verifier)
+
+Repartition par categorie :
+   4414  creme-hydratante
+   2455  gel-douche
+   2279  shampoing
+   1538  serum
+   1219  huile-corps
+   1183  masque-cheveux
+   1069  rouge-a-levres
+   1057  apres-shampoing
+   1011  creme-solaire-corps
+    936  creme-corps
+    867  nettoyant
+    833  masque
+    753  contour-yeux
+    685  soin-levres
+    672  fond-de-teint-cosmetique
+    668  soin-mains
+    653  deodorant
+    650  creme-solaire-visage
+    608  brume
+    501  spray-coiffant
+    480  demaquillant
+    442  soin-pieds
+    416  soin-anti-chute
+    409  serum-cheveux
+    403  eyeliner
+    398  exfoliant
+    379  mascara
+    279  gommage-corps
+    256  lait-corporel
+    248  poudre
+    222  huile-visage
+    195  palette-yeux
+    190  sourcils
+    163  huile-cheveux
+    163  blush
+     90  fond-de-teint
+     76  shampoing-sec
+     67  vergetures
+     47  beurre-corporel
+     42  autobronzant
+     36  primer
+     25  highlighter
+     22  soin-cuir-chevelu
+     17  soin-cheveux-colores
+
+Exemples ecartes (sans photo valide) :
+  - ISDIN | Lotion après soleil ISDIN® 200ml | Beauté et cosmétique > Protection solaire > Protection solaire pour le corps > Après-soleil
+  - LA ROCHE POSAY | La Roche-Posay Effaclar +M Gel Moussant Purifiant 400ml | Beauté et cosmétique > Visage > Acné > Nettoyant
+  - Cantabria Labs | Urée 10 % Nm 500 Ml | Beauté et cosmétique > Corps > Hydratation > Peau sèche
+  - MUSSVITAL | Mussvital Gel de bain Aloe vera 750 ml | Hygiène > Soins pour le corps > Hygiène > Peau normale
+  - MUSSVITAL | Gel de bain Mussvital au lait de coco 750ml | Hygiène > Soins pour le corps > Hygiène > Peau normale
+  - LINEA VERDE | Shila Emulsion Photoprotecteur 200 Ml Photoprotecteur | Beauté et cosmétique > Visage > Hydratation > Peau sèche
+  - LA ROCHE POSAY | La Roche Posay Effaclar H Crème Lavante 200ml | Hygiène > Soins pour le corps > Hygiène > Peau sensible
+  - MUSSVITAL | Mussvital Derma gel de bain pour peaux sensibles 1l | Hygiène > Soins pour le corps > Hygiène > Peau sensible
+  - NUGGELA & SULE | Shampoing 100% vert Nuggela & Sulé Premium 250 ml | Hygiène > Cheveux > Shampooing > Usage fréquent
+  - NUGGELA & SULE | Nuggela & Sule Brouillard de cheveux 207ml | Hygiène > Cheveux > Après-shampooing sans rinçage
+  - NUGGELA & SULE | Ampoules de traitement anti-âge Nuggela & Sulé Premium 4 U X 10 Ml | Hygiène > Cheveux > Ampoules
+  - NUGGELA & SULE | Régénérateur de cheveux Nuggela & Sulé 4 U X 10 Ml | Hygiène > Cheveux > Ampoules
+  - NUGGELA & SULE | Masque capillaire Nuggela & Sule South Beach 250 Ml | Hygiène > Cheveux > Masque > Usage fréquent
+  - Neutrogena® | Neutrogena® Crème Pieds Absorption Express 100ml | Hygiène > Soin des pieds > Hydratation > Pieds très secs
+  - NUGGELA & SULE | Nuggela & Sulé Amazonic Sérum Renforcement + Croissance des Cils | Beauté et cosmétique > Yeux > Cils > Fortifiant
+
+Exemples ecartes (outil/accessoire/coffret) :
+  - PEDINA | Pédina noir enlève la dureté de l'éponge noire 1 pc | Hygiène > Soin des pieds > Soin > Callosités - Cors
+  - BETER | Éponge Beter Maquillage Siliconesans latex collection Glowy | Beauté et cosmétique > Visage > Maquillage > Brosses
+  - BETER | Beter Contour Brush Brosse Kabuki Collection Glowy | Beauté et cosmétique > Visage > Maquillage > Brosses
+  - BETER | Pinceau de maquillage ovale Beter Collection Fluid Glowy | Beauté et cosmétique > Visage > Maquillage > Brosses
+  - Vitry | Pince à épiler Vitry Micro Conical en acier inoxydable aiguisé. | Beauté et cosmétique > Yeux > Sourcils > Pinces à épiler
+  - Vitry | Pince à épiler Vitry pointes aiguisées et ultrafines en acier inoxydable. | Beauté et cosmétique > Yeux > Sourcils > Pinces à épiler
+  - COLOUR CLINUANCE | Colour Clinuance Kit 10.1 Couleur Force | Hygiène > Cheveux > Lotion
+  - M2 BEAUTÉ | M2 Beauté Outils peigne à cils peigne à cils peigne à cils | Beauté et cosmétique > Yeux > Cils > Accessoires
+  - Vitry | Vitry Pince à Epiler Club Mors Crabe Biais Couleur | Beauté et cosmétique > Yeux > Sourcils > Pinces à épiler
+  - Vitry | Vitry Pince à Epiler Mors Crabe Couleur | Beauté et cosmétique > Yeux > Sourcils > Pinces à épiler
+  - BETER | Eponge démaquillante Beter 2 Unités | Beauté et cosmétique > Visage > Nettoyant visage > Cotons
+  - Somatoline | Somatoline Kit Tratamiento Total (7 Noches + Zonas Rebeldes) * | Beauté et cosmétique > Corps > Minceur
+  - BETER | Miroir Beter 10 Augments | Beauté et cosmétique > Visage > Maquillage > Miroirs
+  - Vitry | Vitry Pince à Epiler Mors Biais Inox 1 Pièce | Beauté et cosmétique > Yeux > Sourcils > Pinces à épiler
+  - Vitry | Vitry Pince à Epiler Professionnelle Mors Biais Inox Doré | Beauté et cosmétique > Yeux > Sourcils > Pinces à épiler
+
+Exemples ecartes (soin medical) :
+  - Scholl | Scholl callus patches molespuma 1ud | Hygiène > Soin des pieds > Soin > Callosités - Cors
+  - URGO | Urgo Coricide 12 pansements | Hygiène > Soin des pieds > Soin > Callosités - Cors
+  - LLOPAR | Llopar Callus coupeur de callosités | Hygiène > Soin des pieds > Gommage > Callosités
+  - MAF | Maf Curved Oval Callus Scraper 1 Unité | Hygiène > Soin des pieds > Gommage > Callosités
+  - Excilor | Excilor Forte Traitement de la Mycose des Ongles 30 ml | Hygiène > Mains et ongles > Soin > Mycose
+  - Compeed | Compeed™ protection contre les callosités entre les doigts 10 Unités | Hygiène > Soin des pieds > Soin > Callosités - Cors
+  - Compeed | Compeed™ Pansements Cors Format Medium 10 u. | Hygiène > Soin des pieds > Soin > Callosités - Cors
+  - Bionike | BIONIKE DÉFENSE CHEVEUX SH ANTIFONGIQUE | Cosmétiques naturels > Soins visage et corps
+  - Erboristeria Magentina | Hémorroïdes Populaires Det 150Ml | Cosmétiques naturels > Soins visage et corps
+  - SVR | SVR Xérial 50 Extrême Crème Pieds Anti-Callosités 50ml | Hygiène > Soin des pieds > Soin > Callosités - Cors
+  - CICCARELLI | Ciccarelli Timodore Cryothérapie Verrues 75ml | Beauté et cosmétique > Visage > Nettoyant visage > Lotions toniques
+  - Scholl | Scholl Cors Feutres Protecteurs 9 Unités | Hygiène > Soin des pieds > Gommage > Callosités
+  - URGO | Urgo Cors et Oeils de Perdrix 5 pansements | Hygiène > Soin des pieds > Soin > Callosités - Cors
+  - Scholl | Scholl Capuchon Doigts Orteils | Hygiène > Soin des pieds > Gommage > Callosités
+  - Excilor | Excilor Crème Régénératrice Corne & Callosités 50ml | Hygiène > Soin des pieds > Gommage > Callosités
+
+Exemples ecartes (non classifie) :
+  - FARMEDCO | Maquillage des lèvres pour les ongles No. 64 | Beauté et cosmétique > Visage > Maquillage
+  - Arkopharma | Arkoesencial huile d'argan 30ml | Cosmétiques naturels > Soins visage et corps
+  - Nurapharm | Mb Formule d'âge 20 X 12 Ml | Cosmétiques naturels > Soins visage et corps
+  - Clinique | Clinique Sculptionary Cheek Contour Paleta 02 * | Beauté et cosmétique > Visage > Maquillage
+  - Radhe Shyam | Radhe Shyam Henné Tatouage Naturel | Beauté et cosmétique > Visage > Maquillage
+  - AVD | Avd G-Femm Savon Liquide Intime 200ml | Cosmétiques naturels > Soins visage et corps
+  - ABBATE GUALTIERO | NETTOYANT INTIME SANOCLIN | Cosmétiques naturels > Soins visage et corps
+  - ABBATE GUALTIERO | Abbate Gualtiero Clinderm Nettoyant Intime 500ml | Cosmétiques naturels > Soins visage et corps
+  - ABBATE GUALTIERO | Abbate Gualtiero Sanodet Isogin Nettoyant Liquide 100ml | Cosmétiques naturels > Soins visage et corps
+  - Jowaé | Jowaé Concentré Jeunesse Détox Éclat Nuit 30ml | Cosmétiques naturels > Soins visage et corps
+  - Alfasigma | Aluseb Lotion 75Ml | Cosmétiques naturels > Soins visage et corps
+  - Arkopharma | ARKOVOX MIEL/ CITRON 24CARAM | Beauté et cosmétique > Visage > Maquillage > Miroirs
+  - Baule Volante & Fior di Loto | SAVON DE MARSEILLE BIO | Cosmétiques naturels > Soins visage et corps
+  - Nivea | NIVEA NOURRISSANT CORPS 250ML | Cosmétiques naturels > Soins visage et corps
+  - Bionike | Bionike Proxera Emulsion Corps 200ml | Cosmétiques naturels > Soins visage et corps
+
+Exemples ecartes (complement alimentaire) :
+  - Neusc | Neusc Two Comprimé dermoprotecteur 24g | Hygiène > Mains et ongles > Hydratation
+  - Naturmil | Naturmil Centella Asiatica 500 Mg 90 Comprimés | Beauté et cosmétique > Corps > Anti-cellulite
+  - Signasol | Signasol 28 Ampoules buvables | Beauté et cosmétique > Visage > Anti-âge > Ampoules
+  - sebamed | Sebamed™ Clear Face Cleaner comprimé 100g | Beauté et cosmétique > Visage > Acné > Nettoyant
+  - Apivita | Apivita comprimés de thym et miel sans sucre 45g | Cosmétiques naturels > Soins visage et corps
+  - Apivita | Apivita Propolis Propolis Propolis Propolis Gorge Sirop Propolis et Thym 150ml | Cosmétiques naturels > Soins visage et corps
+  - Klorane | Klorane Patchs Lissants Défatigants 2x7 Sachets | Beauté et cosmétique > Yeux > Patchs
+  - PHARMEXTRACTA | Monoselect Agnus 30 Comprimés | Beauté et cosmétique > Yeux > Cils
+  - BIODUE | Biodue Triconicon 30 Comprimés 400Mg | Beauté et cosmétique > Visage > Anti-âge
+  - Mathieu Labo | Valdispharm L'Action Masque Noir Pell Off Charbon 3 sachets | Cosmétiques naturels > Soins visage et corps
+  - L'Action Paris | L'Action Paris Patch Point Noir Tea Tree 5 sachets | Beauté et cosmétique > Visage > Acné > Soin
+  - ACTIVA | Activa Bien être Cheveux 45 gélules | Beauté et cosmétique > Visage > Anti-âge
+  - ACTIVA | Activa Bien être Femme + 30 gélules | Beauté et cosmétique > Yeux > Cils
+  - REPAVAR | Repavar Monoderma C10 28 gélules | Beauté et cosmétique > Visage > Anti-âge
+  - Dr Valnet | Docteur Valnet Les Bains AlgEssences 6 Sachets | Beauté et cosmétique > Corps > Produits raffermissants
+
+Exemples ecartes (homme/rasage) :
+  - Clinique | Clinique Men Crema De Ojos Anti-edad 15ml * | Beauté et cosmétique > Yeux > Contour des yeux
+  - Carolina Herrera | Carolina Herrera Ch Homme Désodorisant Désodorisant 150ml Vaporisateur | Hygiène > Soins pour le corps > Déodorants
+  - Carolina Herrera | Carolina Herrera 212 Déodorant Homme Vaporisateur 150ml pour Homme | Hygiène > Soins pour le corps > Déodorants
+  - Nivea | Nivea Invisible Hommes Vaporisateur Déodorant Hommes Vaporisateur 200ml | Hygiène > Soins pour le corps > Déodorants
+  - Clinique | Clinique For Men Gel-Concentré Hydratant Maximun 48ml | Hygiène > Soins pour le corps > Hygiène
+  - LABELLO | LABELLO ACTIVE POUR HOMMES SPF15 | Beauté et cosmétique > Lèvres > Hydratation > Soin réparateur
+  - Bionike | DEFENCE MAN ENERGISE CRGEL REVEL | Beauté et cosmétique > Visage > Anti-âge > Soin de jour
+  - MEDA PHARMA | SAUGELLA HOMME DÉTERGENT 500ML | Cosmétiques naturels > Soins visage et corps
+  - GIULIANI | Bioscalin Energy Hair Homme 30comp | Beauté et cosmétique > Visage > Anti-âge
+  - GIULIANI | Bioscalin Energy Anti Chute Homme 10uts | Cosmétiques naturels > Soins visage et corps
+  - L'ERBOLARIO | CRÈME VISAGE HOMME 50ML | Beauté et cosmétique > Visage > Anti-âge > Sérum
+  - L'ERBOLARIO | SAVON AUX HERBES HOMME 100G | Hygiène > Soins pour le corps > Hygiène
+  - L'ERBOLARIO | SHAMPOOING DOUCHE HOMME 250ML | Hygiène > Soins pour le corps > Hygiène
+  - EUCARE | Eucare Neocriloidin Lotion capillaire homme 150Ml | Cosmétiques naturels > Soins visage et corps
+  - Cavaillès | Cavaillès L'Homme Déodorant Anti-Transpirant 48h 150ml | Hygiène > Soins pour le corps > Déodorants
+
+Exemples ecartes (parfum) :
+  - L'Occitane | L'Occitane Verveine Agrumes Eau Fraiche 150mL | Hygiène > Soins pour le corps > Hygiène
+  - Amidomio | Euphidra-Amidomial Acq Cologne | Cosmétiques naturels > Soins visage et corps
+  - YODEYMA | Yodeyma For You Eau De Parfum 15ml | Beauté et cosmétique > Visage > Nettoyant visage > Lotions toniques
+  - Helan | Helan Bimbi Acqua Luigia Colonia Sans Alcool 100ml | Cosmétiques naturels > Soins visage et corps
+  - Nuhanciam | Nuhanciam Cuidado Corporal Extremo Sin Perfume 200ml | Beauté et cosmétique > Visage > Hydratation > Peau sèche
+  - Comodynes | Comodynes Auto-Bronzant Eau Fraîche Visage & Corps 100ml | Beauté et cosmétique > Protection solaire > Protection solaire pour le corps > Autobronzants pour le corps
+  - Soivre Cosmetics | Soivre Body Mist Happy 150ml | Beauté et cosmétique > Visage > Hydratation
+  - Eucerin | Urea Repair Plus Loción 5% perfume 400ml | Beauté et cosmétique > Corps > Hydratation > Peau très sèche (xérose)
+  - Laboratoire Du Haut-Ségala | Laboratoire du Haut-Ségala Desodorante Crema sin Perfume Bio 50g | Hygiène > Soins pour le corps > Déodorants
+  - Ozalys | Ozalys Moisturizing Body Mist 100ml | Beauté et cosmétique > Visage > Hydratation
+  - Garnier | Garnier Natural Bronzer Quick Drying Self Tan Body Mist Dark 150ml | Beauté et cosmétique > Protection solaire > Protection solaire pour le corps > Autobronzants pour le corps
+  - Hei Poa | Hei Poa Perfume Monoï Tiaré 100ml | Beauté et cosmétique > Corps > Huiles
+  - BETAFAR | Betafar Aceite de Almendras Sin Perfume 1000ml | Beauté et cosmétique > Corps > Huiles
+  - Rated Green | Rated Green Detangling Perfume Mist 03 Peony Cocon Sandal 80ml | Hygiène > Cheveux > Soin
+  - Rated Green | Rated Green Detangling Perfume Mist 01 Lemon Freesia Musk 80ml | Hygiène > Cheveux > Soin

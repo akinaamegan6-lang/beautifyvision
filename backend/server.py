@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 import certifi
 import os
 import json
+import asyncio
 import logging
 import base64
 import re
@@ -95,31 +96,61 @@ async def ratings_stats(keys: Optional[List[str]] = None) -> dict:
     return out
 
 
-async def get_catalog():
-    """Catalogue de produits servi par l'API.
+import time  # noqa: E402
 
-    Lit la collection Mongo "products" (les vrais produits importes depuis le
-    flux Awin via scripts/import_awin_feed.py). Si cette collection est encore
-    vide (import pas encore lance), on retombe sur l'ancien catalogue de demo
-    (catalog.CATALOG) pour que le site reste fonctionnel en attendant.
-    """
-    items = await products_col.find({}).to_list(length=20000)
-    if not items:
-        items = [dict(p) for p in CATALOG]
-    else:
-        for it in items:
-            it.pop("_id", None)
+# Cache memoire des produits (par filtre category/parent). Avec un catalogue de
+# plusieurs dizaines de milliers de produits, relire toute la collection a
+# chaque requete etait beaucoup trop lent : on ne lit que la tranche demandee
+# (filtre Mongo) et on la garde en memoire quelques minutes.
+_PRODUCTS_TTL = 180
+_products_cache = {}  # (category, parent) -> (timestamp, items)
+_PRODUCT_PROJECTION = {"_id": 0, "description": 0}
+
+
+async def _load_products(category: Optional[str] = None, parent: Optional[str] = None):
+    key = (category, parent)
+    hit = _products_cache.get(key)
+    now = time.time()
+    if hit and now - hit[0] < _PRODUCTS_TTL:
+        return hit[1]
+    query = {}
+    if category:
+        query["category"] = category
+    if parent:
+        query["parent"] = parent
+    items = await products_col.find(query, _PRODUCT_PROJECTION).to_list(length=None)
+    if items:
         items = dedupe_variants(items)
-    # Les notes affichees sont UNIQUEMENT celles laissees par les visiteuses
-    # (collection product_ratings). Les anciennes valeurs par defaut (4.0 / 0
-    # avis) du flux et du catalogue de demo sont ecrasees : 0 note tant que
-    # personne n'a note le produit.
-    stats = await ratings_stats()
-    for it in items:
-        s = stats.get(rating_key(it))
-        it["rating"] = s["rating"] if s else 0.0
-        it["reviews"] = s["reviews"] if s else 0
+    elif not await products_col.estimated_document_count():
+        # Collection vide (import pas lance) : ancien catalogue de demo.
+        items = [
+            dict(p) for p in CATALOG
+            if (not category or p["category"] == category) and (not parent or p["parent"] == parent)
+        ]
+    if len(_products_cache) > 200:
+        _products_cache.clear()
+    _products_cache[key] = (now, items)
     return items
+
+
+async def get_catalog(category: Optional[str] = None, parent: Optional[str] = None):
+    """Produits servis par l'API (optionnellement filtres par categorie/parent).
+
+    Lit la collection Mongo "products" (flux Awin importes via scripts/). Les
+    notes affichees sont UNIQUEMENT celles laissees par les visiteuses
+    (collection product_ratings) : 0 note tant que personne n'a note le
+    produit. Les produits sont mis en cache, pas les notes.
+    """
+    base = await _load_products(category, parent)
+    stats = await ratings_stats()
+    out = []
+    for it in base:
+        c = dict(it)
+        s = stats.get(rating_key(c))
+        c["rating"] = s["rating"] if s else 0.0
+        c["reviews"] = s["reviews"] if s else 0
+        out.append(c)
+    return out
 
 
 app = FastAPI()
@@ -255,11 +286,7 @@ async def list_products(
     sort: str = "price_asc",
     search: Optional[str] = None,
 ):
-    items = await get_catalog()
-    if category:
-        items = [p for p in items if p["category"] == category]
-    if parent:
-        items = [p for p in items if p["parent"] == parent]
+    items = await get_catalog(category=category, parent=parent)
     items = [p for p in items if min_price <= p["price"] <= max_price]
     if search:
         s = search.lower()
@@ -289,8 +316,7 @@ LOW_RES_IMAGE_PRODUCTS = {
 
 @api_router.get("/products/top", response_model=List[Product])
 async def top_products(parent: str = "cosmetiques", limit: int = 10):
-    catalog = await get_catalog()
-    items = [p for p in catalog if p["parent"] == parent]
+    items = await get_catalog(parent=parent)
     items = [
         p for p in items
         if (_normalize_text(p["brand"]), _normalize_text(re.sub(r"[,(].*$", "", p["name"]).strip())) not in LOW_RES_IMAGE_PRODUCTS
@@ -327,11 +353,15 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
 
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
-    catalog = await get_catalog()
-    for p in catalog:
-        if p["id"] == product_id:
-            return p
-    raise HTTPException(status_code=404, detail="Product not found")
+    doc = await products_col.find_one({"id": product_id}, _PRODUCT_PROJECTION)
+    if doc is None:
+        doc = next((dict(p) for p in CATALOG if p["id"] == product_id), None)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+    s = (await ratings_stats([rating_key(doc)])).get(rating_key(doc))
+    doc["rating"] = s["rating"] if s else 0.0
+    doc["reviews"] = s["reviews"] if s else 0
+    return doc
 
 
 # ============ Notes des produits (donnees par les visiteuses) ============
@@ -401,6 +431,61 @@ def _extract_json(text: str) -> dict:
     return {}
 
 
+
+# ---- Essayage IA : uniquement du VRAI maquillage ----
+# Categories de maquillage utilisables par l'IA (hors demaquillant, soins...).
+MAKEUP_CATEGORIES = [
+    "rouge-a-levres", "fond-de-teint-cosmetique", "palette-yeux", "mascara",
+    "eyeliner", "blush", "highlighter", "poudre", "contouring", "sourcils", "primer",
+]
+# Mots qui trahissent un soin / produit solaire / nettoyant range par erreur
+# dans une categorie maquillage : jamais envoyes a l'IA.
+NOT_MAKEUP_RE = re.compile(
+    r"solaire|sunscreen|sun\s?(care|cream|lotion|screen|stick)|sonnen|protector\s?solar|"
+    r"creme\s(hydrat|nourr|visage|corps|mains|pieds)|huile\s(de|seche|corps|visage)|serum|"
+    r"demaquill|nettoy|micellaire|shampo|gel\s?douche|apres[- ]soleil|anti[- ]?(age|rides|cellulite)|"
+    r"soin\s(des|du|pour)|baume\s(a|pour)\s(levres\s)?soin|lait\s(corps|corporel)",
+    re.I,
+)
+# Nombre max de produits envoyes a l'IA par zone (presélection) : le catalogue
+# peut contenir des milliers de produits, on n'envoie que les plus pertinents.
+AI_PER_CATEGORY = 60
+
+_COLOR_WORDS = [
+    "nude", "rouge", "red", "rose", "pink", "corail", "coral", "peche", "peach", "brun", "brown", "marron",
+    "dore", "gold", "prune", "plum", "bordeaux", "cuivre", "copper", "noir", "black", "miel", "caramel",
+    "orange", "violet", "purple", "mauve", "beige", "terracotta", "berry", "baie", "vert", "green",
+    "bleu", "blue", "jaune", "yellow", "champagne", "bronze", "taupe", "gris", "grey", "fuchsia",
+]
+
+
+async def _makeup_candidates(req) -> list:
+    """Produits de maquillage (avec une zone) a proposer a l'IA, presélectionnes
+    par categorie : mots de couleur de la demande presents dans le nom, couleur
+    connue (color_hex), puis produits du budget d'abord."""
+    pools = await asyncio.gather(*[get_catalog(category=c) for c in MAKEUP_CATEGORIES])
+    prompt = _normalize_text(req.prompt or "")
+    wanted = [w for w in _COLOR_WORDS if w in prompt]
+    budget = req.budget_max or 1000
+    chosen = []
+    for items in pools:
+        scored = []
+        for p in items:
+            if not p.get("zone") or p.get("parent") != "cosmetiques":
+                continue
+            if NOT_MAKEUP_RE.search(_normalize_text(p["name"])):
+                continue
+            name = _normalize_text(p["name"])
+            score = 0
+            score += 3 * sum(1 for w in wanted if w in name)
+            score += 2 if p.get("color_hex") else 0
+            score += 1 if p["price"] <= budget else 0
+            scored.append((score, p))
+        scored.sort(key=lambda t: (-t[0], t[1]["price"]))
+        chosen.extend(p for _, p in scored[:AI_PER_CATEGORY])
+    return chosen
+
+
 @api_router.post("/ai/select-products", response_model=AISelectResponse)
 async def ai_select_products(req: AISelectRequest):
     if not ANTHROPIC_API_KEY:
@@ -410,8 +495,7 @@ async def ai_select_products(req: AISelectRequest):
     # over-budget items in the pool (rather than filtering them out entirely)
     # so Claude can optionally surface a good out-of-budget option per zone,
     # instead of simply never knowing such a product exists.
-    catalog = await get_catalog()
-    candidates = [p for p in catalog if p["parent"] == "cosmetiques"]
+    candidates = await _makeup_candidates(req)
     # Keep useful fields only to limit token count
     slim = [
         {
@@ -422,8 +506,6 @@ async def ai_select_products(req: AISelectRequest):
             "price": p["price"],
             "color_hex": p.get("color_hex"),
             "zone": p.get("zone"),
-            "tags": p.get("tags", []),
-            "benefits": p.get("benefits", []),
         }
         for p in candidates
     ]
@@ -524,7 +606,7 @@ async def ai_select_products(req: AISelectRequest):
     # catalog so we never trust the model's own notion of what's in/out of
     # budget: a "products" entry must truly be within budget, and an
     # "out_of_budget" entry must truly be above it.
-    price_by_id = {p["id"]: p["price"] for p in catalog}
+    price_by_id = {p["id"]: p["price"] for p in candidates}
     valid_ids = set(price_by_id.keys())
 
     cleaned = []
