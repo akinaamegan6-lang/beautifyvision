@@ -722,12 +722,17 @@ def main():
 
     inserted = updated = 0
     if not dry_run:
-        for d in docs:
-            res = products_col.update_one({"id": d["id"]}, {"$set": d}, upsert=True)
-            if res.upserted_id is not None:
-                inserted += 1
-            else:
-                updated += 1
+        from pymongo import UpdateOne
+        total = len(docs)
+        for i in range(0, total, 500):
+            batch = docs[i:i + 500]
+            res = products_col.bulk_write(
+                [UpdateOne({"id": d["id"]}, {"$set": d}, upsert=True) for d in batch],
+                ordered=False,
+            )
+            inserted += res.upserted_count
+            updated += res.matched_count
+            print(f"  ... {min(i + 500, total)} / {total} produits ecrits", flush=True)
 
     # --- rapports --------------------------------------------------------------
     rep = ["IMPORT DOCMORRIS FR" + (" (SIMULATION, rien n'est ecrit en base)" if dry_run else "")]
