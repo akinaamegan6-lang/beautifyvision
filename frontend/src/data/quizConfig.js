@@ -386,11 +386,12 @@ export const ROUTINE_PRODUCTS = [
   // Mêmes catégories, mêmes libellés et même ordre que le menu du site (API
   // /categories, backend/catalog.py) : le choix des produits d'une routine est
   // identique à la recherche d'un produit unique. `group` = bloc d'affichage,
-  // `section` = regroupement du bilan PDF.
+  // `section` = regroupement du bilan PDF. Eau micellaire, Tonique, Gloss, Correcteur et Bronzer sont des choix propres aux routines (absents du menu produit unique).
   // Visage
   { slug: "creme-hydratante", label: "Crème hydratante", category: "creme-hydratante", emoji: "🧴", section: "skincare", group: "visage", det: "ta", short: "Crème hydratante" },
   { slug: "serum", label: "Sérum", category: "serum", emoji: "🧪", section: "skincare", group: "visage", det: "ton" },
   { slug: "nettoyant", label: "Savon / Nettoyant", category: "nettoyant", emoji: "🧼", section: "skincare", group: "visage", det: "ton", short: "Savon / nettoyant" },
+  { slug: "eau-micellaire", label: "Eau micellaire", category: "nettoyant", emoji: "💧", section: "skincare", group: "visage", det: "ton", fem: true },
   { slug: "huile-visage", label: "Huile visage", category: "huile-visage", emoji: "🌟", section: "skincare", group: "visage", det: "ton", fem: true },
   { slug: "masque", label: "Masque", category: "masque", emoji: "🎭", section: "skincare", group: "visage", det: "ton" },
   { slug: "contour-yeux", label: "Contour des yeux", category: "contour-yeux", emoji: "👁️", section: "skincare", group: "visage", det: "ton" },
@@ -398,6 +399,7 @@ export const ROUTINE_PRODUCTS = [
   { slug: "exfoliant", label: "Exfoliant / Gommage", category: "exfoliant", emoji: "✨", section: "skincare", group: "visage", det: "ton", short: "Exfoliant" },
   { slug: "fond-de-teint", label: "Fond de teint / BB cream", category: "fond-de-teint", emoji: "🌹", section: "skincare", group: "visage", det: "ton", short: "Fond de teint" },
   { slug: "demaquillant", label: "Démaquillant", category: "demaquillant", emoji: "🧖", section: "skincare", group: "visage", det: "ton" },
+  { slug: "tonique", label: "Tonique", category: "brume", emoji: "🌿", section: "skincare", group: "visage", det: "ton" },
   { slug: "brume", label: "Brume / Eau thermale", category: "brume", emoji: "💨", section: "skincare", group: "visage", det: "ta", short: "Brume" },
   { slug: "creme-solaire-visage", label: "Crème solaire visage", category: "creme-solaire-visage", emoji: "☀️", section: "skincare", group: "visage", det: "ta" },
   // Corps
@@ -415,11 +417,14 @@ export const ROUTINE_PRODUCTS = [
   { slug: "gel-douche", label: "Gel douche / Savon corps", category: "gel-douche", emoji: "🧼", section: "skincare", group: "corps", det: "ton", short: "Gel douche" },
   // Maquillage
   { slug: "rouge-a-levres", label: "Rouge à lèvres / Gloss", category: "rouge-a-levres", emoji: "💄", section: "maquillage", group: "maquillage", det: "ton", short: "Rouge à lèvres" },
+  { slug: "gloss", label: "Gloss", category: "rouge-a-levres", emoji: "💋", section: "maquillage", group: "maquillage", det: "ton" },
   { slug: "fond-de-teint-cosmetique", label: "Fond de teint & Correcteur", category: "fond-de-teint-cosmetique", emoji: "🌹", section: "maquillage", group: "maquillage", det: "ton", short: "Fond de teint" },
+  { slug: "correcteur", label: "Correcteur", category: "fond-de-teint-cosmetique", emoji: "🩷", section: "maquillage", group: "maquillage", det: "ton" },
   { slug: "palette-yeux", label: "Palette yeux", category: "palette-yeux", emoji: "🎨", section: "maquillage", group: "maquillage", det: "ta" },
   { slug: "mascara", label: "Mascara", category: "mascara", emoji: "👁️", section: "maquillage", group: "maquillage", det: "ton" },
   { slug: "eyeliner", label: "Eyeliner & Crayon yeux", category: "eyeliner", emoji: "✏️", section: "maquillage", group: "maquillage", det: "ton", short: "Eyeliner" },
   { slug: "blush", label: "Blush & Bronzer", category: "blush", emoji: "🌸", section: "maquillage", group: "maquillage", det: "ton", short: "Blush" },
+  { slug: "bronzer", label: "Bronzer", category: "blush", emoji: "🧡", section: "maquillage", group: "maquillage", det: "ton" },
   { slug: "highlighter", label: "Highlighter / Enlumineur", category: "highlighter", emoji: "✨", section: "maquillage", group: "maquillage", det: "ton", short: "Highlighter" },
   { slug: "poudre", label: "Poudre (libre, compacte)", category: "poudre", emoji: "🤍", section: "maquillage", group: "maquillage", det: "ta", short: "Poudre" },
   { slug: "contouring", label: "Contouring", category: "contouring", emoji: "🧡", section: "maquillage", group: "maquillage", det: "ton" },
@@ -437,14 +442,8 @@ export const ROUTINE_PRODUCTS = [
   { slug: "soin-anti-chute", label: "Soin anti-chute", category: "soin-anti-chute", emoji: "🌱", section: "cheveux", group: "cheveux", det: "ton" },
   { slug: "soin-cheveux-colores", label: "Soin cheveux colorés", category: "soin-cheveux-colores", emoji: "🎨", section: "cheveux", group: "cheveux", det: "ton" },
   { slug: "soin-cuir-chevelu", label: "Soin cuir chevelu", category: "soin-cuir-chevelu", emoji: "🌿", section: "cheveux", group: "cheveux", det: "ton" },
-  // Anciennes entrées (plus proposées au choix, gardées pour d'éventuels liens existants).
-  { slug: "eau-micellaire", label: "Eau micellaire", category: "nettoyant", emoji: "💧", section: "skincare", group: "visage", hidden: true, det: "ton", fem: true },
-  { slug: "tonique", label: "Tonique", category: "brume", emoji: "🌿", section: "skincare", group: "visage", hidden: true, det: "ton" },
   { slug: "creme-visage", label: "Crème visage", category: "creme-hydratante", emoji: "🧴", section: "skincare", group: "visage", hidden: true, det: "ta" },
   { slug: "creme-solaire", label: "Crème solaire visage", category: "creme-solaire-visage", emoji: "☀️", section: "skincare", group: "visage", hidden: true, det: "ta" },
-  { slug: "correcteur", label: "Correcteur", category: "fond-de-teint-cosmetique", emoji: "🩷", section: "maquillage", group: "maquillage", hidden: true, det: "ton" },
-  { slug: "bronzer", label: "Bronzer", category: "blush", emoji: "🧡", section: "maquillage", group: "maquillage", hidden: true, det: "ton" },
-  { slug: "gloss", label: "Gloss", category: "rouge-a-levres", emoji: "💋", section: "maquillage", group: "maquillage", hidden: true, det: "ton" },
 ];
 
 // Titre accorde en genre et en nombre : "Ta brume idéale", "Ton sérum idéal",
