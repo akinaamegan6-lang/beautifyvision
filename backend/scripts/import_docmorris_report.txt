@@ -1,4 +1,4 @@
-IMPORT DOCMORRIS FR (SIMULATION, rien n'est ecrit en base)
+IMPORT DOCMORRIS FR
   251380  lignes lues
   185783  ecartees : rayon hors categories du site (parfums, hommes, sante, bebe, orthopedie...)
      208  ecartees : sans photo valide
@@ -15,12 +15,14 @@ IMPORT DOCMORRIS FR (SIMULATION, rien n'est ecrit en base)
     1193  quasi-doublons internes DocMorris fusionnes
    29468  produits DocMorris uniques
     3774  produits deja presents (ancien flux)
+    3796  produits deja presents (base)
      352  ecartes car deja presents (Comas/Hairlust/base)
    29116  PRODUITS A IMPORTER
     2255    dont noms ecrits en espagnol (a verifier)
    29116  avant limite par categorie
    29116  PRODUITS IMPORTES APRES LIMITE
      641  importes mais ressemblant a un produit existant (a verifier)
+  -> nouveaux : 29116, mis a jour : 0
 
 Repartition par categorie :
    4414  creme-hydratante

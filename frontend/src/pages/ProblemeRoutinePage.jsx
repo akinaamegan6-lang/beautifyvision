@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Sparkles, ArrowRight } from "lucide-react";
 import { api } from "../lib/api";
+import { trackQuiz } from "../lib/trackQuiz";
 import { SKIN_PROBLEMS, getProblemQuestions } from "../data/quizConfig";
 import { rankProducts, splitByMatchQuality } from "../lib/scoring";
 import QuizStep from "../components/QuizStep";
@@ -57,7 +58,14 @@ export default function ProblemeRoutinePage() {
       .then((results) => {
         const all = results.flat();
         const answers = { problem: slug, product_answers: answersRef.current };
-        setRanked(rankProducts(all, answers, slug));
+        const rankedList = rankProducts(all, answers, slug);
+        setRanked(rankedList);
+        trackQuiz({
+          quizType: "probleme",
+          quizKey: slug,
+          answers: { zone: selectedZone, zones_precises: zonesPrecises, ...answersRef.current },
+          products: rankedList.slice(0, 10),
+        });
       })
       .finally(() => setLoading(false));
   };

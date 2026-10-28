@@ -94,6 +94,7 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
         items: [
           "Données de compte : e-mail, nom, mot de passe (stocké de façon chiffrée), ou informations transmises par Google si tu te connectes via Google.",
           "Données d'usage du diagnostic beauté : réponses au quiz, teinte de peau sélectionnée, préférences indiquées pour générer tes recommandations.",
+          "Statistiques anonymes des quiz : à chaque quiz terminé, nous enregistrons le type de quiz, ton genre et ta tranche d'âge (si tu les indiques), tes réponses, les produits recommandés et la date. Ces informations sont enregistrées sans ton nom, sans ton e-mail, sans ton adresse IP et sans identifiant d'appareil : elles ne permettent pas de t'identifier.",
           "Photo pour l'essayage virtuel : si tu utilises cette fonctionnalité, ta photo est transmise de façon sécurisée à nos prestataires d'intelligence artificielle pour générer le rendu. Elle n'est pas conservée : elle n'est enregistrée ni sur nos serveurs ni dans notre base de données.",
           "Liste de favoris (wishlist) : conservée localement dans ton navigateur.",
           "Commentaires publiés sur le blog : prénom et texte du commentaire, affichés publiquement sous l'article concerné.",
@@ -117,6 +118,7 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
           "Permettre la publication de commentaires sur le blog.",
           "Calculer et afficher la note moyenne des produits à partir des notes laissées par les lectrices.",
           "Répondre aux messages envoyés via le formulaire de contact.",
+          "Établir des statistiques anonymes sur l'utilisation des quiz afin d'améliorer nos recommandations.",
           "Mesurer les achats réalisés via nos liens d'affiliation, si tu l'as accepté, afin de percevoir notre rémunération.",
           "Assurer la sécurité et le bon fonctionnement du Site.",
         ],
@@ -145,6 +147,7 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
       { type: "p", text: "Tes données sont hébergées par Vercel Inc. (hébergement du Site) et stockées dans une base de données MongoDB Atlas." },
       { type: "p", text: "Pour générer les recommandations et les essayages virtuels, certaines informations (préférences beauté, ou ta photo si tu utilises l'essayage virtuel) sont transmises à nos prestataires d'intelligence artificielle (Anthropic et Google), uniquement le temps du traitement de ta demande." },
       { type: "p", text: "Si tu te connectes avec Google, l'authentification passe par un service d'authentification tiers (auth.emergentagent.com), qui nous transmet uniquement les informations nécessaires à la création de ton compte." },
+      { type: "p", text: "Les statistiques anonymes des quiz (réponses, genre, tranche d'âge, produits recommandés) sont conservées 24 mois maximum, puis supprimées ou agrégées. Elles ne sont pas rattachées à ton compte ni à ton identité." },
       { type: "p", text: "Les messages envoyés via le formulaire de contact transitent par le service FormSubmit (formsubmit.co), qui les transmet par e-mail à Beautify Vision." },
       { type: "p", text: "Lorsque tu cliques sur un lien affilié, tu quittes le Site et tu es redirigé·e vers Awin puis vers le site du marchand, ou directement vers Amazon. Ces acteurs traitent alors tes données sous leur propre responsabilité, selon leurs politiques de confidentialité respectives." },
       { type: "p", text: "Beautify Vision ne vend ni ne loue tes données personnelles à des tiers à des fins commerciales." },

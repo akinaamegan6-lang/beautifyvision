@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Save, Share2, Sparkles, ChevronDown, ExternalLink } from "lucide-react";
 import { api } from "../lib/api";
+import { trackQuiz } from "../lib/trackQuiz";
 import { rankProducts, splitByMatchQuality, MIN_GOOD_MATCH_SCORE } from "../lib/scoring";
 import { getRoutineProductBySlug, routineIdealTitle, SKIN_PROBLEMS } from "../data/quizConfig";
 import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
@@ -139,6 +140,7 @@ export default function ResultatsRoutinePage() {
   const problemLabel = SKIN_PROBLEMS.find(p => p.slug === probleme)?.label;
 
   const [recos, setRecos] = useState({}); // { slug: [products...] }
+  const trackedRef = useRef(false);
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -156,6 +158,30 @@ export default function ResultatsRoutinePage() {
         }
       }
       setRecos(result);
+      if (!trackedRef.current) {
+        trackedRef.current = true;
+        const products = [];
+        for (const slug of selected) {
+          const meta = getRoutineProductBySlug(slug);
+          for (const p of (result[slug] || []).slice(0, 3)) {
+            products.push({ ...p, _slot: meta?.label || slug });
+          }
+        }
+        trackQuiz({
+          quizType: "routine-360",
+          quizKey: state?.chosenType || null,
+          answers: {
+            routine_type: state?.chosenType || null,
+            routine_sub: state?.chosenSub || null,
+            etapes_choisies: selected,
+            profil: skinAnswers,
+            budget: budgetRange || null,
+            probleme: probleme || null,
+            details_par_produit: productAnswers,
+          },
+          products,
+        });
+      }
     }
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps

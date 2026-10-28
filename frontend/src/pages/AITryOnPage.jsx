@@ -3,6 +3,7 @@ import { Upload, Sparkles, RefreshCw, Save, Share2, ImagePlus } from "lucide-rea
 import { Slider } from "../components/ui/slider";
 import { Textarea } from "../components/ui/textarea";
 import { api } from "../lib/api";
+import { trackQuiz } from "../lib/trackQuiz";
 import { applyMakeup, detectZonePositions } from "../lib/faceMakeup";
 import { PRESET_LOOKS } from "../data/criteria";
 import ProductCard from "../components/ProductCard";
@@ -238,6 +239,19 @@ export default function AITryOnPage() {
         usedRealAi,
       });
       setStep(4);
+      trackQuiz({
+        quizType: "essayage-ia",
+        quizKey: presetId || null,
+        answers: {
+          style: presetId,
+          demande: String(prompt || "").slice(0, 300),
+          budget_max: budget,
+          sous_ton: skinTone.undertone,
+          teinte_hex: skinTone.hex,
+          rendu_ia_reel: usedRealAi,
+        },
+        products: details.filter(Boolean).map((p) => ({ ...p, _slot: p.zone })),
+      });
     } catch (e) {
       console.error("Generate error:", e);
       toast.error("Une erreur est survenue. Réessaie dans un instant.");

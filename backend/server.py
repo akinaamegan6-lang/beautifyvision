@@ -11,7 +11,7 @@ import base64
 import re
 import uuid
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -404,6 +404,121 @@ async def submit_rating(req: RatingSubmit):
     )
     stats = await ratings_stats([req.key])
     return stats.get(req.key, {"rating": float(req.stars), "reviews": 1})
+
+
+# ============ Statistiques des quiz (anonymes) ============
+# Chaque passage au quiz est enregistre SANS aucune donnee personnelle : pas
+# d'email, pas de nom, pas d'adresse IP, pas d'appareil. Seulement : le type
+# de quiz, le genre et la tranche d'age declares, les reponses, et les
+# produits recommandes. Un identifiant aleatoire sert uniquement de cle.
+quiz_sessions_col = db["quiz_sessions"]
+
+QUIZ_TYPES = {"produit", "routine-360", "probleme", "essayage-ia"}
+GENDERS = {"femme", "homme", "autre", "non-precise"}
+AGE_RANGES = {"moins-18", "18-24", "25-34", "35-44", "45-54", "55-plus", "non-precise"}
+
+
+class QuizReco(BaseModel):
+    id: str = Field(default="", max_length=64)
+    name: str = Field(default="", max_length=200)
+    brand: str = Field(default="", max_length=100)
+    category: str = Field(default="", max_length=60)
+    price: float = 0
+    score: Optional[float] = None
+    slot: Optional[str] = Field(default=None, max_length=60)  # ex: etape de la routine / zone
+
+
+class QuizSessionIn(BaseModel):
+    quiz_type: str
+    quiz_key: Optional[str] = Field(default=None, max_length=80)
+    gender: Optional[str] = None
+    age_range: Optional[str] = None
+    answers: dict = {}
+    products: List[QuizReco] = []
+
+
+@api_router.post("/quiz-sessions")
+async def record_quiz_session(req: QuizSessionIn):
+    if req.quiz_type not in QUIZ_TYPES:
+        raise HTTPException(status_code=400, detail="quiz_type invalide")
+    answers_json = json.dumps(req.answers, ensure_ascii=False, default=str)
+    if len(answers_json) > 12000 or len(req.products) > 60:
+        raise HTTPException(status_code=413, detail="Donnees trop volumineuses")
+    doc = {
+        "id": uuid.uuid4().hex,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "quiz_type": req.quiz_type,
+        "quiz_key": (req.quiz_key or "").strip() or None,
+        "gender": req.gender if req.gender in GENDERS else "non-precise",
+        "age_range": req.age_range if req.age_range in AGE_RANGES else "non-precise",
+        "answers": json.loads(answers_json),
+        "products": [p.model_dump() if hasattr(p, "model_dump") else p.dict() for p in req.products],
+    }
+    await quiz_sessions_col.insert_one(doc)
+    return {"ok": True}
+
+
+async def require_admin(user: dict = Depends(current_user)) -> dict:
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acces reserve a l'administratrice")
+    return user
+
+
+@api_router.get("/admin/quiz-stats")
+async def admin_quiz_stats(_: dict = Depends(require_admin)):
+    now = datetime.now(timezone.utc)
+
+    async def group(field):
+        rows = {}
+        async for r in quiz_sessions_col.aggregate([{"$group": {"_id": f"${field}", "n": {"$sum": 1}}}]):
+            rows[r["_id"] or "-"] = r["n"]
+        return rows
+
+    by_quiz = []
+    async for r in quiz_sessions_col.aggregate([
+        {"$group": {"_id": {"t": "$quiz_type", "k": "$quiz_key"}, "n": {"$sum": 1}}},
+        {"$sort": {"n": -1}},
+    ]):
+        by_quiz.append({"quiz_type": r["_id"]["t"], "quiz_key": r["_id"]["k"], "count": r["n"]})
+
+    since = (now - timedelta(days=30)).isoformat()
+    per_day = {}
+    async for r in quiz_sessions_col.aggregate([
+        {"$match": {"created_at": {"$gte": since}}},
+        {"$group": {"_id": {"$substr": ["$created_at", 0, 10]}, "n": {"$sum": 1}}},
+        {"$sort": {"_id": 1}},
+    ]):
+        per_day[r["_id"]] = r["n"]
+
+    return {
+        "total": await quiz_sessions_col.estimated_document_count(),
+        "last_7_days": await quiz_sessions_col.count_documents({"created_at": {"$gte": (now - timedelta(days=7)).isoformat()}}),
+        "last_30_days": await quiz_sessions_col.count_documents({"created_at": {"$gte": since}}),
+        "by_quiz_type": await group("quiz_type"),
+        "by_quiz": by_quiz,
+        "by_gender": await group("gender"),
+        "by_age_range": await group("age_range"),
+        "per_day": per_day,
+    }
+
+
+@api_router.get("/admin/quiz-sessions")
+async def admin_quiz_sessions(
+    quiz_type: Optional[str] = None,
+    quiz_key: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 30,
+    _: dict = Depends(require_admin),
+):
+    query = {}
+    if quiz_type:
+        query["quiz_type"] = quiz_type
+    if quiz_key:
+        query["quiz_key"] = quiz_key
+    limit = max(1, min(limit, 100))
+    cursor = quiz_sessions_col.find(query, {"_id": 0}).sort("created_at", -1).skip(max(0, skip)).limit(limit)
+    items = await cursor.to_list(length=limit)
+    return {"items": items, "total": await quiz_sessions_col.count_documents(query)}
 
 
 # ============ AI Endpoints ============
@@ -917,6 +1032,9 @@ async def sitemap():
 
 # Include router
 app.include_router(api_router)
+
+from starlette.middleware.gzip import GZipMiddleware  # noqa: E402
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.add_middleware(
     CORSMiddleware,

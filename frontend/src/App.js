@@ -20,6 +20,8 @@ import PolitiqueConfidentialitePage from "@/pages/legal/PolitiqueConfidentialite
 import CguPage from "@/pages/legal/CguPage";
 import CommentCaMarchePage from "@/pages/CommentCaMarchePage";
 import ContactPage from "@/pages/ContactPage";
+import AdminQuizPage from "@/pages/AdminQuizPage";
+import ProfileGate from "@/components/ProfileGate";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import CookieBanner from "@/components/CookieBanner";
@@ -53,13 +55,14 @@ function AppRouter() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/quiz/:categorie/:souscategorie/:produit" element={<QuizProduitPage />} />
+        <Route path="/quiz/:categorie/:souscategorie/:produit" element={<ProfileGate><QuizProduitPage /></ProfileGate>} />
         <Route path="/resultats/:produit" element={<ResultatsProduitPage />} />
-        <Route path="/routine-360" element={<Routine360Page />} />
+        <Route path="/routine-360" element={<ProfileGate><Routine360Page /></ProfileGate>} />
         <Route path="/resultats-routine" element={<ResultatsRoutinePage />} />
-        <Route path="/essayage-ia" element={<AITryOnPage />} />
+        <Route path="/essayage-ia" element={<ProfileGate><AITryOnPage /></ProfileGate>} />
         <Route path="/wishlist" element={<WishlistPage />} />
-        <Route path="/probleme/:slug" element={<ProblemeRoutinePage />} />
+        <Route path="/probleme/:slug" element={<ProfileGate><ProblemeRoutinePage /></ProfileGate>} />
+        <Route path="/admin/quiz" element={<AdminQuizPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<ArticlePage />} />
         <Route path="/mentions-legales" element={<MentionsLegalesPage />} />

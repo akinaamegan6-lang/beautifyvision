@@ -1,5 +1,6 @@
 // Compatibility scoring algorithm
 import { BUDGET_RANGES } from "../data/quizConfig";
+import { getProfile } from "./profile";
 
 function contains(arr, needle) {
   if (!arr || !needle) return false;
@@ -286,6 +287,22 @@ export function scoreProduct(product, answers = {}, problem = null) {
     reasons.push(...r);
   }
   s += Math.min(40, concernBonusTotal);
+
+  // Tranche d'age (question posee avant chaque quiz) : leger ajustement,
+  // jamais prioritaire sur les vrais criteres du quiz.
+  const ageRange = answers.age_range || (getProfile() || {}).age_range;
+  if (ageRange) {
+    const antiAge = contains(product.benefits || [], "anti-âge") || contains(product.tags || [], "anti-âge") ||
+      /anti[- ]?(âge|age|rides)|rides|fermet[ée]|lifting|collag[eè]ne|r[ée]tinol/i.test(product.name || "");
+    if (antiAge) {
+      if (ageRange === "moins-18") { s -= 15; }
+      else if (ageRange === "18-24") { s -= 8; }
+      else if (["35-44", "45-54", "55-plus"].includes(ageRange)) {
+        s += ageRange === "35-44" ? 6 : 10;
+        reasons.push("adapté à ta tranche d'âge");
+      }
+    }
+  }
 
   // Rating boost
   if (product.rating >= 4.7) s += 5;

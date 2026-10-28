@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { api } from "../lib/api";
+import { trackQuiz } from "../lib/trackQuiz";
 import { rankProducts, splitByMatchQuality } from "../lib/scoring";
 import ProductRecommendationCard from "../components/ProductRecommendationCard";
 import HorizontalProductCard from "../components/HorizontalProductCard";
@@ -13,10 +14,16 @@ export default function ResultatsProduitPage() {
   const navigate = useNavigate();
   const [ranked, setRanked] = useState(null); // null = encore en chargement
   const answers = state?.answers || {};
+  const trackedRef = useRef(false);
 
   useEffect(() => {
     api.get("/products", { params: { category: produit } }).then((r) => {
-      setRanked(rankProducts(r.data || [], answers));
+      const rankedList = rankProducts(r.data || [], answers);
+      setRanked(rankedList);
+      if (!trackedRef.current) {
+        trackedRef.current = true;
+        trackQuiz({ quizType: "produit", quizKey: produit, answers, products: rankedList.slice(0, 10) });
+      }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [produit]);
