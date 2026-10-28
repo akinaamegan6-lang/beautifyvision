@@ -61,7 +61,7 @@ function ProductSection({ slug, recommendations }) {
     return (
       <div className="mb-14" data-testid={`routine-section-${slug}`}>
         <h3 className="text-xl md:text-2xl font-semibold text-[#79C1E0] mb-5">{meta?.emoji} {routineIdealTitle(meta)}</h3>
-        <NoGoodMatchMessage productLabel={meta?.label.toLowerCase() || "produit"} plural={meta?.det === "tes"}/>
+        <NoGoodMatchMessage productLabel={(meta?.short || meta?.label || "produit").toLowerCase()} plural={meta?.det === "tes"}/>
         {alternatives.slice(0, 3).length > 0 && (
           <div className="mt-4 space-y-2">
             {alternatives.slice(0, 3).map((p, i) => <AlternativeCard key={p.id} product={p} index={i + 1}/>)}

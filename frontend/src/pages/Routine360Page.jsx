@@ -84,6 +84,10 @@ const INTRO_COPY = {
   cheveux: { noun: "cheveux", title: "Ta routine cheveux", button: "Lancer le quiz pour créer ma routine cheveux" },
 };
 
+// Visuel d'une catégorie : celui du menu produit unique (le gel douche garde
+// le picto historique du savon/nettoyant).
+const routineImage = (slug) => (slug === "gel-douche" ? getProductImage(slug) : getMenuProductImage(slug));
+
 // Nombre de produits autorisés dans une routine.
 const MIN_PRODUCTS = 2;
 const MAX_PRODUCTS = 5;
@@ -124,8 +128,8 @@ function ProductFilterModal({ slug, open, onClose, onSave, budgetTotal }) {
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="product-filter-modal">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
-            {meta && <img src={getProductImage(meta.slug)} alt="" className="w-10 h-10 object-contain"/>}
-            <h3 className="text-xl font-bold">Personnalise {meta?.det || "ton"} <span className="editorial">{meta?.label.toLowerCase()}</span></h3>
+            {meta && <img src={routineImage(meta.slug)} alt="" className="w-10 h-10 object-contain"/>}
+            <h3 className="text-xl font-bold">Personnalise {meta?.det || "ton"} <span className="editorial">{(meta?.short || meta?.label || "").toLowerCase()}</span></h3>
           </div>
         </div>
 
@@ -457,39 +461,18 @@ export default function Routine360Page() {
 
   // === Step 3 — Products grid ===
   if (step === 3) {
+    // Mêmes choix que le menu « produit unique » : un bloc par famille du menu.
     const sections = chosenType === "360"
-      ? ["skincare", "maquillage", "cheveux"]
+      ? ["visage", "corps", "maquillage", "cheveux"]
       : chosenType === "visage"
-        ? (chosenSub === "complet" ? ["skincare", "maquillage"] : ["skincare"])
-        : chosenType === "corps" ? ["skincare"] // body products are in skincare section
+        ? (chosenSub === "complet" ? ["visage", "maquillage"] : ["visage"])
+        : chosenType === "corps" ? ["corps"]
         : chosenType === "cheveux" ? ["cheveux"]
-        : ["skincare"];
+        : ["visage"];
 
-    // La section "skincare" mélange des produits visage ET corps : on exclut
-    // les uns des autres selon le type de routine choisi (bug remonté : des
-    // produits visage apparaissaient en "routine corps", et vice-versa).
-    // Les 12 catégories corps du menu (même liste que le menu « Corps »).
-    const BODY_ONLY_SLUGS = [
-      "creme-corps", "huile-corps", "gommage-corps", "lait-corporel", "beurre-corporel",
-      "soin-mains", "soin-pieds", "deodorant", "autobronzant", "vergetures",
-      "creme-solaire-corps", "gel-douche",
-    ];
-    const isBodyOnly = (p) => BODY_ONLY_SLUGS.includes(p.slug);
+    const items = (grp) => ROUTINE_PRODUCTS.filter((p) => p.group === grp && !p.hidden);
 
-    const items = (sec) => {
-      const all = ROUTINE_PRODUCTS.filter((p) => p.section === sec);
-      if (sec !== "skincare") return all;
-      if (chosenType === "corps") {
-        return BODY_ONLY_SLUGS.map((slug) => all.find((p) => p.slug === slug)).filter(Boolean);
-      }
-      if (chosenType === "visage") {
-        return all.filter((p) => !isBodyOnly(p));
-      }
-      // "360" (routine complète) : on garde tout, visage + corps.
-      return all;
-    };
-
-    const titleMap = { skincare: "Skincare", maquillage: "Maquillage", cheveux: "Cheveux" };
+    const titleMap = { visage: "Visage", corps: "Corps", maquillage: "Maquillage", cheveux: "Cheveux" };
     const routineLabelMap = {
       visage: "ta routine visage",
       corps: "ta routine corps",
@@ -555,7 +538,7 @@ export default function Routine360Page() {
                       <button onClick={() => toggle(p.slug)} className="w-full flex flex-col items-center gap-2 text-center" data-testid={`product-tile-${p.slug}`}>
                         {isSel && <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#FEC4D2] flex items-center justify-center"><Check size={12} className="text-white"/></span>}
                         <div className="w-20 h-20 rounded-xl overflow-hidden bg-white flex items-center justify-center">
-                          <img src={getProductImage(p.slug)} alt={p.label} loading="lazy" className="w-full h-full object-contain p-1"/>
+                          <img src={routineImage(p.slug)} alt={p.label} loading="lazy" className="w-full h-full object-contain p-1"/>
                         </div>
                         <span className="text-sm font-medium text-neutral-800">{p.label}</span>
                       </button>
@@ -618,7 +601,7 @@ export default function Routine360Page() {
             });
             return (
               <div key={slug} className="flex items-center gap-3 sm:gap-5 px-4 sm:px-6 py-5" data-testid={`recap-row-${slug}`}>
-                <img src={getProductImage(slug)} alt="" className="w-10 h-10 object-contain shrink-0"/>
+                <img src={routineImage(slug)} alt="" className="w-10 h-10 object-contain shrink-0"/>
                 <span className="font-semibold text-sm w-[100px] sm:w-[140px] shrink-0 break-words">{meta?.label}</span>
                 <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">
                   {tags.slice(0, 3).map((t) => <span key={t} className="text-[10px] bg-[#FEC4D2]/40 text-neutral-800 px-2 py-1 rounded-full">{t}</span>)}
