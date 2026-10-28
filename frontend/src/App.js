@@ -21,6 +21,7 @@ import CguPage from "@/pages/legal/CguPage";
 import CommentCaMarchePage from "@/pages/CommentCaMarchePage";
 import ContactPage from "@/pages/ContactPage";
 import AdminQuizPage from "@/pages/AdminQuizPage";
+import SkinRoutinePage from "@/pages/SkinRoutinePage";
 import ProfileGate from "@/components/ProfileGate";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
@@ -62,6 +63,7 @@ function AppRouter() {
         <Route path="/essayage-ia" element={<ProfileGate><AITryOnPage /></ProfileGate>} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/probleme/:slug" element={<ProfileGate><ProblemeRoutinePage /></ProfileGate>} />
+        <Route path="/routine/:slug" element={<SkinRoutinePage />} />
         <Route path="/admin/quiz" element={<AdminQuizPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<ArticlePage />} />

@@ -4,6 +4,7 @@ import { Sparkles, Search, Settings2, CheckCircle2, ArrowRight, BarChart3, Play 
 import { api } from "../lib/api";
 import ProductCard from "../components/ProductCard";
 import ProductRating from "../components/ProductRating";
+import SkinRoutinesSection from "../components/SkinRoutinesSection";
 import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1763192902738-a3e17d5f9015?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwbWFrZXVwJTIwcG9ydHJhaXQlMjBnbG93fGVufDB8fHx8MTc3ODQ0NzQwNHww&ixlib=rb-4.1.0&q=85";
@@ -283,6 +284,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ===== NOS ROUTINES SUR MESURE ===== */}
+      <SkinRoutinesSection />
 
       {/* ===== TOP MONTH PODIUM ===== */}
       {top.length > 0 && (

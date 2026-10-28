@@ -22,3 +22,6 @@ Images recadrées en 16:9 (1672×941). Inchangées : routine petit budget, sous-
 | categorie-corps.png | https://www.pexels.com/photo/a-woman-with-a-skincare-product-on-her-back-6731839/ | cottonbro studio |
 
 `categorie-cheveux.png` est inchangée.
+
+## Pages routines par type de peau
+Photos rondes (hero-*.webp, peau-*.webp) : Pexels (licence libre, credit non obligatoire) ; fonds fond-*.webp : visuels fournis par Beautify Vision. Produits : images marchands (flux Awin DocMorris FR), detourees.

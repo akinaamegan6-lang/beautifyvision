@@ -351,6 +351,24 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
     return result
 
 
+@api_router.get("/products/by-ids", response_model=List[Product])
+async def products_by_ids(ids: str):
+    """Produits choisis a la main (pages routines par type de peau...).
+    `ids` = identifiants separes par des virgules ; l'ordre demande est conserve."""
+    wanted = [i.strip() for i in ids.split(",") if i.strip()][:40]
+    if not wanted:
+        return []
+    docs = await products_col.find({"id": {"$in": wanted}}, _PRODUCT_PROJECTION).to_list(length=len(wanted))
+    by_id = {d["id"]: d for d in docs}
+    ordered = [by_id[i] for i in wanted if i in by_id]
+    stats = await ratings_stats([rating_key(d) for d in ordered])
+    for d in ordered:
+        s = stats.get(rating_key(d))
+        d["rating"] = s["rating"] if s else 0.0
+        d["reviews"] = s["reviews"] if s else 0
+    return ordered
+
+
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     doc = await products_col.find_one({"id": product_id}, _PRODUCT_PROJECTION)
