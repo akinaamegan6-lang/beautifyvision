@@ -161,7 +161,25 @@ function applyUnwantedIngredients(product, labels) {
   return { excluded, bonus: Math.min(30, bonus), reasons };
 }
 
+// Produits explicitement destinés aux hommes (ex: "Clarins Men Gel Super
+// Hydratant", "Homme", rasage, barbe). Les produits "hommes" sont masqués pour
+// les femmes ; l'inverse n'est pas appliqué (aucun produit n'est réservé aux
+// femmes dans le catalogue : tout peut convenir à un homme).
+const MEN_PRODUCT_RE = /\b(men|men's|homme|hommes|masculin|masculine|pour lui|for him|barbe|rasage|after[- ]?shave|aftershave)\b/i;
+
+export function isMenProduct(product) {
+  const hay = `${product.name || ""} ${product.brand || ""} ${product.subcategory || ""}`;
+  return MEN_PRODUCT_RE.test(hay);
+}
+
 export function scoreProduct(product, answers = {}, problem = null) {
+  // Genre déclaré avant le quiz : une femme ne se voit jamais proposer un
+  // produit "homme".
+  const gender = answers.gender || (getProfile() || {}).gender;
+  if (gender === "femme" && isMenProduct(product)) {
+    return { score: 0, reasons: [], excluded: true };
+  }
+
   let s = 30; // baseline so all products feel "considered"
   const reasons = [];
 

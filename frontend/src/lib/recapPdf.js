@@ -412,6 +412,9 @@ export function buildRoutineRecap({ selected = [], skinAnswers = {}, productAnsw
     ingredients: sec.ingredients,
     main_items,
     missing_steps: missing,
+    budget_note: budgetRange && budgetRange.max && total > budgetRange.max
+      ? `Ton budget est un peu serré : avec ${main_items.length} produits, la routine la plus économique que nous avons trouvée coûte ${total.toFixed(2).replace(".", ",")} € pour un budget de ${budgetRange.max} €. Tu peux retirer un produit ou augmenter ton budget pour avoir plus de choix.`
+      : null,
     total: Math.round(total * 100) / 100,
     total_count: main_items.length,
     disclaimer: null,

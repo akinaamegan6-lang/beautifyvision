@@ -1,13 +1,12 @@
-// Profil "genre + tranche d'age" demande avant chaque quiz.
-// Conserve uniquement dans sessionStorage (le temps de la visite, dans le
-// navigateur de la personne) : il sert a ajuster legerement les
+// Profil "genre + tranche d'age" demande avant CHAQUE quiz (reponse obligatoire).
+// La derniere reponse est gardee dans sessionStorage (le temps de la visite,
+// dans le navigateur de la personne) pour pre-remplir la question : elle sert a ajuster legerement les
 // recommandations et a alimenter des statistiques anonymes.
 
 export const GENDER_OPTIONS = [
   { value: "femme", label: "Femme" },
   { value: "homme", label: "Homme" },
   { value: "autre", label: "Autre" },
-  { value: "non-precise", label: "Je préfère ne pas répondre" },
 ];
 
 export const AGE_OPTIONS = [
@@ -17,11 +16,12 @@ export const AGE_OPTIONS = [
   { value: "35-44", label: "35 – 44 ans" },
   { value: "45-54", label: "45 – 54 ans" },
   { value: "55-plus", label: "55 ans et plus" },
-  { value: "non-precise", label: "Je préfère ne pas répondre" },
 ];
 
-export const GENDER_LABEL = Object.fromEntries(GENDER_OPTIONS.map((o) => [o.value, o.label]));
-export const AGE_LABEL = Object.fromEntries(AGE_OPTIONS.map((o) => [o.value, o.label]));
+// "non-precise" n'est plus proposé (la réponse est obligatoire) mais reste
+// affiché dans l'admin pour les anciens enregistrements.
+export const GENDER_LABEL = { ...Object.fromEntries(GENDER_OPTIONS.map((o) => [o.value, o.label])), "non-precise": "Non précisé" };
+export const AGE_LABEL = { ...Object.fromEntries(AGE_OPTIONS.map((o) => [o.value, o.label])), "non-precise": "Non précisé" };
 
 const KEY = "bv_profile";
 

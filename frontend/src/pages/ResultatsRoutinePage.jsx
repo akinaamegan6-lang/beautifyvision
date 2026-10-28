@@ -4,6 +4,7 @@ import { Save, Share2, Sparkles, ChevronDown, ExternalLink } from "lucide-react"
 import { api } from "../lib/api";
 import { trackQuiz } from "../lib/trackQuiz";
 import { rankProducts, splitByMatchQuality, MIN_GOOD_MATCH_SCORE } from "../lib/scoring";
+import { optimizeRoutine } from "../lib/routineBudget";
 import { getRoutineProductBySlug, routineIdealTitle, SKIN_PROBLEMS } from "../data/quizConfig";
 import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
 import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
@@ -142,6 +143,7 @@ export default function ResultatsRoutinePage() {
   const problemLabel = SKIN_PROBLEMS.find(p => p.slug === probleme)?.label;
 
   const [recos, setRecos] = useState({}); // { slug: [products...] }
+  const [budgetInfo, setBudgetInfo] = useState(null); // { total, maxBudget, overBudget }
   const trackedRef = useRef(false);
   const [email, setEmail] = useState("");
 
@@ -153,12 +155,28 @@ export default function ResultatsRoutinePage() {
         if (!meta) continue;
         try {
           const r = await api.get("/products", { params: { category: meta.category } });
-          const merged = { ...skinAnswers, budget_range: budgetRange, product_answers: productAnswers[slug] || {} };
+          // Le budget saisi est un budget TOTAL : pour noter chaque produit on
+          // le ramène à une enveloppe par produit (avec un peu de marge), au
+          // lieu de comparer le prix d'un seul produit au budget de toute la
+          // routine.
+          const perProductMax = budgetRange && selected.length
+            ? Math.ceil((budgetRange.max / selected.length) * 1.5)
+            : null;
+          const merged = {
+            ...skinAnswers,
+            budget_range: perProductMax ? { min: 0, max: perProductMax } : budgetRange,
+            product_answers: productAnswers[slug] || {},
+          };
           result[slug] = rankProducts(r.data || [], merged).slice(0, 10);
         } catch {
           result[slug] = [];
         }
       }
+      // Choix final des produits : budget total respecté si possible, aucun
+      // produit en double entre deux étapes.
+      const optimized = optimizeRoutine(selected, result, budgetRange?.max);
+      Object.assign(result, optimized.recos);
+      setBudgetInfo({ total: optimized.total, maxBudget: optimized.maxBudget, overBudget: optimized.overBudget });
       setRecos(result);
       if (!trackedRef.current) {
         trackedRef.current = true;
@@ -230,6 +248,11 @@ export default function ResultatsRoutinePage() {
 
       <section className="px-6 py-10 relative">
         <div className="max-w-5xl mx-auto">
+          {budgetInfo?.overBudget && (
+            <div className="mb-8 bg-[#FFF3CD] border border-[#FFC107]/70 rounded-2xl px-5 py-4 text-sm text-[#6b5314]" data-testid="routine-over-budget">
+              <strong>Ton budget est un peu serré :</strong> avec {selected.length} produits, la routine la plus économique que nous avons trouvée coûte {budgetInfo.total.toFixed(2)} € pour un budget de {budgetInfo.maxBudget} €. Tu peux retirer un produit ou augmenter ton budget pour avoir plus de choix.
+            </div>
+          )}
           {selected.length === 0 && (
             <p className="text-center text-neutral-500">Aucun produit sélectionné. <button onClick={() => navigate("/routine-360")} className="text-[#79C1E0] underline">Recommencer</button></p>
           )}

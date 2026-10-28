@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { GENDER_OPTIONS, AGE_OPTIONS, getProfile, saveProfile } from "../lib/profile";
 
 function Choice({ options, value, onChange, testid }) {
@@ -15,7 +16,7 @@ function Choice({ options, value, onChange, testid }) {
               active
                 ? "bg-[#FEC4D2]/15 border-[#FEC4D2] text-neutral-900 shadow-[0_8px_24px_-12px_rgba(254,196,210,0.6)]"
                 : "bg-white border-neutral-200 text-neutral-700 hover:border-[#FEC4D2]"
-            } ${opt.value === "non-precise" ? "col-span-2 md:col-span-3 border-dashed text-neutral-500" : ""}`}
+            }`}
             data-testid={`${testid}-${opt.value}`}
           >
             {opt.label}
@@ -26,21 +27,26 @@ function Choice({ options, value, onChange, testid }) {
   );
 }
 
-// Entoure un quiz : tant que genre + tranche d'age n'ont pas ete donnes (pour
-// cette visite), on les demande avant la 1re question. Une fois repondu, les
-// quiz suivants de la meme visite ne les redemandent pas.
+// Entoure un quiz : genre + tranche d'age sont demandes AVANT CHAQUE quiz
+// (reponse obligatoire, pas d'option "je prefere ne pas repondre"). Si la
+// personne a deja repondu pendant la visite, ses reponses precedentes sont
+// pre-selectionnees : elle peut les modifier ou simplement continuer.
 export default function ProfileGate({ children }) {
-  const [profile, setProfile] = useState(() => getProfile());
-  const [gender, setGender] = useState(null);
-  const [age, setAge] = useState(null);
+  const { pathname } = useLocation();
+  const previous = getProfile();
+  const validGender = (v) => GENDER_OPTIONS.some((o) => o.value === v);
+  const validAge = (v) => AGE_OPTIONS.some((o) => o.value === v);
+  const [donePath, setDonePath] = useState(null);
+  const [gender, setGender] = useState(() => (previous && validGender(previous.gender) ? previous.gender : null));
+  const [age, setAge] = useState(() => (previous && validAge(previous.age_range) ? previous.age_range : null));
 
-  if (profile) return children;
+  // Un nouveau quiz (autre URL) = on redemande.
+  if (donePath === pathname) return children;
 
   const ready = gender && age;
   const submit = () => {
-    const p = { gender, age_range: age };
-    saveProfile(p);
-    setProfile(p);
+    saveProfile({ gender, age_range: age });
+    setDonePath(pathname);
   };
 
   return (
@@ -54,7 +60,7 @@ export default function ProfileGate({ children }) {
             Fais-nous <span className="editorial">connaissance</span>
           </h1>
           <p className="mt-3 text-sm text-neutral-500">
-            Ces deux réponses nous aident à affiner tes recommandations. Elles restent anonymes : aucun nom, aucun e-mail.
+            Ces deux réponses sont nécessaires pour affiner tes recommandations. Elles restent anonymes : aucun nom, aucun e-mail.
           </p>
         </div>
 

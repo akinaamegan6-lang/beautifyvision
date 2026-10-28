@@ -94,7 +94,7 @@ export const POLITIQUE_CONFIDENTIALITE_SECTIONS = [
         items: [
           "Données de compte : e-mail, nom, mot de passe (stocké de façon chiffrée), ou informations transmises par Google si tu te connectes via Google.",
           "Données d'usage du diagnostic beauté : réponses au quiz, teinte de peau sélectionnée, préférences indiquées pour générer tes recommandations.",
-          "Statistiques anonymes des quiz : à chaque quiz terminé, nous enregistrons le type de quiz, ton genre et ta tranche d'âge (si tu les indiques), tes réponses, les produits recommandés et la date. Ces informations sont enregistrées sans ton nom, sans ton e-mail, sans ton adresse IP et sans identifiant d'appareil : elles ne permettent pas de t'identifier.",
+          "Statistiques anonymes des quiz : à chaque quiz terminé, nous enregistrons le type de quiz, ton genre et ta tranche d'âge (demandés avant chaque quiz), tes réponses, les produits recommandés et la date. Ces informations sont enregistrées sans ton nom, sans ton e-mail, sans ton adresse IP et sans identifiant d'appareil : elles ne permettent pas de t'identifier.",
           "Photo pour l'essayage virtuel : si tu utilises cette fonctionnalité, ta photo est transmise de façon sécurisée à nos prestataires d'intelligence artificielle pour générer le rendu. Elle n'est pas conservée : elle n'est enregistrée ni sur nos serveurs ni dans notre base de données.",
           "Liste de favoris (wishlist) : conservée localement dans ton navigateur.",
           "Commentaires publiés sur le blog : prénom et texte du commentaire, affichés publiquement sous l'article concerné.",

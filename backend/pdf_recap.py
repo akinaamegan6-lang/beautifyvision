@@ -792,6 +792,8 @@ def compose(payload: Dict[str, Any]) -> Dict[str, Any]:
             blocks.append({"type": "message", "text": "Aucun produit assez adapté à tes critères n'a été trouvé pour : " + ", ".join(m.lower() for m in missing) + ". Tu peux refaire le quiz de ces produits en élargissant tes critères."})
         if payload.get("total"):
             blocks.append({"type": "total", "total": float(payload["total"]), "count": int(payload.get("total_count") or n)})
+        if payload.get("budget_note"):
+            blocks.append({"type": "message", "text": payload["budget_note"]})
     else:
         if items and not payload.get("no_match"):
             blocks.append({"type": "heading", "lead": "Ton produit", "accent": "idéal",
@@ -855,6 +857,7 @@ def sanitize(body: Any) -> Dict[str, Any]:
         "ingredients": [_s(x, 80) for x in (b.get("ingredients") or [])[:30] if x],
         "main_items": [_item(x) for x in (b.get("main_items") or [])[:40]],
         "missing_steps": [_s(x, 60) for x in (b.get("missing_steps") or [])[:30] if x],
+        "budget_note": _s(b.get("budget_note"), 320) if b.get("budget_note") else "",
         "others": [_item(x) for x in (b.get("others") or [])[:6]],
     }
     try:

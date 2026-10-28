@@ -83,6 +83,16 @@ const INTRO_COPY = {
   cheveux: { noun: "cheveux", title: "Ta routine cheveux", button: "Lancer le quiz pour créer ma routine cheveux" },
 };
 
+// Budget total conseillé selon le nombre de produits : ~26 € par produit
+// (3 produits ≈ 80 €, 5 produits ≈ 130 €), arrondi à 5 €, jamais sous 80 €.
+function suggestedBudgetMax(count) {
+  return Math.max(80, Math.round((count * 26) / 5) * 5);
+}
+// En dessous de ~15 € par produit, tenir le budget devient irréaliste.
+function minRealisticBudget(count) {
+  return count * 15;
+}
+
 // Filter modal for one product
 function ProductFilterModal({ slug, open, onClose, onSave, budgetTotal }) {
   const meta = ROUTINE_PRODUCTS.find((p) => p.slug === slug);
@@ -186,7 +196,11 @@ export default function Routine360Page() {
   const [authOpen, setAuthOpen] = useState(false);
   const [chosenType, setChosenType] = useState(null);
   const [chosenSub, setChosenSub] = useState(null);
-  const [budget, setBudget] = useState({ min: 20, max: 80 });
+  const [budget, setBudgetState] = useState({ min: 20, max: 80 });
+  // Tant que la personne n'a pas modifié elle-même le budget, il s'ajuste au
+  // nombre de produits choisis (5 produits ≠ budget d'une routine à 3 produits).
+  const [budgetTouched, setBudgetTouched] = useState(false);
+  const setBudget = (b) => { setBudgetTouched(true); setBudgetState(b); };
   const [selected, setSelected] = useState([]);
   const [productConfig, setProductConfig] = useState({}); // { slug: { answers, budget } }
   const [modalSlug, setModalSlug] = useState(null);
@@ -202,6 +216,12 @@ export default function Routine360Page() {
   const [draftBudget, setDraftBudget] = useState({ min: 20, max: 80 });
   const [catAnswers, setCatAnswers] = useState({});
   const [catQIdx, setCatQIdx] = useState(0);
+
+  useEffect(() => {
+    if (budgetTouched || selected.length < 3) return;
+    const suggested = suggestedBudgetMax(selected.length);
+    setBudgetState((b) => (b.max === suggested ? b : { ...b, max: suggested }));
+  }, [selected.length, budgetTouched]);
 
   // Remonte en haut à chaque changement d'étape (évite d'arriver au milieu/en bas de la page suivante)
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [step, catQIdx]);
@@ -501,7 +521,16 @@ export default function Routine360Page() {
                 <input type="number" value={budget.max} onChange={(e) => setBudget({ ...budget, max: Number(e.target.value) })} className="w-20 px-2 py-1 border border-neutral-200 rounded-lg text-sm" data-testid="budget-max"/>
                 <span className="text-neutral-400 text-xs">€</span>
               </div>
-              <p className="text-[11px] text-neutral-500 mt-1">Nous répartirons ce budget entre tes produits sélectionnés.</p>
+              <p className="text-[11px] text-neutral-500 mt-1">
+                {budgetTouched
+                  ? "Nous répartirons ce budget entre tes produits sélectionnés."
+                  : "Ce budget s'ajuste automatiquement au nombre de produits que tu sélectionnes : tu peux le modifier."}
+              </p>
+              {selected.length >= 3 && budget.max < minRealisticBudget(selected.length) && (
+                <p className="mt-2 text-xs text-[#8a6d1d] bg-[#FFF3CD] border border-[#FFC107]/60 rounded-lg px-3 py-2" data-testid="budget-too-low">
+                  Avec {selected.length} produits, il sera difficile de te proposer une routine complète à moins de {minRealisticBudget(selected.length)} €. Tu peux augmenter ton budget ou retirer un produit.
+                </p>
+              )}
             </div>
           </div>
 
