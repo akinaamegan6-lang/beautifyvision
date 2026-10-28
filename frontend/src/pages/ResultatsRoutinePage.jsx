@@ -7,6 +7,8 @@ import { rankProducts, splitByMatchQuality, MIN_GOOD_MATCH_SCORE } from "../lib/
 import { getRoutineProductBySlug, routineIdealTitle, SKIN_PROBLEMS } from "../data/quizConfig";
 import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
 import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
+import RecapDownloadCta from "../components/RecapDownloadCta";
+import { buildRoutineRecap } from "../lib/recapPdf";
 import ProductRating from "../components/ProductRating";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
@@ -191,6 +193,8 @@ export default function ResultatsRoutinePage() {
     .map((s) => (recos[s] || []).find((p) => p._score >= MIN_GOOD_MATCH_SCORE))
     .filter(Boolean);
   const total = allBest.reduce((sum, p) => sum + (p.price || 0), 0);
+  const recapPayload = () => buildRoutineRecap({ selected, skinAnswers, productAnswers, budgetRange, probleme, chosenType: state?.chosenType, recos });
+  const recapReady = selected.length > 0 && Object.keys(recos).length > 0;
 
   const saveRoutine = (e) => {
     e.preventDefault();
@@ -218,6 +222,9 @@ export default function ResultatsRoutinePage() {
             Créée spécialement pour toi {skinAnswers.skin_type && <>· peau <span className="font-semibold capitalize">{skinAnswers.skin_type}</span></>}
             {problemLabel && <> · objectif <span className="font-semibold">{problemLabel}</span></>}
           </p>
+          <div className="mt-6">
+            <RecapDownloadCta variant="inline" buildPayload={recapPayload} disabled={!recapReady} filename="ma-routine-beautify-vision.pdf" testId="recap-top" />
+          </div>
         </div>
       </section>
 
@@ -231,6 +238,10 @@ export default function ResultatsRoutinePage() {
           ))}
         </div>
       </section>
+
+      {selected.length > 0 && (
+        <RecapDownloadCta buildPayload={recapPayload} disabled={!recapReady} filename="ma-routine-beautify-vision.pdf" />
+      )}
 
       {allBest.length > 0 && (
         <section className="px-6 py-12 bg-[#FEC4D2]/[0.06] relative">

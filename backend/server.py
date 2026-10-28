@@ -369,6 +369,34 @@ async def products_by_ids(ids: str):
     return ordered
 
 
+@api_router.post("/recap-pdf")
+async def recap_pdf(body: dict):
+    """PDF « Mon bilan Beautify Vision » : diagnostic du quiz + routine ou produit
+    recommandes, avec liens affilies cliquables. Les produits sont relus en base a
+    partir de leurs identifiants (jamais d'URL fournie par le client)."""
+    try:
+        import pdf_recap
+        from recap_images import fetch_product_images
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Generation du PDF indisponible : installer reportlab et pillow (pip install -r requirements.txt)")
+    payload = pdf_recap.sanitize(body)
+    ids = pdf_recap.product_ids(payload)[:40]
+    docs = []
+    if ids:
+        docs = await products_col.find(
+            {"id": {"$in": ids}},
+            {"_id": 0, "id": 1, "name": 1, "brand": 1, "price": 1, "image": 1, "affiliate_url": 1},
+        ).to_list(length=len(ids))
+    products = {d["id"]: dict(d) for d in docs}
+    await fetch_product_images(products)
+    pdf = await asyncio.to_thread(pdf_recap.render, payload, products)
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="mon-bilan-beautify-vision.pdf"', "Cache-Control": "no-store"},
+    )
+
+
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     doc = await products_col.find_one({"id": product_id}, _PRODUCT_PROJECTION)

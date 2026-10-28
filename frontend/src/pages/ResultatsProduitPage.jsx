@@ -7,6 +7,8 @@ import { rankProducts, splitByMatchQuality } from "../lib/scoring";
 import ProductRecommendationCard from "../components/ProductRecommendationCard";
 import HorizontalProductCard from "../components/HorizontalProductCard";
 import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
+import RecapDownloadCta from "../components/RecapDownloadCta";
+import { buildProductRecap } from "../lib/recapPdf";
 
 export default function ResultatsProduitPage() {
   const { produit } = useParams();
@@ -39,6 +41,7 @@ export default function ResultatsProduitPage() {
   const best = goodMatches[0];
   const otherGoodMatches = goodMatches.slice(1, 10);
   const altsToShow = alternatives.slice(0, 6);
+  const recapPayload = () => buildProductRecap({ answers, categorie: state?.categorie, produit, ranked });
 
   return (
     <main className="bg-white min-h-screen relative" data-testid="resultats-produit">
@@ -57,6 +60,9 @@ export default function ResultatsProduitPage() {
           ) : (
             <h1 className="mt-2 text-3xl md:text-4xl font-bold text-neutral-900">Tes recommandations</h1>
           )}
+          <div className="mt-6">
+            <RecapDownloadCta variant="inline" buildPayload={recapPayload} filename={`mon-bilan-${produit}.pdf`} testId="recap-top" />
+          </div>
         </div>
         <div className="max-w-5xl mx-auto">
           {best ? <ProductRecommendationCard product={best}/> : <NoGoodMatchMessage/>}
@@ -100,6 +106,8 @@ export default function ResultatsProduitPage() {
           </div>
         </section>
       )}
+
+      <RecapDownloadCta buildPayload={recapPayload} filename={`mon-bilan-${produit}.pdf`} />
 
       <section className="px-6 py-20">
         <div className="max-w-5xl mx-auto rounded-[2.5rem] p-10 md:p-16 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #FEC4D2 0%, #79C1E0 100%)" }} data-testid="banner-routine-360">

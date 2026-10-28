@@ -9,6 +9,8 @@ import QuizStep from "../components/QuizStep";
 import ProductRecommendationCard from "../components/ProductRecommendationCard";
 import HorizontalProductCard from "../components/HorizontalProductCard";
 import NoGoodMatchMessage from "../components/NoGoodMatchMessage";
+import RecapDownloadCta from "../components/RecapDownloadCta";
+import { buildProblemRecap } from "../lib/recapPdf";
 
 const VISAGE_ZONES = [
   "Front", "Joues", "Nez", "Menton", "Contour des yeux",
@@ -321,6 +323,15 @@ export default function ProblemeRoutinePage() {
                         )}
                       </div>
 
+                      <div className="text-center -mt-4 mb-8">
+                        <RecapDownloadCta
+                          variant="inline"
+                          testId="recap-top"
+                          filename={`mon-bilan-${slug}.pdf`}
+                          buildPayload={() => buildProblemRecap({ slug, zone, zonesPrecises, problemQuestions: problemQs, problemAnswers: answersRef.current, ranked, disclaimer })}
+                        />
+                      </div>
+
                       {best ? (
                         <ProductRecommendationCard
                           product={best}
@@ -368,6 +379,13 @@ export default function ProblemeRoutinePage() {
                     </>
                   );
                 })()}
+
+                <div className="mt-12 -mx-6">
+                  <RecapDownloadCta
+                    filename={`mon-bilan-${slug}.pdf`}
+                    buildPayload={() => buildProblemRecap({ slug, zone, zonesPrecises, problemQuestions: problemQs, problemAnswers: answersRef.current, ranked, disclaimer })}
+                  />
+                </div>
 
                 <div
                   className="mt-12 rounded-[2.5rem] p-10 md:p-16 text-center relative overflow-hidden"
