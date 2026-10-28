@@ -3,7 +3,9 @@
 // - "\n" insere un retour a la ligne
 // - "{{mot ou phrase}}" met en avant ce segment (couleur/italique selon le bloc)
 // - "[[texte affiche|https://url]]" insere un lien cliquable (utilise pour
-//   les mentions de produits Awin/Amazon dans le corps d'un article) ; le
+//   les mentions de produits dans le corps d'un article : toujours des liens
+//   Amazon Partenaires generes avec SiteStripe ; les liens Awin sont reserves
+//   aux cartes produits) ; le
 //   lien s'ouvre dans un nouvel onglet avec rel="noopener noreferrer sponsored"
 //   (cote rendu, voir RichText.jsx).
 
