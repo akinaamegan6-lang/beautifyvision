@@ -73,7 +73,7 @@ export default function SkinRoutinesSection() {
                     className="mt-5 inline-flex items-center gap-2 bg-white hover:bg-[#FEC4D2] text-neutral-900 text-sm font-medium px-5 py-2.5 rounded-full transition shadow-sm"
                     data-testid={`skin-card-link-${r.key}`}
                   >
-                    Voir plus <ArrowRight size={15} />
+                    Découvrir la routine idéale <ArrowRight size={15} />
                   </Link>
                 </div>
               </article>
