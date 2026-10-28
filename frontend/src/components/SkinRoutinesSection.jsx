@@ -14,12 +14,12 @@ export default function SkinRoutinesSection() {
   return (
     <section className="relative px-6 py-20 md:py-24" data-testid="skin-routines-section">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto">
+        <div className="text-center max-w-4xl mx-auto">
           <p className="text-xs uppercase tracking-[0.2em] text-[#79C1E0] font-semibold">Nos routines sur mesure</p>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold leading-tight text-neutral-900">
-            <span className="text-[#79C1E0]">Une peau unique,</span> <span className="editorial text-[#F2709C]">des solutions adaptées.</span>
+          <h2 className="mt-3 text-3xl md:text-5xl font-bold text-[#79C1E0] leading-tight">
+            Trouve la routine parfaite <span className="editorial text-[#FEC4D2]">pour ta peau</span>
           </h2>
-          <p className="mt-4 text-neutral-600 leading-relaxed">
+          <p className="mt-4 text-neutral-600 leading-relaxed max-w-2xl mx-auto">
             Peau grasse, taches, boutons ou sécheresse : choisis ton besoin et découvre la routine et les produits adaptés, sélectionnés parmi les meilleurs soins du moment.
           </p>
         </div>
@@ -61,10 +61,10 @@ export default function SkinRoutinesSection() {
                         rel="sponsored nofollow noopener noreferrer"
                         title={p.name}
                         aria-label={p.name}
-                        className={`block w-[38%] shrink-0 transition-transform duration-300 hover:-translate-y-1 ${i === 1 ? "h-64 relative z-10" : "h-48"}`}
+                        className={`group block w-[38%] shrink-0 ${i === 1 ? "h-64" : "h-48"}`}
                         data-testid={`skin-product-${r.key}-${i + 1}`}
                       >
-                        <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-contain drop-shadow-[0_6px_8px_rgba(0,0,0,0.18)]" />
+                        <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:-translate-y-1" />
                       </a>
                     ))}
                   </div>
