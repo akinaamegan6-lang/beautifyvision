@@ -53,7 +53,7 @@ export function swapIfPlaceholder(e, className) {
 }
 
 
-export const BUDGET_ICON = "/icone/budget.png";
+export const BUDGET_ICON = "/icone/budget-portefeuille.svg"; // portefeuille Iconify (Phosphor), rose Beautify Vision
 
 // Visuels générés (ChatGPT, conversation "Modification interface site"), un
 // par catégorie de produit de la Routine 360°. On complète cette liste au fur

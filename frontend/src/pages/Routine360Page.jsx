@@ -511,7 +511,7 @@ export default function Routine360Page() {
 
           {/* Budget banner */}
           <div className="mt-6 bg-[#FEC4D2]/10 border border-[#FEC4D2]/40 rounded-2xl px-5 py-4 flex items-center gap-4">
-            <img src={BUDGET_ICON} alt="" className="w-[34px] h-[34px]" />
+            <img src={BUDGET_ICON} alt="" className="w-[42px] h-[42px]" />
             <div className="flex-1">
               <p className="text-sm font-semibold">Budget total pour ta routine</p>
               <div className="mt-1 flex items-center gap-2">
