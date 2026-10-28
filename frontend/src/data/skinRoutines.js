@@ -8,11 +8,12 @@ export const SKIN_ROUTINES = [
   /* ------------------------------------------------------------------ */
   {
     key: "grasse",
+    tone: "pink",
     path: "/routine/peau-grasse",
     breadcrumb: "Peau grasse",
     homeLabel: "PEAU GRASSE",
-    homeTitle: ["Adieu les", "brillances"],
-    homeText: "Purifie, matifie et équilibre sans décaper : une routine douce pour un teint net toute la journée.",
+    homeTitle: ["Tu as la peau", "grasse ?"],
+    homeText: "Découvre les meilleurs produits pour réguler l'excès de sébum et garder une peau nette.",
     seoTitle: "Peau grasse : quelle routine adopter ? Soins et conseils | Beautify Vision",
     seoDescription:
       "Peau grasse : comprends l'excès de sébum, découvre les meilleurs nettoyants et soins matifiants, la routine complète en 4 étapes et les erreurs à éviter.",
@@ -80,11 +81,12 @@ export const SKIN_ROUTINES = [
   /* ------------------------------------------------------------------ */
   {
     key: "taches",
+    tone: "blue",
     path: "/routine/peau-a-taches",
     breadcrumb: "Taches pigmentaires",
     homeLabel: "TACHES PIGMENTAIRES",
-    homeTitle: ["Un teint", "uniforme"],
-    homeText: "Atténue les taches brunes, illumine le teint et protège ta peau pour éviter qu'elles reviennent.",
+    homeTitle: ["Tu as des", "taches ?"],
+    homeText: "Découvre les meilleurs produits pour unifier le teint et réduire l'apparence des taches.",
     seoTitle: "Taches pigmentaires : quelle routine adopter ? Soins et conseils | Beautify Vision",
     seoDescription:
       "Taches pigmentaires : comprends leurs causes, découvre les meilleurs sérums anti-taches et protections solaires, la routine complète en 4 étapes et les erreurs à éviter.",
@@ -152,11 +154,12 @@ export const SKIN_ROUTINES = [
   /* ------------------------------------------------------------------ */
   {
     key: "boutons",
+    tone: "pink",
     path: "/routine/peau-acneique",
     breadcrumb: "Peau à tendance acnéique",
-    homeLabel: "PEAU À TENDANCE ACNÉIQUE",
-    homeTitle: ["Stop aux", "boutons"],
-    homeText: "Assainis, apaise et traite les imperfections avec des soins ciblés, sans agresser ta peau.",
+    homeLabel: "PEAU ACNÉIQUE",
+    homeTitle: ["Tu as tendance", "aux boutons ?"],
+    homeText: "Découvre les meilleurs produits pour purifier la peau, limiter les imperfections et prévenir leur apparition.",
     seoTitle: "Peau à tendance acnéique : quelle routine adopter ? Soins et conseils | Beautify Vision",
     seoDescription:
       "Peau à tendance acnéique : comprends les boutons, découvre les meilleurs nettoyants et soins anti-imperfections, la routine complète en 4 étapes et les erreurs à éviter.",
@@ -224,11 +227,12 @@ export const SKIN_ROUTINES = [
   /* ------------------------------------------------------------------ */
   {
     key: "seche",
+    tone: "blue",
     path: "/routine/peau-seche",
     breadcrumb: "Peau sèche",
     homeLabel: "PEAU SÈCHE",
-    homeTitle: ["Un confort", "durable"],
-    homeText: "Nourris, répare et protège ta peau pour dire adieu aux tiraillements et aux sensations d'inconfort.",
+    homeTitle: ["Tu as la peau", "sèche ?"],
+    homeText: "Découvre les meilleurs produits pour hydrater en profondeur, réparer la barrière cutanée et retrouver du confort.",
     seoTitle: "Peau sèche : quelle routine adopter ? Soins et conseils | Beautify Vision",
     seoDescription:
       "Peau sèche : comprends les tiraillements, découvre les meilleures crèmes et nettoyants doux, la routine complète en 4 étapes et les erreurs à éviter.",

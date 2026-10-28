@@ -17,7 +17,7 @@ export default function SkinRoutinesSection() {
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-[0.2em] text-[#79C1E0] font-semibold">Nos routines sur mesure</p>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold leading-tight text-neutral-900">
-            Une peau unique, <span className="editorial text-[#79C1E0]">des solutions adaptées.</span>
+            <span className="text-[#79C1E0]">Une peau unique,</span> <span className="editorial text-[#F2709C]">des solutions adaptées.</span>
           </h2>
           <p className="mt-4 text-neutral-600 leading-relaxed">
             Peau grasse, taches, boutons ou sécheresse : choisis ton besoin et découvre la routine et les produits adaptés, sélectionnés parmi les meilleurs soins du moment.
@@ -30,28 +30,28 @@ export default function SkinRoutinesSection() {
             return (
               <article
                 key={r.key}
-                className="relative flex flex-col rounded-[2rem] overflow-hidden p-6 min-h-[560px] bg-cover bg-center bg-[#FEEFF2] card-lift"
+                className="relative flex flex-col rounded-[2rem] overflow-hidden p-6 bg-cover bg-center bg-[#FEEFF2] card-lift"
                 style={{ backgroundImage: `url(${IMG}/fond-${r.key}.webp)` }}
                 data-testid={`skin-card-${r.key}`}
               >
                 {/* Voile blanc : éclaircit le fond illustré (ajuste bg-white/45 pour plus ou moins de clarté) */}
                 <span className="absolute inset-0 bg-white/45 pointer-events-none" aria-hidden="true" />
-                <div className="relative flex items-start justify-between gap-3">
-                  <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-700 pt-1 max-w-[9rem]">{r.homeLabel}</p>
-                  <img
-                    src={`${IMG}/peau-${r.key}.webp`}
-                    alt={`Gros plan peau — ${r.breadcrumb.toLowerCase()}`}
-                    loading="lazy"
-                    className="w-20 h-20 rounded-full object-cover border-[3px] border-white shadow-md shrink-0"
-                  />
-                </div>
+                <img
+                  src={`${IMG}/peau-${r.key}.webp`}
+                  alt={`Gros plan peau — ${r.breadcrumb.toLowerCase()}`}
+                  loading="lazy"
+                  className="absolute top-3 right-3 w-14 h-14 rounded-full object-cover border-[3px] border-white shadow-md"
+                />
+                <p className={`relative text-[11px] uppercase tracking-[0.18em] font-semibold max-w-[8.5rem] ${r.tone === "pink" ? "text-[#F2709C]" : "text-[#3b8fb8]"}`}>{r.homeLabel}</p>
 
-                <h3 className="relative mt-3 text-3xl font-bold leading-[1.1] text-neutral-900">
-                  {r.homeTitle[0]} <span className="editorial text-[#3b8fb8]">{r.homeTitle[1]}</span>
+                <h3 className="relative mt-4 text-[1.5rem] font-bold leading-[1.15] text-neutral-900">
+                  {r.homeTitle[0]}
+                  <br />
+                  <span className="text-[#F2709C]">{r.homeTitle[1]}</span>
                 </h3>
-                <p className="relative mt-3 text-sm text-neutral-800 leading-relaxed">{r.homeText}</p>
+                <p className="relative mt-2 text-sm text-neutral-800 leading-relaxed">{r.homeText}</p>
 
-                <div className="relative mt-auto pt-6">
+                <div className="relative mt-auto pt-4">
                   <div className="flex items-end justify-center -space-x-3 h-64">
                     {products.map((p, i) => (
                       <a
