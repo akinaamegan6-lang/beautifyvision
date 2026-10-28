@@ -25,7 +25,7 @@ export const SKIN_ROUTINES = [
     heroImage: "/image/routines/hero-grasse.webp",
     heroTagline: "Matifiée, jamais agressée.",
     understand: {
-      title: "Comprendre la peau grasse",
+      title: "Comprendre la peau {grasse}",
       text: [
         "Une peau grasse est une peau dont les glandes sébacées sont particulièrement actives. Le sébum en excès donne un aspect luisant, dilate les pores et peut favoriser les points noirs et les boutons. Les hormones, le stress, la chaleur, l'hérédité et parfois certains soins trop décapants jouent un rôle important.",
         "Contrairement à une idée reçue, une peau grasse a aussi besoin d'hydratation. Quand on la nettoie trop fort, elle se défend en produisant encore plus de sébum : c'est l'effet rebond. L'objectif d'une bonne routine pour peau grasse est donc de réguler, pas d'assécher.",
@@ -39,33 +39,33 @@ export const SKIN_ROUTINES = [
     },
     productSections: [
       {
-        title: "Les meilleurs nettoyants pour peau grasse",
+        title: "Les meilleurs {nettoyants} pour peau grasse",
         text: "Un bon nettoyant pour peau grasse élimine le sébum, la pollution et le maquillage sans laisser la peau qui tire. Privilégie les gels et mousses doux, utilisés matin et soir, qui purifient en profondeur tout en respectant le film hydrolipidique.",
         ids: ["321f7cde-6481-565e-9580-2aa922da3c1b", "e3d4b0d1-7317-54c4-83c1-9eb3c2593721", "93549950-a558-569e-9336-2cd477421bbb", "9b1e3530-b65a-588a-b384-ccca4e035be9"],
       },
       {
-        title: "Les meilleures crèmes et soins pour peau grasse",
+        title: "Les meilleures {crèmes et soins} pour peau grasse",
         text: "Côté soins, on cherche des textures légères : gels-crèmes, fluides et sérums matifiants qui hydratent sans graisser. Les actifs comme la niacinamide, le zinc ou l'acide salicylique aident à resserrer les pores et à limiter la brillance.",
         ids: ["de310020-4ab0-5ec2-b7a5-0fa7453fe046", "114b7dc7-86b7-5121-ac17-e81ac470572b", "1a7c173e-abba-5c2f-8484-828bd86ac484", "9db6cd86-008a-54bd-a8e9-903339c7abce"],
       },
     ],
     tips: {
-      title: "Nos conseils pour réduire l'excès de sébum",
+      title: "Nos {conseils} pour réduire l'excès de sébum",
       text: "Quelques gestes simples, répétés chaque jour, font une vraie différence sur une peau grasse. Voici ce que nous recommandons pour garder un teint net sans abîmer ta peau.",
       items: [
-        "Nettoie ta peau deux fois par jour seulement, avec un gel doux : plus souvent, tu stimules la production de sébum.",
-        "N'oublie jamais l'hydratation : une crème gel légère évite l'effet rebond et garde la peau confortable.",
-        "Intègre un actif régulateur (niacinamide, zinc, acide salicylique) une à deux fois par jour selon la tolérance.",
-        "Exfolie en douceur une à deux fois par semaine pour désincruster les pores sans irriter.",
-        "Choisis des textures non comédogènes, y compris pour ton maquillage et ta protection solaire.",
-        "Change ta taie d'oreiller régulièrement et évite de toucher ton visage dans la journée.",
+        { icon: "drop", title: "Nettoie matin et soir", text: "Nettoie ta peau deux fois par jour seulement, avec un gel doux : plus souvent, tu stimules la production de sébum." },
+        { icon: "drop-half", title: "Hydrate sans graisser", text: "N'oublie jamais l'hydratation : une crème gel légère évite l'effet rebond et garde la peau confortable." },
+        { icon: "flask", title: "Choisis un actif régulateur", text: "Intègre un actif régulateur (niacinamide, zinc, acide salicylique) une à deux fois par jour selon la tolérance." },
+        { icon: "sparkle", title: "Exfolie en douceur", text: "Exfolie en douceur une à deux fois par semaine pour désincruster les pores sans irriter." },
+        { icon: "leaf", title: "Reste non comédogène", text: "Choisis des textures non comédogènes, y compris pour ton maquillage et ta protection solaire." },
+        { icon: "hand-palm", title: "Touche moins ton visage", text: "Change ta taie d'oreiller régulièrement et évite de toucher ton visage dans la journée." },
       ],
     },
     routine: [
-      { name: "Nettoyer", icon: "drop", text: "Un gel ou une mousse purifiante, matin et soir, pour retirer l'excès de sébum et les impuretés." },
-      { name: "Traiter", icon: "flask", text: "Un sérum ou un soin ciblé (niacinamide, zinc, acide salicylique) pour réguler le sébum et affiner le grain de peau." },
-      { name: "Hydrater", icon: "drop-half", text: "Un gel-crème ou un fluide matifiant qui hydrate sans graisser et prévient l'effet rebond." },
-      { name: "Protéger", icon: "shield-check", text: "Une protection solaire SPF 50 texture fluide, non comédogène, tous les matins toute l'année." },
+      { name: "Nettoyer", icon: "drop", productId: "321f7cde-6481-565e-9580-2aa922da3c1b", when: ["sun", "moon"], text: "Un gel ou une mousse purifiante, matin et soir, pour retirer l'excès de sébum et les impuretés." },
+      { name: "Traiter", icon: "flask", productId: "9db6cd86-008a-54bd-a8e9-903339c7abce", when: ["sun", "moon"], text: "Un sérum ou un soin ciblé (niacinamide, zinc, acide salicylique) pour réguler le sébum et affiner le grain de peau." },
+      { name: "Hydrater", icon: "drop-half", productId: "de310020-4ab0-5ec2-b7a5-0fa7453fe046", when: ["sun", "moon"], text: "Un gel-crème ou un fluide matifiant qui hydrate sans graisser et prévient l'effet rebond." },
+      { name: "Protéger", icon: "shield-check", productId: "d09f2fcd-61e6-50be-b4eb-25c80327f851", when: ["sun"], text: "Une protection solaire SPF 50 texture fluide, non comédogène, tous les matins toute l'année." },
     ],
     mistakes: [
       { title: "Décaper la peau", text: "Les produits trop agressifs ou l'alcool dessèchent et déclenchent une surproduction de sébum." },
@@ -98,7 +98,7 @@ export const SKIN_ROUTINES = [
     heroImage: "/image/routines/hero-taches.webp",
     heroTagline: "Un teint lumineux, jour après jour.",
     understand: {
-      title: "Comprendre les taches pigmentaires",
+      title: "Comprendre les {taches pigmentaires}",
       text: [
         "Les taches apparaissent quand les mélanocytes, les cellules qui fabriquent le pigment de la peau, produisent de la mélanine de façon trop importante et irrégulière. Le soleil est la première cause, mais les hormones, l'inflammation (après un bouton, par exemple) et certains traitements peuvent aussi les provoquer.",
         "La clé d'une routine efficace contre les taches pigmentaires tient en deux mots : régularité et protection. Les actifs éclaircissants agissent lentement, souvent en quelques semaines, et leurs effets disparaissent vite si la peau n'est pas protégée du soleil chaque jour. En cas de tache qui change d'aspect, consulte un dermatologue.",
@@ -112,33 +112,33 @@ export const SKIN_ROUTINES = [
     },
     productSections: [
       {
-        title: "Les meilleurs sérums anti-taches",
+        title: "Les meilleurs {sérums anti-taches}",
         text: "Un sérum anti-taches concentre les actifs qui agissent sur la pigmentation : niacinamide, vitamine C, acide tranexamique ou dérivés éclaircissants. Applique-le matin ou soir, sur peau propre, et compte au minimum quatre à huit semaines avant de juger le résultat.",
         ids: ["6e645561-c1db-5ac8-b6f1-e6890bedaf5b", "76e190b4-8583-57a3-8a7c-409d219612fb", "3391221e-b656-5b64-a10a-c7ff2b4ddab2", "329f992c-18fb-5164-b34c-1b1b7a1414b8"],
       },
       {
-        title: "Les meilleures protections solaires pour le visage",
+        title: "Les meilleures {protections solaires} pour le visage",
         text: "Sans écran solaire, aucun soin anti-taches ne peut fonctionner durablement. Choisis un SPF 50 avec une bonne protection UVA, dans une texture que tu aimes porter tous les jours : fluide invisible, crème légère ou version teintée.",
         ids: ["ff93c09a-f0dd-5c12-96aa-192c77c35616", "00ed8980-2a3c-5507-a2b6-79d9d4d37c97", "ba8f2cc4-a2f9-5ef9-8954-ddbaa3dc7cf8", "d09f2fcd-61e6-50be-b4eb-25c80327f851"],
       },
     ],
     tips: {
-      title: "Nos conseils pour atténuer les taches pigmentaires",
+      title: "Nos {conseils} pour atténuer les taches pigmentaires",
       text: "Atténuer une tache demande de la patience et un peu de méthode. Voici les gestes qui comptent vraiment pour retrouver un teint plus uniforme et éviter que les marques reviennent.",
       items: [
-        "Applique une protection solaire SPF 50 chaque matin, même en hiver et par temps nuageux, et renouvelle-la en cas d'exposition prolongée.",
-        "Introduis un sérum anti-taches progressivement, un jour sur deux au début, pour limiter les irritations.",
-        "Évite de gratter ou de frotter les zones pigmentées : toute inflammation peut aggraver la tache.",
-        "Associe un actif éclaircissant le matin (vitamine C) et un soin réparateur le soir pour soutenir la peau.",
-        "Sois constante : les résultats se voient en général après un à trois mois d'utilisation régulière.",
-        "Consulte un dermatologue si une tache grandit, saigne, change de couleur ou de forme.",
+        { icon: "sun", title: "SPF 50 chaque matin", text: "Applique une protection solaire SPF 50 chaque matin, même en hiver et par temps nuageux, et renouvelle-la en cas d'exposition prolongée." },
+        { icon: "flask", title: "Introduis les actifs doucement", text: "Introduis un sérum anti-taches progressivement, un jour sur deux au début, pour limiter les irritations." },
+        { icon: "hand-palm", title: "Ne frotte pas les taches", text: "Évite de gratter ou de frotter les zones pigmentées : toute inflammation peut aggraver la tache." },
+        { icon: "sparkle", title: "Associe éclat et réparation", text: "Associe un actif éclaircissant le matin (vitamine C) et un soin réparateur le soir pour soutenir la peau." },
+        { icon: "clock", title: "Sois constante", text: "Sois constante : les résultats se voient en général après un à trois mois d'utilisation régulière." },
+        { icon: "magnifying-glass", title: "Consulte au moindre doute", text: "Consulte un dermatologue si une tache grandit, saigne, change de couleur ou de forme." },
       ],
     },
     routine: [
-      { name: "Nettoyer", icon: "drop", text: "Un nettoyant doux, sans savon, matin et soir, pour préparer la peau sans l'irriter." },
-      { name: "Traiter", icon: "flask", text: "Un sérum anti-taches (niacinamide, vitamine C…) appliqué sur l'ensemble du visage pour uniformiser le teint." },
-      { name: "Hydrater", icon: "drop-half", text: "Une crème hydratante confortable pour renforcer la barrière cutanée et mieux tolérer les actifs." },
-      { name: "Protéger", icon: "shield-check", text: "Un écran solaire SPF 50 tous les matins : l'étape la plus importante de la routine anti-taches." },
+      { name: "Nettoyer", icon: "drop", productId: "64f1a5ba-8045-5ec1-9274-cab817b3b5b6", when: ["sun", "moon"], text: "Un nettoyant doux, sans savon, matin et soir, pour préparer la peau sans l'irriter." },
+      { name: "Traiter", icon: "flask", productId: "6e645561-c1db-5ac8-b6f1-e6890bedaf5b", when: ["sun", "moon"], text: "Un sérum anti-taches (niacinamide, vitamine C…) appliqué sur l'ensemble du visage pour uniformiser le teint." },
+      { name: "Hydrater", icon: "drop-half", productId: "5dccfe9d-3a0e-59a9-bc0e-d415669ce744", when: ["sun", "moon"], text: "Une crème hydratante confortable pour renforcer la barrière cutanée et mieux tolérer les actifs." },
+      { name: "Protéger", icon: "shield-check", productId: "d09f2fcd-61e6-50be-b4eb-25c80327f851", when: ["sun"], text: "Un écran solaire SPF 50 tous les matins : l'étape la plus importante de la routine anti-taches." },
     ],
     mistakes: [
       { title: "Négliger la protection solaire", text: "Sans SPF, les taches foncent à nouveau et les soins perdent leur effet." },
@@ -171,7 +171,7 @@ export const SKIN_ROUTINES = [
     heroImage: "/image/routines/hero-boutons.webp",
     heroTagline: "Des soins ciblés, une peau apaisée.",
     understand: {
-      title: "Comprendre la peau à tendance acnéique",
+      title: "Comprendre la peau {à tendance acnéique}",
       text: [
         "Les boutons naissent quand un pore se bouche : le sébum et les cellules mortes forment un bouchon, les bactéries prolifèrent et la peau s'enflamme. Les variations hormonales, le stress, certains cosmétiques gras et une mauvaise gestion de la peau (frotter, percer) peuvent entretenir le problème.",
         "Une routine pour peau à tendance acnéique doit donc faire trois choses à la fois : purifier les pores, calmer l'inflammation et respecter la barrière cutanée. Les actifs comme l'acide salicylique, le zinc, la niacinamide ou le peroxyde de benzoyle sont efficaces, mais s'introduisent un à un. Si l'acné est sévère ou douloureuse, un avis médical s'impose.",
@@ -185,33 +185,33 @@ export const SKIN_ROUTINES = [
     },
     productSections: [
       {
-        title: "Les meilleurs nettoyants pour peau à tendance acnéique",
+        title: "Les meilleurs {nettoyants} pour peau à tendance acnéique",
         text: "Le nettoyant est la base de la routine anti-boutons. Choisis un gel ou une mousse assainissante, sans savon ni alcool, qui élimine le sébum et les impuretés sans irriter. Un lavage matin et soir suffit largement.",
         ids: ["02c55c9d-46d4-5492-900a-dec1cef82b16", "69862816-61db-5773-a709-4f6c31276555", "8e9fe305-546b-5f57-919c-1a70b2772924", "9156e0a8-adf3-5e90-9795-ecccb8cd6023"],
       },
       {
-        title: "Les meilleurs soins anti-imperfections",
+        title: "Les meilleurs {soins anti-imperfections}",
         text: "Les soins ciblés combinent des actifs kératolytiques et apaisants pour désobstruer les pores et réduire les boutons existants. Applique-les en fine couche sur les zones concernées ou sur tout le visage selon les indications du produit.",
         ids: ["bdce14e1-5d23-5016-b558-d3c67cf1c03b", "d9f52671-0abe-5446-a57f-d591b4283f8d", "de514cbe-c591-5c30-b0a8-ccc47d8c9137", "273ada16-c150-5123-b23d-f8e4227e68eb"],
       },
     ],
     tips: {
-      title: "Nos conseils pour limiter les boutons",
+      title: "Nos {conseils} pour limiter les boutons",
       text: "Pour une peau à tendance acnéique, la constance compte plus que l'intensité. Ces gestes t'aideront à calmer les poussées et à éviter les marques sur le long terme.",
       items: [
-        "Ne perce jamais un bouton : tu risques d'aggraver l'inflammation et de laisser une cicatrice.",
-        "Introduis un seul actif nouveau à la fois, et attends deux à trois semaines avant d'en ajouter un autre.",
-        "Hydrate ta peau avec une crème non comédogène : une peau sèche et irritée produit plus d'imperfections.",
-        "Nettoie tes téléphones, pinceaux de maquillage et taies d'oreiller régulièrement.",
-        "Protège ta peau du soleil avec un SPF léger : il limite aussi les marques post-boutons.",
-        "Si les boutons sont nombreux, profonds ou douloureux, consulte un dermatologue sans attendre.",
+        { icon: "hand-palm", title: "Ne perce jamais un bouton", text: "Ne perce jamais un bouton : tu risques d'aggraver l'inflammation et de laisser une cicatrice." },
+        { icon: "flask", title: "Un seul actif à la fois", text: "Introduis un seul actif nouveau à la fois, et attends deux à trois semaines avant d'en ajouter un autre." },
+        { icon: "drop-half", title: "Hydrate quand même", text: "Hydrate ta peau avec une crème non comédogène : une peau sèche et irritée produit plus d'imperfections." },
+        { icon: "sparkle", title: "Nettoie tes accessoires", text: "Nettoie tes téléphones, pinceaux de maquillage et taies d'oreiller régulièrement." },
+        { icon: "sun", title: "Protège-toi du soleil", text: "Protège ta peau du soleil avec un SPF léger : il limite aussi les marques post-boutons." },
+        { icon: "magnifying-glass", title: "Consulte si besoin", text: "Si les boutons sont nombreux, profonds ou douloureux, consulte un dermatologue sans attendre." },
       ],
     },
     routine: [
-      { name: "Nettoyer", icon: "drop", text: "Un gel assainissant doux, matin et soir, pour purifier les pores sans décaper." },
-      { name: "Traiter", icon: "flask", text: "Un soin anti-imperfections (acide salicylique, zinc, niacinamide) sur les zones à boutons, le soir de préférence." },
-      { name: "Hydrater", icon: "drop-half", text: "Une crème légère non comédogène qui apaise et répare la barrière cutanée." },
-      { name: "Protéger", icon: "shield-check", text: "Un SPF 50 fluide et non gras, pour éviter que les marques ne foncent au soleil." },
+      { name: "Nettoyer", icon: "drop", productId: "69862816-61db-5773-a709-4f6c31276555", when: ["sun", "moon"], text: "Un gel assainissant doux, matin et soir, pour purifier les pores sans décaper." },
+      { name: "Traiter", icon: "flask", productId: "bdce14e1-5d23-5016-b558-d3c67cf1c03b", when: ["sun", "moon"], text: "Un soin anti-imperfections (acide salicylique, zinc, niacinamide) sur les zones à boutons, le soir de préférence." },
+      { name: "Hydrater", icon: "drop-half", productId: "114b7dc7-86b7-5121-ac17-e81ac470572b", when: ["sun", "moon"], text: "Une crème légère non comédogène qui apaise et répare la barrière cutanée." },
+      { name: "Protéger", icon: "shield-check", productId: "00ed8980-2a3c-5507-a2b6-79d9d4d37c97", when: ["sun"], text: "Un SPF 50 fluide et non gras, pour éviter que les marques ne foncent au soleil." },
     ],
     mistakes: [
       { title: "Se laver trop souvent", text: "Plus de deux nettoyages par jour irritent la peau et aggravent les poussées." },
@@ -244,7 +244,7 @@ export const SKIN_ROUTINES = [
     heroImage: "/image/routines/hero-seche.webp",
     heroTagline: "Nourrie, apaisée, confortable.",
     understand: {
-      title: "Comprendre la peau sèche",
+      title: "Comprendre la peau {sèche}",
       text: [
         "La peau sèche produit moins de sébum et possède une barrière cutanée moins efficace : l'eau s'évapore plus facilement et la peau perd en souplesse. Il ne faut pas la confondre avec une peau déshydratée, qui manque d'eau et peut toucher tous les types de peau, y compris les peaux grasses.",
         "Le froid, le chauffage, l'eau très chaude, les savons détergents et certains traitements accentuent la sécheresse. Une bonne routine pour peau sèche associe des produits doux, des actifs hydratants (acide hyaluronique, glycérine) et des corps gras réparateurs (céramides, beurre de karité) pour restaurer la barrière cutanée.",
@@ -258,33 +258,33 @@ export const SKIN_ROUTINES = [
     },
     productSections: [
       {
-        title: "Les meilleures crèmes pour peau sèche",
+        title: "Les meilleures {crèmes} pour peau sèche",
         text: "Pour une peau sèche, choisis des crèmes riches en céramides, glycérine, beurre de karité ou acide hyaluronique. Elles nourrissent en profondeur, réparent la barrière cutanée et assurent un confort qui dure toute la journée.",
         ids: ["5dccfe9d-3a0e-59a9-bc0e-d415669ce744", "ecfba931-df9e-545a-b772-58acbf3edafa", "092c648a-eb37-5e1d-b033-e2d4ed7a8f74", "1de5b6ad-979c-5150-b9c9-dcb5888326c1"],
       },
       {
-        title: "Les meilleurs nettoyants doux pour peau sèche",
+        title: "Les meilleurs {nettoyants doux} pour peau sèche",
         text: "Un nettoyant pour peau sèche doit respecter le film hydrolipidique : huiles, laits et eaux micellaires sont de bons alliés. Évite les gels moussants détergents et rince à l'eau tiède pour préserver le confort de ta peau.",
         ids: ["873bd077-b06b-59b7-9d6e-a924df866af7", "1b6f83f4-0862-50a0-ae8b-286c0ac4a53f", "64f1a5ba-8045-5ec1-9274-cab817b3b5b6", "fc559506-16b9-555d-ab0d-1c5a2d5abd58"],
       },
     ],
     tips: {
-      title: "Nos conseils pour soulager la peau sèche",
+      title: "Nos {conseils} pour soulager la peau sèche",
       text: "Une peau sèche aime la douceur et la régularité. Ces habitudes t'aideront à retrouver du confort et à renforcer ta barrière cutanée durablement.",
       items: [
-        "Utilise de l'eau tiède plutôt que chaude, pour le visage comme pour la douche.",
-        "Applique ta crème sur peau légèrement humide pour mieux retenir l'hydratation.",
-        "Ajoute un sérum à l'acide hyaluronique sous ta crème pour les périodes de sécheresse marquée.",
-        "Choisis des produits sans parfum ni alcool, qui limitent les réactions d'inconfort.",
-        "Prévois un masque nourrissant une à deux fois par semaine, et un baume sur les zones les plus sèches.",
-        "Bois suffisamment et humidifie l'air de ta pièce si le chauffage est fort en hiver.",
+        { icon: "thermometer-simple", title: "Eau tiède uniquement", text: "Utilise de l'eau tiède plutôt que chaude, pour le visage comme pour la douche." },
+        { icon: "drop", title: "Crème sur peau humide", text: "Applique ta crème sur peau légèrement humide pour mieux retenir l'hydratation." },
+        { icon: "flask", title: "Ajoute un sérum hydratant", text: "Ajoute un sérum à l'acide hyaluronique sous ta crème pour les périodes de sécheresse marquée." },
+        { icon: "leaf", title: "Sans parfum ni alcool", text: "Choisis des produits sans parfum ni alcool, qui limitent les réactions d'inconfort." },
+        { icon: "heart", title: "Masque et baume", text: "Prévois un masque nourrissant une à deux fois par semaine, et un baume sur les zones les plus sèches." },
+        { icon: "cloud", title: "Humidifie ton air", text: "Bois suffisamment et humidifie l'air de ta pièce si le chauffage est fort en hiver." },
       ],
     },
     routine: [
-      { name: "Nettoyer", icon: "drop", text: "Une huile, un lait ou une eau micellaire douce, matin et soir, sans frotter ni utiliser d'eau chaude." },
-      { name: "Traiter", icon: "flask", text: "Un sérum hydratant à l'acide hyaluronique ou aux céramides pour repulper et réparer la peau." },
-      { name: "Hydrater", icon: "drop-half", text: "Une crème riche et nourrissante, appliquée matin et soir, pour sceller l'hydratation." },
-      { name: "Protéger", icon: "shield-check", text: "Une protection solaire SPF 50 de texture crème, qui complète l'hydratation tout au long de l'année." },
+      { name: "Nettoyer", icon: "drop", productId: "873bd077-b06b-59b7-9d6e-a924df866af7", when: ["sun", "moon"], text: "Une huile, un lait ou une eau micellaire douce, matin et soir, sans frotter ni utiliser d'eau chaude." },
+      { name: "Traiter", icon: "flask", productId: "1de5b6ad-979c-5150-b9c9-dcb5888326c1", when: ["sun", "moon"], text: "Un soin réparateur ou un sérum hydratant (acide hyaluronique, céramides) pour repulper et réparer la peau." },
+      { name: "Hydrater", icon: "drop-half", productId: "ecfba931-df9e-545a-b772-58acbf3edafa", when: ["sun", "moon"], text: "Une crème riche et nourrissante, appliquée matin et soir, pour sceller l'hydratation." },
+      { name: "Protéger", icon: "shield-check", productId: "ff93c09a-f0dd-5c12-96aa-192c77c35616", when: ["sun"], text: "Une protection solaire SPF 50 de texture crème, qui complète l'hydratation tout au long de l'année." },
     ],
     mistakes: [
       { title: "Utiliser de l'eau trop chaude", text: "Elle dissout les lipides naturels de la peau et accentue les tiraillements." },
