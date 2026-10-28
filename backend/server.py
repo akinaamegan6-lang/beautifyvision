@@ -26,6 +26,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 from catalog import CATALOG, CATEGORIES  # noqa: E402
 from auth import build_router as build_auth_router, seed_admin  # noqa: E402
+from tryon_filters import is_accessory, is_plain_lip_balm, requested_unusual_colors, conflicts_for  # noqa: E402
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
@@ -121,6 +122,9 @@ async def _load_products(category: Optional[str] = None, parent: Optional[str] =
     items = await products_col.find(query, _PRODUCT_PROJECTION).to_list(length=None)
     if items:
         items = dedupe_variants(items)
+        # Ni soin ni maquillage (pince a epiler, griffe de crabe, ciseaux...) :
+        # ces articles ne doivent jamais apparaitre sur le site.
+        items = [p for p in items if not is_accessory(p.get("name", ""))]
     elif not await products_col.estimated_document_count():
         # Collection vide (import pas lance) : ancien catalogue de demo.
         items = [
@@ -253,6 +257,9 @@ class AISelectResponse(BaseModel):
     products: List[AISelectProduct]
     out_of_budget: List[AISelectProduct] = []
     summary: str
+    # Zones pour lesquelles une teinte inhabituelle est demandee (ex: levres
+    # vertes) mais aucun produit du catalogue n'a cette teinte : [{zone, color}]
+    unmatched: List[dict] = []
 
 
 class ApplyMakeupRequest(BaseModel):
@@ -636,6 +643,9 @@ async def _makeup_candidates(req) -> list:
                 continue
             if NOT_MAKEUP_RE.search(_normalize_text(p["name"])):
                 continue
+            # Un baume a levres de soin ne colore pas : ce n'est pas un rouge a levres.
+            if p.get("zone") == "lips" and is_plain_lip_balm(p["name"]):
+                continue
             name = _normalize_text(p["name"])
             score = 0
             score += 3 * sum(1 for w in wanted if w in name)
@@ -769,11 +779,20 @@ async def ai_select_products(req: AISelectRequest):
     # "out_of_budget" entry must truly be above it.
     price_by_id = {p["id"]: p["price"] for p in candidates}
     valid_ids = set(price_by_id.keys())
+    product_by_id = {p["id"]: p for p in candidates}
+    # Couleurs inhabituelles exigees par la demande (ex: "bouche verte") : un
+    # produit n'est conserve pour cette zone que si sa teinte est confirmee
+    # (mot de couleur dans le nom ou color_hex proche), jamais "au plus proche".
+    requested_colors = requested_unusual_colors(req.prompt or "")
+
+    def _color_conflict(pid, zone):
+        prod = product_by_id.get(pid)
+        return bool(prod) and conflicts_for(prod, zone, requested_colors) is not None
 
     cleaned = []
     for item in products:
         pid = item.get("product_id")
-        if pid in valid_ids and price_by_id[pid] <= req.budget_max:
+        if pid in valid_ids and price_by_id[pid] <= req.budget_max and not _color_conflict(pid, item.get("zone", "face")):
             cleaned.append(AISelectProduct(
                 product_id=pid,
                 zone=item.get("zone", "face"),
@@ -785,7 +804,7 @@ async def ai_select_products(req: AISelectRequest):
     cleaned_oob = []
     for item in oob_products:
         pid = item.get("product_id")
-        if pid in valid_ids and pid not in cleaned_ids and price_by_id[pid] > req.budget_max:
+        if pid in valid_ids and pid not in cleaned_ids and price_by_id[pid] > req.budget_max and not _color_conflict(pid, item.get("zone", "face")):
             cleaned_oob.append(AISelectProduct(
                 product_id=pid,
                 zone=item.get("zone", "face"),
@@ -800,7 +819,7 @@ async def ai_select_products(req: AISelectRequest):
         seen_zones = set()
         for p in sorted(candidates, key=lambda x: -x.get("rating", 0)):
             z = p.get("zone")
-            if z and z not in seen_zones and p["price"] <= req.budget_max:
+            if z and z not in seen_zones and p["price"] <= req.budget_max and not _color_conflict(p["id"], z):
                 cleaned.append(AISelectProduct(
                     product_id=p["id"],
                     zone=z,
@@ -811,7 +830,14 @@ async def ai_select_products(req: AISelectRequest):
             if len(cleaned) >= 4:
                 break
 
-    return AISelectResponse(products=cleaned, out_of_budget=cleaned_oob, summary=summary)
+    covered_zones = {c.zone for c in cleaned}
+    unmatched = [
+        {"zone": r["zone"], "color": r["word"]}
+        for r in requested_colors
+        if r["zone"] not in covered_zones
+    ]
+
+    return AISelectResponse(products=cleaned, out_of_budget=cleaned_oob, summary=summary, unmatched=unmatched)
 
 
 @api_router.post("/ai/apply-makeup", response_model=ApplyMakeupResponse)

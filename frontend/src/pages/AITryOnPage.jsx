@@ -35,6 +35,11 @@ const PROMPT_DICT = [
   "naturel", "mat", "doré", "champagne", "pêche", "orangé", "violet", "shimmer",
 ];
 
+// Libellé français des zones (message « aucun produit dans cette teinte »)
+const ZONE_LABEL_FR = {
+  lips: "Lèvres", cheeks: "Joues", liner: "Eyeliner", lashes: "Cils", brows: "Sourcils",
+};
+
 async function selectProducts({ undertone, budgetMax, presetId, prompt, skinToneHex }) {
   // Vraie selection IA (Claude) cote backend. Si la cle ANTHROPIC_API_KEY
   // n'est pas configuree (ou que l'appel echoue pour une autre raison), on
@@ -47,7 +52,7 @@ async function selectProducts({ undertone, budgetMax, presetId, prompt, skinTone
       undertone,
       budget_max: budgetMax || 200,
     });
-    return { products: data.products, outOfBudget: data.out_of_budget || [], summary: data.summary };
+    return { products: data.products, outOfBudget: data.out_of_budget || [], summary: data.summary, unmatched: data.unmatched || [] };
   } catch (err) {
     console.warn("Selection IA (backend) indisponible, repli sur la selection locale :", err);
   }
@@ -93,6 +98,7 @@ async function selectProducts({ undertone, budgetMax, presetId, prompt, skinTone
   return {
     products: selected,
     outOfBudget: [],
+    unmatched: [],
     summary: presetLabel ? `Look "${presetLabel}" · sous-ton ${undertone}` : `Sous-ton ${undertone}`,
   };
 }
@@ -175,7 +181,7 @@ export default function AITryOnPage() {
       const fullPrompt = `${presetText}. ${prompt}`.trim();
 
       // 1. Selection des produits (IA cote backend si les cles sont configurees)
-      const { products: selected, outOfBudget, summary } = await selectProducts({
+      const { products: selected, outOfBudget, summary, unmatched } = await selectProducts({
         undertone: skinTone.undertone,
         budgetMax: budget,
         presetId,
@@ -235,6 +241,7 @@ export default function AITryOnPage() {
         image: imageUrl,
         products: details.filter(Boolean),
         outOfBudget: outOfBudgetDetails.filter(Boolean),
+        unmatched: unmatched || [],
         summary,
         usedRealAi,
       });
@@ -437,6 +444,16 @@ export default function AITryOnPage() {
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-5" data-testid="result-products">
           {result.products.map((p) => <ProductCard key={p.id} product={p} />)}
         </div>
+
+        {result.unmatched?.length > 0 && (
+          <div className="mt-6 bg-[#79C1E0]/10 border border-[#79C1E0]/40 rounded-2xl px-5 py-4 text-sm text-neutral-700 leading-relaxed" data-testid="unmatched-note">
+            {result.unmatched.map((u, i) => (
+              <p key={i} className={i > 0 ? "mt-2" : ""}>
+                <strong>{ZONE_LABEL_FR[u.zone] || u.zone} ({u.color}) :</strong> aucun produit de notre catalogue n'existe dans cette teinte, donc nous ne t'en recommandons pas. L'image montre le rendu imaginé par l'IA.
+              </p>
+            ))}
+          </div>
+        )}
 
         <div className="mt-6 bg-[#FEC4D2]/10 border border-[#FEC4D2]/40 rounded-2xl px-6 py-5 flex items-center justify-between" data-testid="look-total">
           <span className="text-neutral-600 text-base">Total du look</span>
