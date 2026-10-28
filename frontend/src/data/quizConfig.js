@@ -386,7 +386,7 @@ export const ROUTINE_PRODUCTS = [
   // Mêmes catégories, mêmes libellés et même ordre que le menu du site (API
   // /categories, backend/catalog.py) : le choix des produits d'une routine est
   // identique à la recherche d'un produit unique. `group` = bloc d'affichage,
-  // `section` = regroupement du bilan PDF. Eau micellaire, Tonique, Gloss, Correcteur et Bronzer sont des choix propres aux routines (absents du menu produit unique).
+  // `section` = regroupement du bilan PDF. `alsoIn` = autre bloc où le choix apparaît aussi (la brume sert au visage et au corps). Eau micellaire, Tonique, Gloss, Correcteur et Bronzer sont des choix propres aux routines (absents du menu produit unique).
   // Visage
   { slug: "creme-hydratante", label: "Crème hydratante", category: "creme-hydratante", emoji: "🧴", section: "skincare", group: "visage", det: "ta", short: "Crème hydratante" },
   { slug: "serum", label: "Sérum", category: "serum", emoji: "🧪", section: "skincare", group: "visage", det: "ton" },
@@ -400,7 +400,7 @@ export const ROUTINE_PRODUCTS = [
   { slug: "fond-de-teint", label: "Fond de teint / BB cream", category: "fond-de-teint", emoji: "🌹", section: "skincare", group: "visage", det: "ton", short: "Fond de teint" },
   { slug: "demaquillant", label: "Démaquillant", category: "demaquillant", emoji: "🧖", section: "skincare", group: "visage", det: "ton" },
   { slug: "tonique", label: "Tonique", category: "brume", emoji: "🌿", section: "skincare", group: "visage", det: "ton" },
-  { slug: "brume", label: "Brume / Eau thermale", category: "brume", emoji: "💨", section: "skincare", group: "visage", det: "ta", short: "Brume" },
+  { slug: "brume", label: "Brume / Eau thermale", category: "brume", emoji: "💨", section: "skincare", group: "visage", det: "ta", alsoIn: ["corps"], short: "Brume" },
   { slug: "creme-solaire-visage", label: "Crème solaire visage", category: "creme-solaire-visage", emoji: "☀️", section: "skincare", group: "visage", det: "ta" },
   // Corps
   { slug: "creme-corps", label: "Crème corps", category: "creme-corps", emoji: "🌸", section: "skincare", group: "corps", det: "ta" },

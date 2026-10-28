@@ -470,7 +470,14 @@ export default function Routine360Page() {
         : chosenType === "cheveux" ? ["cheveux"]
         : ["visage"];
 
-    const items = (grp) => ROUTINE_PRODUCTS.filter((p) => p.group === grp && !p.hidden);
+    // Un choix peut apparaître dans deux blocs (la brume : visage et corps) ;
+    // en 360° on ne l'affiche qu'une fois pour ne pas le compter en double.
+    const items = (grp) => {
+      const before = sections.slice(0, sections.indexOf(grp));
+      return ROUTINE_PRODUCTS.filter((p) => !p.hidden
+        && (p.group === grp || (p.alsoIn || []).includes(grp))
+        && !before.some((g) => p.group === g || (p.alsoIn || []).includes(g)));
+    };
 
     const titleMap = { visage: "Visage", corps: "Corps", maquillage: "Maquillage", cheveux: "Cheveux" };
     const routineLabelMap = {
