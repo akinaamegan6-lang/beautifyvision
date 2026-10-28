@@ -26,6 +26,7 @@ import ProfileGate from "@/components/ProfileGate";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import CookieBanner from "@/components/CookieBanner";
+import WelcomeRoutinePopup from "@/components/WelcomeRoutinePopup";
 import { installAwinConsentLinks } from "@/lib/consent";
 
 // Remonte en haut de page à chaque changement de route (sauf si on
@@ -75,6 +76,7 @@ function AppRouter() {
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
       <Footer />
+      <WelcomeRoutinePopup />
       <CookieBanner />
     </>
   );
