@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { api } from "../lib/api";
 import Seo from "../components/Seo";
 import SkinIcon from "../components/SkinIcon";
+import RoutineCta from "../components/RoutineCta";
 import ProductCard from "../components/ProductCard";
 import ArticleCard from "../components/ArticleCard";
 import { SKIN_ROUTINES } from "../data/skinRoutines";
@@ -130,13 +131,7 @@ export default function SkinRoutinePage() {
               {routine.intro.map((p, i) => (
                 <p key={i} className="mt-6 text-neutral-600 leading-relaxed max-w-xl">{p}</p>
               ))}
-              <Link
-                to="/routine-360"
-                className="inline-flex items-center gap-2 mt-8 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-sm font-medium px-6 py-3 rounded-full transition"
-                data-testid="skin-cta-routine"
-              >
-                Obtenir ma routine personnalisée <ArrowRight size={16} />
-              </Link>
+              <RoutineCta variant="hero" testId="skin-cta-top" />
             </div>
             <div className="relative flex justify-center lg:justify-end">
               <div className="relative">
@@ -220,6 +215,8 @@ export default function SkinRoutinePage() {
         </div>
       </section>
 
+      <RoutineCta testId="skin-cta-mid" />
+
       {/* ===== ERREURS ===== */}
       <section className="px-6 py-14 md:py-20" data-testid="skin-mistakes">
         <div className="max-w-5xl mx-auto">
@@ -244,6 +241,8 @@ export default function SkinRoutinePage() {
       </section>
 
       <RelatedArticles routine={routine} />
+
+      <RoutineCta testId="skin-cta-bottom" />
 
       {/* ===== AUTRES ROUTINES ===== */}
       <section className="px-6 pb-20" data-testid="skin-other-routines">
