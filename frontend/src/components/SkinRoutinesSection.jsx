@@ -30,7 +30,7 @@ export default function SkinRoutinesSection() {
             return (
               <article
                 key={r.key}
-                className="relative flex flex-col rounded-[2rem] overflow-hidden p-6 min-h-[480px] bg-cover bg-center bg-[#FEEFF2] card-lift"
+                className="relative flex flex-col rounded-[2rem] overflow-hidden p-6 min-h-[560px] bg-cover bg-center bg-[#FEEFF2] card-lift"
                 style={{ backgroundImage: `url(${IMG}/fond-${r.key}.webp)` }}
                 data-testid={`skin-card-${r.key}`}
               >
@@ -52,7 +52,7 @@ export default function SkinRoutinesSection() {
                 <p className="relative mt-3 text-sm text-neutral-800 leading-relaxed">{r.homeText}</p>
 
                 <div className="relative mt-auto pt-6">
-                  <div className="flex items-end justify-center gap-1 sm:gap-2 h-44">
+                  <div className="flex items-end justify-center -space-x-3 h-64">
                     {products.map((p, i) => (
                       <a
                         key={p.id}
@@ -61,7 +61,7 @@ export default function SkinRoutinesSection() {
                         rel="sponsored nofollow noopener noreferrer"
                         title={p.name}
                         aria-label={p.name}
-                        className={`block w-1/3 transition-transform duration-300 hover:-translate-y-1 ${i === 1 ? "h-44" : "h-32"}`}
+                        className={`block w-[38%] shrink-0 transition-transform duration-300 hover:-translate-y-1 ${i === 1 ? "h-64 relative z-10" : "h-48"}`}
                         data-testid={`skin-product-${r.key}-${i + 1}`}
                       >
                         <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-contain drop-shadow-[0_6px_8px_rgba(0,0,0,0.18)]" />
