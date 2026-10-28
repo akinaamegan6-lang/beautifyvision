@@ -23,7 +23,7 @@ export default function LatestArticlesSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-[#79C1E0] leading-tight">
-            Nos derniers <span className="editorial font-normal text-[#F58BA8]">articles</span>
+            Nos derniers <span className="editorial text-[#FEC4D2]">articles</span>
           </h2>
           <p className="mt-4 text-neutral-600 leading-relaxed">
             Des conseils simples et fiables pour mieux comprendre ta peau et adopter les bons réflexes au quotidien.
@@ -35,7 +35,7 @@ export default function LatestArticlesSection() {
         <div className="mt-10 text-center">
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 rounded-full border border-[#F2709C] text-[#F2709C] hover:bg-[#F2709C] hover:text-white px-8 py-3 text-sm font-semibold transition"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-[#FEC4D2] text-neutral-900 hover:bg-[#FEC4D2] hover:border-[#FEC4D2] px-8 py-3 text-sm font-semibold transition shadow-sm hover:shadow-md"
             data-testid="latest-articles-cta"
           >
             Voir tous les articles du blog <ArrowRight size={16} />
