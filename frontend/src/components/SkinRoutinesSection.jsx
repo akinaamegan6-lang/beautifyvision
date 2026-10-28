@@ -61,10 +61,13 @@ export default function SkinRoutinesSection() {
                         rel="sponsored nofollow noopener noreferrer"
                         title={p.name}
                         aria-label={p.name}
-                        className={`group block w-[38%] shrink-0 ${i === 1 ? "h-64" : "h-48"}`}
+                        className={`group relative block w-[38%] shrink-0 ${i === 1 ? "h-64" : "h-48"}`}
                         data-testid={`skin-product-${r.key}-${i + 1}`}
                       >
-                        <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:-translate-y-1" />
+                        {/* Calque 1 : silhouette blanche opaque (le produit n'est plus transparent).
+                            Calque 2 : photo marchand, fond blanc fusionné (multiply). */}
+                        <img src={p.img.replace("/produits/", "/produits/sil/")} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:-translate-y-1" />
+                        <img src={p.img} alt={p.name} loading="lazy" className="absolute inset-0 w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:-translate-y-1" />
                       </a>
                     ))}
                   </div>
