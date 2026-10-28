@@ -34,7 +34,9 @@ export default function SkinRoutinesSection() {
                 style={{ backgroundImage: `url(${IMG}/fond-${r.key}.webp)` }}
                 data-testid={`skin-card-${r.key}`}
               >
-                <div className="flex items-start justify-between gap-3">
+                {/* Voile blanc : éclaircit le fond illustré (ajuste bg-white/45 pour plus ou moins de clarté) */}
+                <span className="absolute inset-0 bg-white/45 pointer-events-none" aria-hidden="true" />
+                <div className="relative flex items-start justify-between gap-3">
                   <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-700 pt-1 max-w-[9rem]">{r.homeLabel}</p>
                   <img
                     src={`${IMG}/peau-${r.key}.webp`}
@@ -44,12 +46,12 @@ export default function SkinRoutinesSection() {
                   />
                 </div>
 
-                <h3 className="mt-3 text-3xl font-bold leading-[1.1] text-neutral-900">
+                <h3 className="relative mt-3 text-3xl font-bold leading-[1.1] text-neutral-900">
                   {r.homeTitle[0]} <span className="editorial text-[#3b8fb8]">{r.homeTitle[1]}</span>
                 </h3>
-                <p className="mt-3 text-sm text-neutral-700 leading-relaxed">{r.homeText}</p>
+                <p className="relative mt-3 text-sm text-neutral-800 leading-relaxed">{r.homeText}</p>
 
-                <div className="mt-auto pt-6">
+                <div className="relative mt-auto pt-6">
                   <div className="flex items-end justify-center gap-1 sm:gap-2 h-44">
                     {products.map((p, i) => (
                       <a
