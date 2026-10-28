@@ -62,6 +62,8 @@ export const BUDGET_ICON = "/icone/budget.png";
 export const CATEGORY_IMAGE = {
   // Skincare
   "nettoyant": "/image/cat-nettoyant.png",
+  // Routine corps : « Gel douche / Savon corps » garde le picto historique du savon/nettoyant.
+  "gel-douche": "/image/cat-nettoyant.png",
   "eau-micellaire": "/image/cat-eau-micellaire.png",
   "tonique": "/image/cat-tonique.png",
   "serum": "/image/cat-serum.png",
@@ -101,7 +103,7 @@ export const CATEGORY_IMAGE = {
 };
 
 export function getProductImage(slug) {
-  return CATEGORY_IMAGE[slug] || NO_PRODUCT_IMAGE;
+  return CATEGORY_IMAGE[slug] || MENU_ONLY_IMAGE[slug] || NO_PRODUCT_IMAGE;
 }
 
 // Catégories du MENU (slugs de l'API /categories) -> visuel. Les slugs du menu

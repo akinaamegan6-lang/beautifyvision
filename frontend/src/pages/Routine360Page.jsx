@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Check, X, AlertTriangle, ChevronRight, Sparkles, ChevronLeft } from "lucide-react";
 import { ROUTINE_PRODUCTS, SKIN_PROBLEMS, BUDGET_RANGES, TEINT_SLUGS, getProductQuestions, getCategoryQuestions } from "../data/quizConfig";
 import { TYPE_HERO_IMAGE, getProductImage, getMenuProductImage, BUDGET_ICON } from "../data/imageAssets";
+import { toast } from "sonner";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "../components/AuthModal";
@@ -82,6 +83,10 @@ const INTRO_COPY = {
   corps: { noun: "corps", title: "Ta routine corps", button: "Lancer le quiz pour créer ma routine corps" },
   cheveux: { noun: "cheveux", title: "Ta routine cheveux", button: "Lancer le quiz pour créer ma routine cheveux" },
 };
+
+// Nombre de produits autorisés dans une routine.
+const MIN_PRODUCTS = 2;
+const MAX_PRODUCTS = 5;
 
 // Budget total conseillé selon le nombre de produits : ~26 € par produit
 // (3 produits ≈ 80 €, 5 produits ≈ 130 €), arrondi à 5 €, jamais sous 80 €.
@@ -218,7 +223,7 @@ export default function Routine360Page() {
   const [catQIdx, setCatQIdx] = useState(0);
 
   useEffect(() => {
-    if (budgetTouched || selected.length < 3) return;
+    if (budgetTouched || selected.length < MIN_PRODUCTS) return;
     const suggested = suggestedBudgetMax(selected.length);
     setBudgetState((b) => (b.max === suggested ? b : { ...b, max: suggested }));
   }, [selected.length, budgetTouched]);
@@ -463,21 +468,19 @@ export default function Routine360Page() {
     // La section "skincare" mélange des produits visage ET corps : on exclut
     // les uns des autres selon le type de routine choisi (bug remonté : des
     // produits visage apparaissaient en "routine corps", et vice-versa).
-    const BODY_ONLY_SLUGS = ["creme-corps", "huile-corps", "creme-solaire-corps"];
-    const isBodyOnly = (p) =>
-      BODY_ONLY_SLUGS.includes(p.slug) ||
-      p.label.toLowerCase().includes("corps") ||
-      p.label.toLowerCase().includes("mains") ||
-      p.label.toLowerCase().includes("pieds") ||
-      p.label.toLowerCase().includes("déo");
-    // Produits partagés entre visage et corps (nettoyant, brume) : utiles aux deux routines.
-    const SHARED_SLUGS = ["nettoyant", "brume"];
+    // Les 12 catégories corps du menu (même liste que le menu « Corps »).
+    const BODY_ONLY_SLUGS = [
+      "creme-corps", "huile-corps", "gommage-corps", "lait-corporel", "beurre-corporel",
+      "soin-mains", "soin-pieds", "deodorant", "autobronzant", "vergetures",
+      "creme-solaire-corps", "gel-douche",
+    ];
+    const isBodyOnly = (p) => BODY_ONLY_SLUGS.includes(p.slug);
 
     const items = (sec) => {
       const all = ROUTINE_PRODUCTS.filter((p) => p.section === sec);
       if (sec !== "skincare") return all;
       if (chosenType === "corps") {
-        return all.filter((p) => isBodyOnly(p) || SHARED_SLUGS.includes(p.slug));
+        return BODY_ONLY_SLUGS.map((slug) => all.find((p) => p.slug === slug)).filter(Boolean);
       }
       if (chosenType === "visage") {
         return all.filter((p) => !isBodyOnly(p));
@@ -495,7 +498,13 @@ export default function Routine360Page() {
     };
     const routineLabel = routineLabelMap[chosenType] || "ta routine";
 
-    const toggle = (slug) => setSelected((arr) => arr.includes(slug) ? arr.filter((x) => x !== slug) : [...arr, slug]);
+    const toggle = (slug) => {
+      if (!selected.includes(slug) && selected.length >= MAX_PRODUCTS) {
+        toast.error(`Tu peux sélectionner ${MAX_PRODUCTS} produits maximum. Retire-en un pour en choisir un autre.`);
+        return;
+      }
+      setSelected((arr) => arr.includes(slug) ? arr.filter((x) => x !== slug) : [...arr, slug]);
+    };
 
     return (
       <main className="bg-white min-h-screen px-6 py-12 md:py-16 relative pb-32" data-testid="routine-step-products">
@@ -505,7 +514,7 @@ export default function Routine360Page() {
           <h1 className="mt-2 text-3xl md:text-4xl font-bold text-neutral-900">
             Choisis tes <span className="editorial text-[#FEC4D2]">produits</span> qui constituent {routineLabel}
           </h1>
-          <p className="mt-2 text-neutral-600">Sélectionne minimum 3 produits.</p>
+          <p className="mt-2 text-neutral-600">Sélectionne entre {MIN_PRODUCTS} et {MAX_PRODUCTS} produits.</p>
           <button onClick={goBackOneStep} className="mt-3 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900" data-testid="routine-back-products">
             <ChevronLeft size={14}/> Précédent
           </button>
@@ -526,7 +535,7 @@ export default function Routine360Page() {
                   ? "Nous répartirons ce budget entre tes produits sélectionnés."
                   : "Ce budget s'ajuste automatiquement au nombre de produits que tu sélectionnes : tu peux le modifier."}
               </p>
-              {selected.length >= 3 && budget.max < minRealisticBudget(selected.length) && (
+              {selected.length >= MIN_PRODUCTS && budget.max < minRealisticBudget(selected.length) && (
                 <p className="mt-2 text-xs text-[#8a6d1d] bg-[#FFF3CD] border border-[#FFC107]/60 rounded-lg px-3 py-2" data-testid="budget-too-low">
                   Avec {selected.length} produits, il sera difficile de te proposer une routine complète à moins de {minRealisticBudget(selected.length)} €. Tu peux augmenter ton budget ou retirer un produit.
                 </p>
@@ -567,7 +576,7 @@ export default function Routine360Page() {
             <span className="text-sm">
               <span className="font-semibold text-[#FEC4D2]">{selected.length}</span> produit{selected.length > 1 ? "s" : ""} <span className="text-neutral-400">· budget {budget.min}-{budget.max}€</span>
             </span>
-            <button disabled={selected.length < 3} onClick={() => setStep(5)} className="bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-sm font-medium px-6 py-2 rounded-full transition disabled:opacity-40 disabled:cursor-not-allowed" data-testid="routine-continue-products">
+            <button disabled={selected.length < MIN_PRODUCTS} onClick={() => setStep(5)} className="bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-sm font-medium px-6 py-2 rounded-full transition disabled:opacity-40 disabled:cursor-not-allowed" data-testid="routine-continue-products">
               Continuer →
             </button>
           </div>
