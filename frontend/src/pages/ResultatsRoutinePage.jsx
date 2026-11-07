@@ -14,6 +14,7 @@ import ProductRating from "../components/ProductRating";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
+import PriceBlock from "../components/PriceBlock";
 
 function AlternativeCard({ product, index }) {
   return (
@@ -27,7 +28,7 @@ function AlternativeCard({ product, index }) {
         <p className="text-xs text-neutral-500">{product.brand}</p>
       </div>
       <div className="text-right shrink-0">
-        <p className="text-lg font-bold text-neutral-900">{product.price.toFixed(0)} €</p>
+        <PriceBlock product={product} digits={0} className="text-lg font-bold text-neutral-900" />
         <p className="text-xs text-[#FEC4D2] font-semibold">{product._score}%</p>
       </div>
       <a href={product.affiliate_url || "#"} target="_blank" rel="noreferrer" className="bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-xs font-medium px-3 py-1.5 rounded-full transition">
@@ -105,7 +106,7 @@ function ProductSection({ slug, recommendations }) {
             </p>
           )}
           <div className="mt-auto pt-4 flex items-center justify-between">
-            <span className="text-xl font-bold text-neutral-900">{best.price.toFixed(2)} €</span>
+            <PriceBlock product={best} className="text-xl font-bold text-neutral-900" />
             <a href={best.affiliate_url || "#"} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white text-sm font-medium px-5 py-2 rounded-full transition" data-testid={`reco-see-${slug}`}>
               Voir le produit <ExternalLink size={12}/>
             </a>

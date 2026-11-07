@@ -180,6 +180,7 @@ class Product(BaseModel):
     name: str
     brand: str
     price: float
+    old_price: Optional[float] = None  # ancien prix (prix barré) si le produit est en promo
     rating: float
     reviews: int
     image: str

@@ -98,3 +98,4 @@ products_*.csv
 # Divers locaux
 .ruff_cache/
 Beautifyvision-code-éléments/
+105475-*.csv

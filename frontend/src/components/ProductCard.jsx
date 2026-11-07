@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { useWishlist } from "../hooks/useWishlist";
 import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
 import ProductRating from "./ProductRating";
+import PriceBlock from "./PriceBlock";
 
 export default function ProductCard({ product, rank }) {
   const { has, toggle } = useWishlist();
@@ -44,7 +45,7 @@ export default function ProductCard({ product, rank }) {
         ))}
       </div>
       <div className="flex items-center justify-between mt-4 pt-4 border-t border-neutral-100">
-        <span className="text-xl font-semibold text-neutral-900">{product.price.toFixed(2)} €</span>
+        <PriceBlock product={product} />
         <a
           href={product.affiliate_url || "#"}
           target="_blank" rel="noreferrer"

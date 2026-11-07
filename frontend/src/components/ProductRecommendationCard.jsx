@@ -1,6 +1,7 @@
 import { ExternalLink, Sparkles } from "lucide-react";
 import ProductRating from "./ProductRating";
 import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
+import PriceBlock from "./PriceBlock";
 
 export default function ProductRecommendationCard({ product, badge = "Recommandé pour toi" }) {
   const score = product._score ?? 90;
@@ -49,7 +50,7 @@ export default function ProductRecommendationCard({ product, badge = "Recommand�
         )}
 
         <div className="mt-auto pt-6 flex items-center justify-between gap-4">
-          <span className="text-2xl font-bold text-neutral-900">{product.price.toFixed(2)} €</span>
+          <PriceBlock product={product} className="text-2xl font-bold text-neutral-900" />
           <a
             href={product.affiliate_url || "#"}
             target="_blank" rel="noreferrer"

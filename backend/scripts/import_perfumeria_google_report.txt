@@ -1,0 +1,14 @@
+Mode : SIMULATION (base simulee depuis ancien flux)
+Lignes du flux Google : 7230
+Lignes du flux non retrouvees en base : voir ci-dessous (nouveaux / ecartes)
+Produits deja en base retrouves dans le flux : 3434 (dont 3009 en promo -> prix barre)
+Produits nouveaux a ajouter : 197 (dont 168 en promo)
+Absents de la base et ecartes (parfums, etuis, hors sujet...) : 3599
+     3258  parfum / etui
+      241  chemin hors sujet
+       55  declinaison de teinte en double
+       38  sans marque
+        6  non classifie
+        1  coffret / set (a traiter plus tard)
+Nouveaux par categorie : creme-hydratante 51, serum 26, rouge-a-levres 18, creme-corps 14, contour-yeux 11, fond-de-teint-cosmetique 10, soin-cuir-chevelu 8, gel-douche 7, palette-yeux 7, blush 7, demaquillant 5, soin-levres 5, shampoing 4, nettoyant 4, eyeliner 4, sourcils 4, brume 2, highlighter 2, serum-cheveux 1, soin-anti-chute 1, deodorant 1, primer 1, spray-coiffant 1, mascara 1, masque 1, masque-cheveux 1
+Produits en base absents du flux : voir avec --check-db

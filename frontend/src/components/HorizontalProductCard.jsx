@@ -2,6 +2,7 @@ import { Heart, ExternalLink } from "lucide-react";
 import ProductRating from "./ProductRating";
 import { useWishlist } from "../hooks/useWishlist";
 import { swapIfPlaceholder, productImgSrc, productImgError } from "../data/imageAssets";
+import PriceBlock from "./PriceBlock";
 
 export default function HorizontalProductCard({ product }) {
   const { has, toggle } = useWishlist();
@@ -27,7 +28,7 @@ export default function HorizontalProductCard({ product }) {
             <p className="text-xs uppercase tracking-[0.18em] text-[#79C1E0] font-semibold">{product.brand}</p>
             <h3 className="mt-2 text-xl md:text-2xl font-bold text-neutral-900 line-clamp-2">{product.name}</h3>
           </div>
-          <span className="text-2xl md:text-3xl font-bold text-neutral-900 whitespace-nowrap">{product.price.toFixed(0)} €</span>
+          <PriceBlock product={product} digits={0} className="text-2xl md:text-3xl font-bold text-neutral-900" />
         </div>
 
         <div className="flex flex-wrap gap-2 mt-4">
