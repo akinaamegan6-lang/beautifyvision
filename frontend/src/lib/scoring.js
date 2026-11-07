@@ -306,7 +306,7 @@ export function scoreProduct(product, answers = {}, problem = null) {
   }
   s += Math.min(40, concernBonusTotal);
 
-  // Tranche d'age (question posee avant chaque quiz) : leger ajustement,
+  // Tranche d'age (question posee une fois par visite, avant le premier quiz) : leger ajustement,
   // jamais prioritaire sur les vrais criteres du quiz.
   const ageRange = answers.age_range || (getProfile() || {}).age_range;
   if (ageRange) {

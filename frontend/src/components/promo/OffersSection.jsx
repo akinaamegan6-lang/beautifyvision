@@ -18,7 +18,7 @@ function CopyCode({ code }) {
     <button
       type="button"
       onClick={copy}
-      className="inline-flex items-center gap-2 border-2 border-dashed border-[#FEC4D2] bg-[#FEC4D2]/15 rounded-xl px-3 py-1.5 font-mono text-sm font-bold tracking-wider text-neutral-900 hover:bg-[#FEC4D2]/30 transition"
+      className="self-start sm:self-auto inline-flex items-center gap-2 border-2 border-dashed border-[#FEC4D2] bg-[#FEC4D2]/15 rounded-xl px-3 py-1.5 font-mono text-sm font-bold tracking-wider text-neutral-900 hover:bg-[#FEC4D2]/30 transition"
       aria-label={`Copier le code ${code}`}
     >
       {code} {done ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} className="text-neutral-500" />}
@@ -44,13 +44,13 @@ function OfferCard({ offer }) {
         {offer.min ? ` · ${offer.min}` : ""}
         {!longTerm ? ` · jusqu'au ${fmtDate(offer.endTs)}` : ""}
       </p>
-      <div className="mt-auto pt-4 flex flex-wrap items-center justify-between gap-3">
-        {offer.code ? <CopyCode code={offer.code} /> : <span />}
+      <div className="mt-auto pt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        {offer.code ? <CopyCode code={offer.code} /> : <span className="hidden sm:block" />}
         <a
           href={offer.url}
           target="_blank"
           rel="sponsored noopener noreferrer"
-          className="inline-flex items-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white text-sm font-medium px-5 py-2.5 rounded-full transition"
+          className="inline-flex items-center justify-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white text-sm font-medium px-5 py-2.5 rounded-full transition"
         >
           Profiter de l'offre <ExternalLink size={13} />
         </a>
@@ -67,12 +67,14 @@ export default function OffersSection() {
   return (
     <section id="offres" className="scroll-mt-24 px-6 py-12 md:py-16" data-testid="promo-offers">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-start gap-5">
-          <span className="w-16 h-16 md:w-20 md:h-20 shrink-0 rounded-full bg-[#FEC4D2]/30 flex items-center justify-center text-[#79C1E0]">
-            <Tag size={30} strokeWidth={1.6} />
+        <div className="relative md:flex md:items-start md:gap-6">
+          <span className="absolute right-0 top-0 w-12 h-12 md:static md:w-20 md:h-20 md:shrink-0 rounded-full bg-[#FEC4D2]/30 flex items-center justify-center text-[#79C1E0]">
+            <Tag className="w-5 h-5 md:w-[30px] md:h-[30px]" strokeWidth={1.6} />
           </span>
           <div className="max-w-3xl">
-            <SectionHeading title={["Codes promo &", "offres du moment"]} />
+            <div className="pr-14 md:pr-0">
+              <SectionHeading title={["Codes promo &", "offres du moment"]} />
+            </div>
             <p className="mt-3 text-neutral-600 leading-relaxed">
               Les codes promo et offres en cours chez nos marchands partenaires : réductions sur tout le site, coffrets de Noël, soins capillaires, maquillage et grandes marques de dermocosmétique. Copie le code, puis clique sur « Profiter de l'offre » pour l'appliquer au moment de payer.
             </p>

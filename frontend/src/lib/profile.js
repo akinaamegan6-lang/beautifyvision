@@ -1,7 +1,8 @@
-// Profil "genre + tranche d'age" demande avant CHAQUE quiz (reponse obligatoire).
-// La derniere reponse est gardee dans sessionStorage (le temps de la visite,
-// dans le navigateur de la personne) pour pre-remplir la question : elle sert a ajuster legerement les
-// recommandations et a alimenter des statistiques anonymes.
+// Profil "genre + tranche d'age" demande une fois par visite avant les quiz
+// (reponse obligatoire). Il est garde dans sessionStorage (le temps de la
+// visite, dans le navigateur de la personne) : les quiz suivants ne le
+// redemandent pas, il est redemande a la prochaine visite. Il sert a ajuster
+// legerement les recommandations et a alimenter des statistiques anonymes.
 
 export const GENDER_OPTIONS = [
   { value: "femme", label: "Femme" },

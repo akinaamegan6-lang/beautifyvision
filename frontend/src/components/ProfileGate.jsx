@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
 import { GENDER_OPTIONS, AGE_OPTIONS, getProfile, saveProfile } from "../lib/profile";
 
 function Choice({ options, value, onChange, testid }) {
@@ -27,26 +26,27 @@ function Choice({ options, value, onChange, testid }) {
   );
 }
 
-// Entoure un quiz : genre + tranche d'age sont demandes AVANT CHAQUE quiz
-// (reponse obligatoire, pas d'option "je prefere ne pas repondre"). Si la
-// personne a deja repondu pendant la visite, ses reponses precedentes sont
-// pre-selectionnees : elle peut les modifier ou simplement continuer.
+// Entoure un quiz : genre + tranche d'age sont demandes (reponse obligatoire,
+// pas d'option "je prefere ne pas repondre") UNE SEULE FOIS par visite. Les
+// reponses sont gardees dans sessionStorage : tant que la personne reste sur
+// le site (meme onglet), les quiz suivants s'ouvrent directement ; a sa
+// prochaine visite (onglet ferme puis rouvert), les questions sont reposees.
+// L'essayage IA n'est pas concerne : il ne demande rien.
 export default function ProfileGate({ children }) {
-  const { pathname } = useLocation();
   const previous = getProfile();
   const validGender = (v) => GENDER_OPTIONS.some((o) => o.value === v);
   const validAge = (v) => AGE_OPTIONS.some((o) => o.value === v);
-  const [donePath, setDonePath] = useState(null);
+  const [, setSaved] = useState(false);
   const [gender, setGender] = useState(() => (previous && validGender(previous.gender) ? previous.gender : null));
   const [age, setAge] = useState(() => (previous && validAge(previous.age_range) ? previous.age_range : null));
 
-  // Un nouveau quiz (autre URL) = on redemande.
-  if (donePath === pathname) return children;
+  // Deja repondu pendant cette visite : on passe directement au quiz.
+  if (previous && validGender(previous.gender) && validAge(previous.age_range)) return children;
 
   const ready = gender && age;
   const submit = () => {
     saveProfile({ gender, age_range: age });
-    setDonePath(pathname);
+    setSaved(true); // force un nouveau rendu : le profil est maintenant en memoire
   };
 
   return (

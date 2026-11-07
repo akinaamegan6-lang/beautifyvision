@@ -64,7 +64,7 @@ function AppRouter() {
         <Route path="/resultats/:produit" element={<ResultatsProduitPage />} />
         <Route path="/routine-360" element={<ProfileGate><Routine360Page /></ProfileGate>} />
         <Route path="/resultats-routine" element={<ResultatsRoutinePage />} />
-        <Route path="/essayage-ia" element={<ProfileGate><AITryOnPage /></ProfileGate>} />
+        <Route path="/essayage-ia" element={<AITryOnPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/promos" element={<PromosPage />} />
         <Route path="/probleme/:slug" element={<ProfileGate><ProblemeRoutinePage /></ProfileGate>} />
