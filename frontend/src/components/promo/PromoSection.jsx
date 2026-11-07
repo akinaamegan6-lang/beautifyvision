@@ -59,7 +59,7 @@ export default function PromoSection({ section }) {
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="flex items-start gap-5 md:gap-6">
           <img src={section.icon} alt="" className="w-16 h-16 md:w-20 md:h-20 shrink-0 object-contain" />
-          <div className="max-w-3xl">
+          <div className="max-w-3xl lg:max-w-2xl">
             <SectionHeading title={section.title} />
             <p className="mt-3 text-neutral-600 leading-relaxed">{section.text}</p>
             {section.links.length > 0 && (

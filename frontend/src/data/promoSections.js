@@ -8,7 +8,7 @@ export const PROMO_SECTIONS = [
     id: "visage",
     title: ["Promos", "Visage"],
     icon: "/icone/visage.png",
-    decor: { src: "/image/tache-de-creme.webp", className: "hidden md:block -left-44 top-0 w-72" },
+    decor: { src: "/image/tache-de-creme.webp", className: "hidden lg:block -right-6 top-6 w-60 scale-x-[-1]" },
     text:
       "Crèmes hydratantes, sérums, nettoyants, masques et soins du contour des yeux : retrouve les soins visage en promotion chez nos marchands partenaires, avec l'ancien prix barré et le pourcentage de remise. Pas sûre de ton type de peau ? Nos routines t'aident à choisir le bon soin.",
     links: [
@@ -29,7 +29,7 @@ export const PROMO_SECTIONS = [
     id: "corps",
     title: ["Promos", "Corps"],
     icon: "/icone/corps.png",
-    decor: { src: "/image/tache-de-mousse.webp", className: "hidden md:block -left-48 -top-8 w-80" },
+    decor: { src: "/image/tache-de-mousse.webp", className: "hidden lg:block -right-8 top-4 w-64 scale-x-[-1]" },
     text:
       "Laits et crèmes hydratantes, gels douche, huiles, gommages, soins des mains et des pieds : prends soin de ta peau de la tête aux pieds avec les promos corps du moment. Les prix barrés te montrent tout de suite l'économie réalisée.",
     links: [],
@@ -44,7 +44,7 @@ export const PROMO_SECTIONS = [
     id: "make-up",
     title: ["Promos", "Make-up"],
     icon: "/icone/maquillage.svg",
-    decor: { src: "/image/pinceau-poudre-rose.webp", className: "hidden md:block -left-52 -top-4 w-80" },
+    decor: { src: "/image/pinceau-poudre-rose.webp", className: "hidden lg:block -right-8 top-6 w-64 scale-x-[-1]" },
     text:
       "Teint, yeux, lèvres : les indispensables du make-up à prix doux. Fonds de teint, poudres et blushs, mascaras, eyeliners et palettes, rouges à lèvres et soins des lèvres, toutes les promos sont regroupées par partie du visage.",
     links: [],

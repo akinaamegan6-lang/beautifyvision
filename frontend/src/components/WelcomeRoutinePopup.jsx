@@ -7,7 +7,7 @@ const SEEN_KEY = "bv_welcome_seen";
 const SHOW_DELAY_MS = 1200;
 // Pages sur lesquelles on n'affiche jamais la pop-in (déjà sur une routine, pages légales, admin, quiz...).
 const EXCLUDED_PREFIXES = [
-  "/routine", "/admin", "/quiz", "/resultats", "/essayage-ia", "/probleme",
+  "/routine", "/promos", "/admin", "/quiz", "/resultats", "/essayage-ia", "/probleme",
   "/mentions-legales", "/politique-de-confidentialite", "/cgu", "/contact", "/auth",
 ];
 

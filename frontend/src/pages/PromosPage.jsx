@@ -53,7 +53,9 @@ export default function PromosPage() {
         <ChristmasBanner />
       </div>
 
-      {PROMO_SECTIONS.map((s) => <PromoSection key={s.id} section={s} />)}
+      {PROMO_SECTIONS.map((s) => (
+        <PromoSection key={s.id} section={s} />
+      ))}
 
       <OffersSection />
 

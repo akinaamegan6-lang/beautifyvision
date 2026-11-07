@@ -24,6 +24,7 @@ import AdminQuizPage from "@/pages/AdminQuizPage";
 import SkinRoutinePage from "@/pages/SkinRoutinePage";
 import PromosPage from "@/pages/PromosPage";
 import PromoFab from "@/components/promo/PromoFab";
+import PartnerPopup from "@/components/promo/PartnerPopup";
 import ProfileGate from "@/components/ProfileGate";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
@@ -80,6 +81,7 @@ function AppRouter() {
       </Routes>
       <Footer />
       <PromoFab />
+      <PartnerPopup />
       <WelcomeRoutinePopup />
       <CookieBanner />
     </>
