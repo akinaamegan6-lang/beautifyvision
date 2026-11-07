@@ -1,0 +1,259 @@
+IMPORT BEAUTY SUCCESS (SIMULATION, rien n'est ecrit en base)
+
+Contenu du flux par rayon :
+   2214  Maquillage
+   1577  Parfum
+   1125  Soin visage
+    610  Idées cadeaux
+    517  Soin corps et bain
+    411  Homme
+    301  Accessoires
+    129  Soin cheveux
+     56  Nos produits responsables
+     23  Parapharmacie
+     16  (vide)
+     15  Calendriers de l'Avent
+     14  By Terry
+      9  Estée Lauder
+      9  Physiomins
+      9  Mini budget Maxi Beauté
+      8  Enfant
+      8  Clinique
+      8  Manucurist
+      8  Shiseido
+      8  Hermès
+      7  Sisley
+      6  Givenchy
+      5  Baija
+      5  Clarins
+      4  Beauty Success
+      4  I Heart Revolution
+      4  Guerlain
+      4  Soldes accessoires
+      4  Lancôme
+      4  Grès
+      3  Hair Rituel By Sisley
+      3  Valentino
+      3  Maison Margiela
+      2  Sélection à -30%
+      2  Thalgo
+      2  Misencil
+      2  Boss
+      2  Solinotes
+      2  Armani
+      2  Woodwick
+      2  Phyto
+      1  Sélection à -50%
+      1  Bachca Paris
+      1  Tentation
+      1  Lancaster
+      1  Narciso Rodriguez
+      1  WAAM
+      1  Si si la Paillette
+      1  Jozz
+      1  Omum
+      1  Soldes maquillage
+      1  Pur Eden
+      1  Max Mara
+      1  Jean Paul Gaultier
+      1  Arcancil
+      1  Sélection à -70%
+      1  Cerruti 1881
+      1  Little Marcel
+      1  MASQUE B.A.R
+      1  Mavala
+      1  Novexpert
+      1  Payot
+      1  Paloma Picasso
+      1  Revolution
+      1  Yves Saint Laurent
+      1  Ioma
+  -> 170 marques dans le flux
+
+    7172  lignes lues
+    2931  ecartees : rayon hors categories du site (parfums, hommes, accessoires, coffrets cadeaux...)
+     335  ecartees : ongles / accessoires / hors categories du site
+      35  ecartees : complement alimentaire
+      96  ecartees : outil/accessoire/coffret/kit
+      42  ecartees : non classifiees
+      35  ecartees : parfum
+      12  ecartees : homme/rasage
+     198  ecartees : recharge (le produit principal est deja liste)
+       3  ecartees : sels/perles de bain
+    3485  candidats apres filtres
+     103  doublons internes fusionnes (meme produit en plusieurs contenances / liste plusieurs fois)
+     377  quasi-doublons internes fusionnes
+    3005  produits Beauty Success uniques
+    3774  deja presents (ancien flux Awin)
+   29116  deja presents (liste DocMorris, a defaut de la base)
+     200  ecartes car deja presents
+    2805  PRODUITS A IMPORTER
+     341  importes mais ressemblant a un produit existant (a verifier)
+
+Repartition des produits importes par categorie :
+    575  rouge-a-levres
+    294  fond-de-teint-cosmetique
+    225  creme-hydratante
+    133  eyeliner
+    129  serum
+    129  palette-yeux
+    116  masque
+    114  blush
+     87  gel-douche
+     66  contour-yeux
+     66  mascara
+     63  soin-levres
+     63  creme-corps
+     59  demaquillant
+     58  poudre
+     58  highlighter
+     55  soin-mains
+     47  creme-solaire-visage
+     45  nettoyant
+     43  brume
+     41  creme-solaire-corps
+     40  lait-corporel
+     38  huile-corps
+     30  gommage-corps
+     30  sourcils
+     24  deodorant
+     23  primer
+     22  shampoing
+     22  huile-visage
+     18  exfoliant
+     18  masque-cheveux
+     15  autobronzant
+     13  apres-shampoing
+     12  soin-cheveux-colores
+      8  spray-coiffant
+      8  soin-pieds
+      5  soin-cuir-chevelu
+      5  huile-cheveux
+      3  vergetures
+      2  serum-cheveux
+      2  soin-anti-chute
+      1  shampoing-sec
+
+Marques importees : 101 dont 57 nouvelles au catalogue
+  Top marques importees : Sisley (313), Beauty Success (260), Guerlain (174), Lancôme (166), Clinique (165), Jozz Beauty (154), Clarins (153), Estée Lauder (146), Givenchy (99), Yves Saint Laurent (97), Payot (76), Bourjois (75), Ioma (44), Shiseido (43), Baïja (41), Nuxe (40), Thalgo (35), Inuwet (34), Garancia (33), Rituals (32), Novexpert (30), Erborian (30), Dr Jart (28), La Colline (27), Pur Eden (25)
+
+Exemples ecartes (ongles / accessoires / hors categories du site) :
+  - Opi | Infinite Shine Vernis À Ongles Effet Gel Werkin' Shine To Five
+  - Beauty Success | Dissolvant Dissolvant Douceur Dissolvant Douceur
+  - Lashilé Beauty | Good Hair Pousse Et Fortification Des Cheveux Cheveux Sublimes
+  - Manucurist | Huile Verte Hydrate & Embellit 15ml
+  - Manucurist | Base S.o.s. Base Coat Ongles Très Abîmés 15ml
+  - Lashilé Beauty | Good Clean Soin Pour Le Visage Peau Nette
+  - Manucurist | Vernis Green Vernis À Ongles Licorice
+  - Bourjois | Vernis 1 Seconde Vernis À Ongles 47 Sunset&match
+  - Bourjois | Vernis 1 Seconde Vernis À Ongles 43 Rosee Du Satin
+  - Hérôme | Seche Vernis/top Coat Soins Mains Et Ongles 75 Ml
+  - Hérôme | Stylo Adoucissant Pour Cuticules Soins Mains Et Ongles 4ml
+  - Hérôme | Durcisseur Doux 'glamour' Soins Mains Et Ongles 10ml
+  - Hérôme | Durcisseur Doux 'glitter' Soins Mains Et Ongles 10ml
+  - Hérôme | Vernis Amer Soins Mains Et Ongles 10ml
+  - Hérôme | Base Lissante Soins Mains Et Ongles 10ml
+
+Exemples ecartes (complement alimentaire) :
+  - Arnaud Paris | Le Complément Nourrissant Perle & Caviar Pipette 15ml
+  - Thalgo | Masque Shot Lift Flash Effet Tenseur - Comble 1 Sachet 20ml
+  - Thalgo | Masque Shot Anti Soif Hydrate - Remineralise 1 Sachet 20ml
+  - Erborian | Ginseng Shot Mask Ginseng Sachet 15gr
+  - Lashilé Beauty | Good Hair Women Anti-chute Cheveux Flacon 60 Gummies
+  - Masque B.a.r | Masque Licorne Masque Tissu Anti-imperfections Sachet 21ml
+  - Payot | Gouttes Sommeil Paisible Complément Alimentaire - Extrait De Mélisse 15ml - Cure De 30 Jours
+  - Physiomins | Thé Drainant Draine L'excès D'eau 20 Sachets
+  - Physiomins | Tonus Vitalité Diminue La Fatigue 60 Gélules
+  - Physiomins | Élimination Réduit L'excès D'eau 30 Comprimés
+  - Physiomins | Régulation Déstocke Et Brûle Les Graisses 30 Comprimés
+  - Physiomins | Beauté Cheveux Et Ongles 60 Gummies
+  - Physiomins | Brûle Graisse Élimination Des Graisses 60 Gélules
+  - Phyto | Phytophanere Complément Alimentaire Cheveux & Ongles - Duo 120 Capsules X 2
+  - Payot | Roselift Infusion Liftante 125ml
+
+Exemples ecartes (outil/accessoire/coffret/kit) :
+  - Océopin | Le Kit Minis Coffret Découverte Trio De Miniatures Format Voyage
+  - Hair Rituel By Sisley | Creme Demelante Restructurante Crème Démêlante Restructurante Aux Protéines De Coton 200ml
+  - Invisibobble | Wrapstar Accessoire Cheveux 1 Unité
+  - Bachca | Bachca Pinceau Blush Biseauté 1 Unité
+  - Sisley | Pinceau Fond De Teint Arrondi - Biseauté 1 Unité
+  - Sisley | Pinceau Phyto-touche Kabuki Rétractable 1 Unité
+  - Sisley | Coffret Sisleÿa L'intégrale Anti-âge La Cure Cure Intensive Anti-âge 4 Flacons De 10ml
+  - Inuwet | Duo Paris Coffret Baumes À Lèvres Fraise Cerise Baumes À Lèvres Stick 3,5 G X2
+  - Inuwet | Super Masque Mains Douces - Hydratation Masque Gants Hydratation Pour Les Mains Gants Pré-imprégnés 16ml X10
+  - Ardell | Magnetic Liquid Liner Demi Wispies Demi Wispies Kit De Faux-cils Magnétiques Avec Liquid Liner Feutre Noir (2,5gr) Demi Wispies
+  - Ardell | Magnetic Liquid Liner 110 Kit Faux-cils Magnétiques Avec Aimant Invisible Kit De Faux-cils Magnétiques Avec Liquid Liner Feutre Noir (2,5gr) 110
+  - Bourjois | Bourjois Liner Pinceau 4 Bleu Pop Art 2,5ml Eyeliner Contour De L'œil 4 Bleu Pop Art
+  - Hérôme | Polissoir À Ongles Quatre Phases Soins Mains Et Ongles Accessoire
+  - Hérôme | Disques De Dissolvant Soignant Sans Acétone Soins Mains Et Ongles 30 Pads
+  - Hérôme | Lime En Verre Soins Mains Et Ongles Lime
+
+Exemples ecartes (non classifie) :
+  - La Colline | Brume Cellulaire Des Alpes Suisse Moisture Boost++ Spray 150ml
+  - La Colline | Emulsion Globale Anti-pollution Emulsion Globale Anti-pollution Flacon Pompe 50ml
+  - La Colline | Bio-gommage Cellulaire Modelant Gommage Activateur D'éclat Flacon Pompe 50ml
+  - La Colline | Baume Celullaire Hydration Jeunesse Moisture Boost++ Pot 50ml
+  - La Colline | Traitement Cellulaire Eco-hydratant Moisture Boost++ Flacon 30ml
+  - La Colline | Soin Revitalisant Cellulaire Soin Hydratant, Énergisant Et Anti-âge Flacon Pompe 50ml
+  - La Colline | Soin Cellulaire Revitalisant Riche Soin Hydratant, Énergisant Et Anti-âge Flacon Pompe 50ml
+  - Tentation | Bain Moussant Chaussure Bordeaux Nacré Pailleté Vanille & Bergamote 40ml
+  - 100bon | Nouveau Souffle Roll-on Aromachologique 10ml
+  - 100bon | S.o.s Roll-on Aromachologique 10ml
+  - 100bon | Nouveau Souffle Spray Aromachologique 30ml
+  - Inuwet | Baume À Lèvres Metal Purple Cassis Baume À Lèvres Hydratant Naturel Stick 3g
+  - Inuwet | Baume À Lèvres Metal Turquoise Cupcake Baume À Lèvres Hydratant Naturel Stick 3g
+  - Baïja | Parfum D'intérieur Moana Fleur De Tiaré Parfum D'intérieur Moana - Fleur De Tiaré
+  - Cattier | Secret Botanique Soin De Jour Nourrissant - Peaux Sèches Flacon 50ml
+
+Exemples ecartes (parfum) :
+  - Givenchy | Monsieur Eau De Toilette 100ml
+  - Lolita Lempicka | So Sweet Eau De Parfum Vaporisateur 30ml
+  - Lolita Lempicka | Mon Eau Eau De Parfum Vaporisateur 30ml
+  - Lolita Lempicka | Mon Eau Eau De Parfum Vaporisateur 50ml
+  - Givenchy | Gentleman Réserve Privée Eau De Parfum 60ml
+  - Givenchy | Gentleman Réserve Privée Eau De Parfum 100ml
+  - Valentino | Born In Roma Coral Fantasy Donna Eau De Parfum 30ml
+  - Valentino | Born In Roma Coral Fantasy Donna Eau De Parfum 50ml
+  - Valentino | Born In Roma Coral Fantasy Donna Eau De Parfum 100ml
+  - Narciso Rodriguez | Narciso Eau De Parfum Cristal Vaporisateur 30ml
+  - Solinotes | Fleur De Jasmin Eau De Parfum 15ml
+  - Givenchy | Gentleman Réserve Privée Eau De Parfum 200ml
+  - Giorgio Armani | Armani Code Eau De Parfum 75ml
+  - Guerlain | Cologne Du Parfumeur Eau De Cologne 100ml
+  - Woodwick | Lavande Relaxante Bougie Parfumée Moyenne Jarre
+
+Exemples ecartes (homme/rasage) :
+  - Shiseido | Fluide Hydratant Et Energisant Ultra Leger Shiseido Men 100ml
+  - Phyto | Phytocyane Men Shampooing Antichute Homme 250ml
+  - Phyto | Traitement Antichute Homme Chute Sévère, Héréditaire, Cheveux Clairsemés 42ml
+  - Inuwet | Baume À Lèvres Snow Girl Barbe À Papa
+  - Jean Paul Gaultier | Coffret Scandal Pour Homme Le Parfum Eau De Parfum Intense 100ml & Gel Douche
+  - Inuwet | Baume À Lèvres Barbe À Papa Barbe À Papa
+  - Cerruti 1881 | 1881 - Lotion Après-rasage 100ml
+  - Clinique | Happy For Men - Eau De Toilette Eau De Toilette - Vaporisateur 100 Ml
+  - Clinique | Skin Supplies For Men - Post Shave Healer - Après-rasage Apaisant
+  - Clinique | Clinique For Men Exfoliant Visage Tube 100ml
+  - Clinique | Skin Supplies For Men - Anti-perspirant Déodorant Roll-on
+  - Clinique | Skin Supplies For Men - Cream Shave - Crème À Raser
+
+Exemples ecartes (recharge (le produit principal est deja liste)) :
+  - Shiseido | Essential Energy Recharge Crème Activatrice D'hydratation 50ml
+  - Shiseido | Essential Energy Recharge Crème Jour Activatrice D'hydratation Spf20 50ml
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 705 Soft Berry
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 742 Joli Rouge
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 757 Nude Brick
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 768 Strawberry
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 774 Pink
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 778 Pecan Nude
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 732 Grenadine
+  - Clarins | Joli Rouge Satin Recharge Rouge À Lèvres Fini Satiné 737 Spicy Cinnamon
+  - Clarins | Joli Rouge Brillant Recharge Rouge À Lèvres Fini Brillant 757s Nude Brick
+  - Clarins | Joli Rouge Brillant Recharge Rouge À Lèvres Fini Brillant 705s Soft Berry
+  - Zao Makeup | Recharge Rouge À Lèvres Cocoon Bio, Vegan Et Rechargeable Mexico
+  - Zao Makeup | Recharge Base Prim'hydra Bio, Vegan Et Rechargeable
+  - Zao Makeup | Recharge Ombre À Paupières Rectangle Nacrée Bio, Vegan & Rechargeable Bronze Rosé
+
+Exemples ecartes (sels/perles de bain) :
+  - Nailmatic | Sels De Bain Moussant Enfant Lagon
+  - Tentation | Bombe De Bain Monoï 190g
+  - Tentation | Bombe De Bain Butterfly Passion 180g

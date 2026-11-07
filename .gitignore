@@ -91,3 +91,10 @@ datafeed_*.csv
 datafeed_*.csv-*
 datafeed_*.csv.gz
 backend/scripts/import_report.txt
+
+# Flux produits Effiliation (Beauty Success), fichier de donnees brut
+products_*.csv
+
+# Divers locaux
+.ruff_cache/
+Beautifyvision-code-éléments/
