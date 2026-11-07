@@ -44,12 +44,12 @@ export default function ProductCard({ product, rank }) {
           <span key={t} className="text-[10px] uppercase tracking-wider bg-[#FEC4D2]/15 text-neutral-700 px-2 py-1 rounded-full">{t}</span>
         ))}
       </div>
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-neutral-100">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-3 mt-4 pt-4 border-t border-neutral-100">
         <PriceBlock product={product} />
         <a
           href={product.affiliate_url || "#"}
           target="_blank" rel="noreferrer"
-          className="bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-xs font-medium px-4 py-2 rounded-full transition"
+          className="flex-1 min-w-[8.5rem] text-center whitespace-nowrap bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 text-xs font-medium px-4 py-2.5 rounded-full transition"
           data-testid={`see-product-${product.id}`}
         >
           Voir le produit

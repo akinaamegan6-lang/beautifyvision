@@ -57,10 +57,12 @@ export default function PromoSection({ section }) {
         className={`pointer-events-none absolute z-0 select-none ${section.decor.className}`}
       />
       <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="flex items-start gap-5 md:gap-6">
-          <img src={section.icon} alt="" className="w-16 h-16 md:w-20 md:h-20 shrink-0 object-contain" />
+        <div className="relative md:flex md:items-start md:gap-6">
+          <img src={section.icon} alt="" className="absolute right-0 top-0 w-12 h-12 object-contain md:static md:w-20 md:h-20 md:shrink-0" />
           <div className="max-w-3xl lg:max-w-2xl">
-            <SectionHeading title={section.title} />
+            <div className="pr-14 md:pr-0">
+              <SectionHeading title={section.title} />
+            </div>
             <p className="mt-3 text-neutral-600 leading-relaxed">{section.text}</p>
             {section.links.length > 0 && (
               <p className="mt-2 text-sm text-neutral-500">

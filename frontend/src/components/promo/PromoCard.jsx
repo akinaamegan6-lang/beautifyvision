@@ -31,13 +31,13 @@ export default function PromoCard({ product }) {
         <p className="text-[11px] uppercase tracking-[0.16em] text-[#79C1E0] font-semibold truncate">{product.brand}</p>
         <h3 className="mt-1.5 text-[15px] leading-snug font-bold text-neutral-900 line-clamp-2 min-h-[2.6em]">{product.name}</h3>
         <ProductRating product={product} className="mt-2" />
-        <div className="mt-auto pt-4 flex items-end justify-between gap-3">
+        <div className="mt-auto pt-4 flex flex-wrap items-end gap-x-3 gap-y-3">
           <PriceBlock product={product} className="text-xl font-bold text-neutral-900" />
           <a
             href={product.affiliate_url || "#"}
             target="_blank"
             rel="sponsored noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white text-xs font-medium px-4 py-2.5 rounded-full transition whitespace-nowrap"
+            className="inline-flex flex-1 min-w-[8.5rem] items-center justify-center gap-1.5 bg-[#79C1E0] hover:bg-[#6ab1d1] text-white text-xs font-medium px-4 py-2.5 rounded-full transition whitespace-nowrap"
             data-testid={`promo-see-${product.id}`}
           >
             Voir le produit <ExternalLink size={12} />
