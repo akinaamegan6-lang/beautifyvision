@@ -347,14 +347,75 @@ export function scoreProduct(product, answers = {}, problem = null) {
 // scores.
 export const MIN_GOOD_MATCH_SCORE = 55;
 
+// --- Mélange des marchands + qualité des photos -------------------------
+// Sans cela, à score égal, l'ordre reste celui de la base : le marchand
+// importé en premier (Perfumeria) occupait tout le haut du classement.
+// Marchand d'un produit : champ `source_merchant` de l'API, sinon déduit du
+// lien affilié (Effiliation, ou identifiant marchand Awin `m=`).
+export function merchantOf(p) {
+  if (p.source_merchant) return String(p.source_merchant).toLowerCase();
+  try {
+    const u = new URL(p.affiliate_url);
+    if (u.host.includes("effiliation")) return "beauty success";
+    const m = u.searchParams.get("m");
+    if (m) return `awin-${m}`;
+    return u.host;
+  } catch (e) {
+    return "autre";
+  }
+}
+
+// Qualité de la photo : les images Beauty Success font ~2000 px (mesuré sur
+// 30 produits : 29 sur 30 font 600 px ou plus). Les images Awin passent par un
+// CDN qui renvoie 600x600, mais leur netteté dépend du marchand.
+export function imageQuality(p) {
+  const img = p.image || "";
+  if (!img || /no[-_]?image|placeholder|undefined|null/i.test(img)) return -2;
+  if (img.includes("beautysuccess.fr")) return 2;
+  if (img.includes("productserve.com")) return 1;
+  return 0;
+}
+
+// Écart de score (en points) dans lequel on accepte de préférer un autre
+// marchand / une plus belle photo : le classement reste fidèle au quiz.
+const DIVERSITY_SCORE_WINDOW = 4;
+const DIVERSITY_DEPTH = 40; // seules les premières places sont mélangées
+
+export function diversifyByMerchant(ranked) {
+  if (ranked.length < 3) return ranked;
+  const head = ranked.slice(0, DIVERSITY_DEPTH);
+  const tail = ranked.slice(DIVERSITY_DEPTH);
+  const pool = head.map((p) => ({ p, m: merchantOf(p), q: imageQuality(p) }));
+  const used = {};
+  const out = [];
+  while (pool.length) {
+    const best = pool[0].p._score;
+    let pick = -1;
+    let pickKey = null;
+    for (let i = 0; i < pool.length; i++) {
+      if (best - pool[i].p._score > DIVERSITY_SCORE_WINDOW) break; // pool trié par score décroissant
+      const key = [used[pool[i].m] || 0, -pool[i].q, -pool[i].p._score];
+      if (!pickKey || key[0] < pickKey[0] || (key[0] === pickKey[0] && (key[1] < pickKey[1] || (key[1] === pickKey[1] && key[2] < pickKey[2])))) {
+        pick = i;
+        pickKey = key;
+      }
+    }
+    const [chosen] = pool.splice(pick, 1);
+    used[chosen.m] = (used[chosen.m] || 0) + 1;
+    out.push(chosen.p);
+  }
+  return [...out, ...tail];
+}
+
 export function rankProducts(products, answers, problem = null) {
-  return products
+  const ranked = products
     .map((p) => {
       const { score, reasons, excluded } = scoreProduct(p, answers, problem);
       return { ...p, _score: score, _reasons: [...new Set(reasons)].slice(0, 4), _excluded: !!excluded };
     })
     .filter((p) => !p._excluded)
     .sort((a, b) => b._score - a._score);
+  return diversifyByMerchant(ranked);
 }
 
 // Separe une liste deja classee (rankProducts) en "vrais" bons matchs et

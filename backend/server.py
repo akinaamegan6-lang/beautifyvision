@@ -190,6 +190,7 @@ class Product(BaseModel):
     color_hex: Optional[str] = None
     zone: Optional[str] = None
     affiliate_url: str = "#"
+    source_merchant: Optional[str] = None
 
 
 BLOG_CATEGORIES = {"skincare", "maquillage", "cheveux", "corps", "ingredients", "conseils"}
@@ -316,6 +317,29 @@ async def list_products(
 # ce n'est pas reparable cote code, seul le marchand peut fournir une photo
 # plus grande. On les exclut du Top (ou la photo est affichee en grand) pour
 # qu'un produit avec une photo nette prenne leur place.
+def _merchant_key(p) -> str:
+    """Marchand d'un produit : champ source_merchant, sinon deduit du lien affilie."""
+    if p.get("source_merchant"):
+        return str(p["source_merchant"]).strip().lower()
+    url = p.get("affiliate_url") or ""
+    if "effiliation" in url:
+        return "beauty success"
+    m = re.search(r"[?&]m=(\d+)", url)
+    return f"awin-{m.group(1)}" if m else "autre"
+
+
+def _image_quality(p) -> int:
+    """Photos Beauty Success : ~2000 px (mesure). Awin : CDN 600 px, nettete variable."""
+    img = p.get("image") or ""
+    if not img or re.search(r"no[-_]?image|placeholder|undefined|null", img, re.I):
+        return -2
+    if "beautysuccess.fr" in img:
+        return 2
+    if "productserve.com" in img:
+        return 1
+    return 0
+
+
 LOW_RES_IMAGE_PRODUCTS = {
     ("la rosee", "stick corrector anti-imperfections"),
 }
@@ -328,7 +352,7 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
         p for p in items
         if (_normalize_text(p["brand"]), _normalize_text(re.sub(r"[,(].*$", "", p["name"]).strip())) not in LOW_RES_IMAGE_PRODUCTS
     ]
-    items.sort(key=lambda p: (-p["rating"], -p["reviews"]))
+    items.sort(key=lambda p: (-p["rating"], -p["reviews"], -_image_quality(p)))
     # get_catalog() a deja fusionne les variantes du MEME produit
     # (dedupe_variants), donc pas besoin de refaire ce tri ici. Il reste par
     # contre un autre probleme a regler : la plupart des produits Awin
@@ -345,8 +369,22 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
     for p in items:
         by_brand.setdefault(p["brand"].strip().lower(), []).append(p)
 
+    # Les marques sont rangees marchand par marchand en alternance (Beauty
+    # Success, DocMorris, Perfumeria...) : sans cela l'ordre de la base donnait
+    # tout le haut du Top au marchand importe en premier.
+    by_merchant = {}
+    for b, bucket in by_brand.items():
+        by_merchant.setdefault(_merchant_key(bucket[0]), []).append(b)
+    for brands in by_merchant.values():
+        brands.sort(key=lambda b: -_image_quality(by_brand[b][0]))
+    brands_cycle = []
+    lists = list(by_merchant.values())
+    while any(lists):
+        for lst in lists:
+            if lst:
+                brands_cycle.append(lst.pop(0))
+
     result = []
-    brands_cycle = list(by_brand.keys())
     while len(result) < limit and any(by_brand[b] for b in brands_cycle):
         for b in brands_cycle:
             bucket = by_brand[b]
