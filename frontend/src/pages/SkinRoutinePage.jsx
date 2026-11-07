@@ -125,6 +125,20 @@ export default function SkinRoutinePage() {
 
       <RoutineCta testId="skin-cta-mid" />
 
+      {/* ===== PROMOS ===== */}
+      <section className="px-6 py-6" data-testid="skin-promos-link">
+        <div className="max-w-5xl mx-auto rounded-3xl bg-gradient-to-r from-[#FEC4D2]/40 to-[#79C1E0]/15 border border-[#FEC4D2] px-6 py-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+          <div>
+            <p className="text-lg md:text-xl font-bold text-neutral-900">Des soins en promo à prix réduit</p>
+            <p className="mt-1 text-sm text-neutral-600">Crèmes, sérums, nettoyants… profite des meilleures promos du moment sur les soins pour ta peau.</p>
+          </div>
+          <Link to="/promos" className="shrink-0 inline-flex items-center gap-2 bg-[#FEC4D2] hover:bg-[#fdb2c3] text-neutral-900 font-semibold text-sm px-6 py-3 rounded-full transition">
+            Voir les promos <ChevronRight size={16} />
+          </Link>
+        </div>
+      </section>
+
+
       {/* ===== ERREURS + ARTICLES ===== */}
       <MistakesAndArticles routine={routine} />
 

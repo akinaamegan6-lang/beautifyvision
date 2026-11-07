@@ -22,6 +22,8 @@ import CommentCaMarchePage from "@/pages/CommentCaMarchePage";
 import ContactPage from "@/pages/ContactPage";
 import AdminQuizPage from "@/pages/AdminQuizPage";
 import SkinRoutinePage from "@/pages/SkinRoutinePage";
+import PromosPage from "@/pages/PromosPage";
+import PromoFab from "@/components/promo/PromoFab";
 import ProfileGate from "@/components/ProfileGate";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
@@ -63,6 +65,7 @@ function AppRouter() {
         <Route path="/resultats-routine" element={<ResultatsRoutinePage />} />
         <Route path="/essayage-ia" element={<ProfileGate><AITryOnPage /></ProfileGate>} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/promos" element={<PromosPage />} />
         <Route path="/probleme/:slug" element={<ProfileGate><ProblemeRoutinePage /></ProfileGate>} />
         <Route path="/routine/:slug" element={<SkinRoutinePage />} />
         <Route path="/admin/quiz" element={<AdminQuizPage />} />
@@ -76,6 +79,7 @@ function AppRouter() {
         <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
       <Footer />
+      <PromoFab />
       <WelcomeRoutinePopup />
       <CookieBanner />
     </>

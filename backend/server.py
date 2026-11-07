@@ -397,6 +397,80 @@ async def top_products(parent: str = "cosmetiques", limit: int = 10):
     return result
 
 
+# ============ Promos (prix barres) ============
+# old_price est rempli a l'import des flux marchands (voir scripts/). Une promo
+# n'est retenue que si la remise est comprise entre 5 % et 70 % : en dessous
+# c'est du bruit, au-dessus c'est presque toujours un prix de reference peu
+# credible pour une page "bons plans".
+PROMO_MIN_PCT, PROMO_MAX_PCT = 5, 70
+
+
+def _promo_pct(p) -> int:
+    price = p.get("price") or 0
+    old = p.get("old_price") or 0
+    if price > 0 and old > price:
+        return round(100 * (old - price) / old)
+    return 0
+
+
+async def _promo_candidates(categories: List[str], skin_type: Optional[str] = None):
+    out = []
+    for c in categories:
+        for p in await get_catalog(category=c):
+            if not (PROMO_MIN_PCT <= _promo_pct(p) <= PROMO_MAX_PCT):
+                continue
+            if _image_quality(p) < 0:
+                continue
+            if (_normalize_text(p["brand"]), _normalize_text(re.sub(r"[,(].*$", "", p["name"]).strip())) in LOW_RES_IMAGE_PRODUCTS:
+                continue
+            if skin_type and skin_type not in (p.get("skin_types") or []):
+                continue
+            out.append(p)
+    return out
+
+
+def _pick_promos(items, limit: int, brand_cap: int = 3):
+    """Plus grosses remises d'abord, mais en alternant les marchands et sans
+    qu'une meme marque occupe toute la liste (brand_cap produits max)."""
+    items = sorted(items, key=lambda p: (-_promo_pct(p), -_image_quality(p)))
+    queues = {}
+    for p in items:
+        queues.setdefault(_merchant_key(p), []).append(p)
+    queues = list(queues.values())
+    out, per_brand = [], {}
+    while len(out) < limit and any(queues):
+        for q in queues:
+            while q:
+                p = q.pop(0)
+                b = _normalize_text(p.get("brand", ""))
+                if per_brand.get(b, 0) >= brand_cap:
+                    continue
+                per_brand[b] = per_brand.get(b, 0) + 1
+                out.append(p)
+                break
+            if len(out) >= limit:
+                break
+    return out
+
+
+@api_router.get("/products/promos", response_model=List[Product])
+async def promo_products(categories: str, limit: int = 20, skin_type: Optional[str] = None):
+    cats = [c.strip() for c in categories.split(",") if c.strip()][:20]
+    if not cats:
+        return []
+    return _pick_promos(await _promo_candidates(cats, skin_type), max(1, min(limit, 60)))
+
+
+@api_router.get("/products/promos/summary")
+async def promo_summary(categories: str):
+    cats = [c.strip() for c in categories.split(",") if c.strip()][:60]
+    items = await _promo_candidates(cats)
+    return {
+        "count": len(items),
+        "max_pct": max((_promo_pct(p) for p in items), default=0),
+    }
+
+
 @api_router.get("/products/by-ids", response_model=List[Product])
 async def products_by_ids(ids: str):
     """Produits choisis a la main (pages routines par type de peau...).

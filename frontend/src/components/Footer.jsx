@@ -36,6 +36,7 @@ export default function Footer() {
           <h4 className="text-sm font-semibold text-[#79C1E0] mb-4">À propos</h4>
           <ul className="space-y-2 text-sm text-neutral-600">
             <li><Link to="/comment-ca-marche" className="hover:text-[#FEC4D2]">Comment ça marche</Link></li>
+            <li><Link to="/promos" className="hover:text-[#FEC4D2]">Promos &amp; bons plans</Link></li>
             <li><Link to="/contact" className="hover:text-[#FEC4D2]">Contact</Link></li>
           </ul>
         </div>

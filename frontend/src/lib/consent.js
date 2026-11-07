@@ -24,7 +24,7 @@ export function openCookieSettings() {
   window.dispatchEvent(new Event("bv-open-cookies"));
 }
 
-const AWIN_RE = /awin1\.com\/pclick\.php/;
+const AWIN_RE = /awin1\.com\/(?:pclick|cread)\.php/;
 
 // Signal de consentement Awin (hors TCF) : cons=1 = cookie accepte, cons=0 =
 // refuse ou pas encore de choix. Avec cons=0, Awin ne depose aucun cookie et
@@ -44,7 +44,7 @@ export function withAwinConsent(url) {
 // toucher, clic molette), pour qu'il porte toujours le choix le plus recent.
 export function installAwinConsentLinks() {
   const handler = (e) => {
-    const a = e.target?.closest?.('a[href*="awin1.com/pclick.php"]');
+    const a = e.target?.closest?.('a[href*="awin1.com/pclick.php"], a[href*="awin1.com/cread.php"]');
     if (a) a.href = withAwinConsent(a.href);
   };
   const events = ["pointerdown", "click", "auxclick", "contextmenu", "touchstart", "focusin"];
