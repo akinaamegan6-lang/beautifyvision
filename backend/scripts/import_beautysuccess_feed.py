@@ -80,7 +80,13 @@ RE_NAILS = re.compile(
 )
 
 RE_REFILL = re.compile(r"\b(recharge|recharges|refill|refills)\b")
-RE_BATH_SALTS = re.compile(r"\b(sels?|perles?|cubes?|bombes?|boules?)\b.*\bbain\b|\bbain\b.*\b(sels?|perles?|cubes?|bombes?)\b")
+# Produits "a verser dans le bain" (parfum d'ambiance, plaisir) : pas des soins de la peau
+RE_BATH_SALTS = re.compile(
+    r"\b(sels?|perles?|cubes?|bombes?|boules?|cristaux|galets?|tablettes?|carres?|poudre|pourdre)\b.*\bbain\b|"
+    r"\bbain\b.*\b(sels?|perles?|cubes?|bombes?|cristaux|galets?|effervescents?)\b|"
+    r"huile (de|pour le) bain|lait de bain|bain lacte|bain de pieds|effervescent|bain moussant enfant"
+)
+RE_BAIN_MOUSSANT = re.compile(r"bain moussant")
 RE_PERFUMED = re.compile(r"\b(brume parfumee|brume pour le corps|eau fraiche|eau parfumee|parfum pour|perfume|bougie|diffuseur)\b")
 
 
@@ -96,8 +102,8 @@ def exclusion_reason(name, l4, g5):
         return "outil/accessoire/coffret/kit"
     if dm.RE_SUPPLEMENT.search(n):
         return "complement alimentaire"
-    if RE_BATH_SALTS.search(n):
-        return "sels/perles de bain"
+    if RE_BATH_SALTS.search(n) or (RE_BAIN_MOUSSANT.search(n) and not re.search(r"douche|gel", n)):
+        return "produits de bain (sels, bombes, huiles et laits de bain...)"
     if norm(l4) in {norm(x) for x in DROP_L4} or RE_BAD_L5.search(norm(g5)) or RE_NAILS.search(n):
         return "ongles / accessoires / hors categories du site"
     return None
