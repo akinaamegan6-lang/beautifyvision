@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, Search, Settings2, CheckCircle2, ArrowRight, BarChart3, Play } from "lucide-react";
 import { api } from "../lib/api";
+import Seo from "../components/Seo";
 import ProductCard from "../components/ProductCard";
 import ProductRating from "../components/ProductRating";
 import SkinRoutinesSection from "../components/SkinRoutinesSection";
@@ -55,6 +56,19 @@ export default function HomePage() {
 
   return (
     <main className="bg-white overflow-x-hidden">
+      <Seo
+        title="Beautify Vision : diagnostic beauté personnalisé, routine et essayage IA"
+        description="Trouve les produits beauté faits pour ta peau : quiz rapide, routine 360° visage, corps et cheveux, essayage maquillage par IA, classement des mieux notés et bons plans."
+        path="/"
+        image="/image/hero-banner-page-promos.png"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Beautify Vision",
+          url: "https://beautifyvision.fr",
+          inLanguage: "fr-FR",
+        }}
+      />
       {/* ===== HERO ===== */}
       <section className="relative px-6 pt-12 md:pt-16 pb-12 md:pb-32" data-testid="hero-section">
         <div className="halo-pink -top-32 -left-32" />

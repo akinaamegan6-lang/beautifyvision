@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Seo from "./Seo";
 import { GENDER_OPTIONS, AGE_OPTIONS, getProfile, saveProfile } from "../lib/profile";
 
 function Choice({ options, value, onChange, testid }) {
@@ -51,6 +52,7 @@ export default function ProfileGate({ children }) {
 
   return (
     <main className="bg-white min-h-screen px-6 py-12 md:py-20 relative" data-testid="profile-gate">
+      <Seo title="Avant de commencer | Beautify Vision" noindex />
       <div className="halo-pink -top-20 -right-20"/>
       <div className="halo-blue top-1/2 -left-32"/>
       <div className="relative max-w-3xl mx-auto">

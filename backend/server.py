@@ -1169,7 +1169,12 @@ SITE_URL = "https://beautifyvision.fr"
 
 # Pages statiques a inclure en plus des articles de blog et des pages
 # "probleme de peau" (generees depuis CATEGORIES, deja dynamique).
-SITEMAP_STATIC_PATHS = ["/", "/blog", "/routine-360", "/essayage-ia"]
+# Seules les pages indexables : les pages "/probleme/..." et "/routine-360" sont
+# precedees d'un questionnaire (age / genre) et n'ont donc pas de contenu pour Google.
+SITEMAP_STATIC_PATHS = [
+    "/", "/blog", "/essayage-ia", "/promos", "/comment-ca-marche",
+    "/routine/peau-grasse", "/routine/peau-a-taches", "/routine/peau-acneique", "/routine/peau-seche",
+]
 
 
 def _xml_escape(value: str) -> str:
@@ -1189,10 +1194,6 @@ async def sitemap():
     Expose aussi via https://beautifyvision.fr/sitemap.xml (rewrite Vercel cote front)."""
     today = datetime.now(timezone.utc).date().isoformat()
     urls = [{"loc": f"{SITE_URL}{p}", "lastmod": today} for p in SITEMAP_STATIC_PATHS]
-
-    for cat in CATEGORIES.values():
-        for prob in cat.get("problems", []):
-            urls.append({"loc": f"{SITE_URL}/probleme/{prob['slug']}", "lastmod": today})
 
     cursor = db.articles.find({}, {"_id": 0, "slug": 1, "published_at": 1})
     async for doc in cursor:

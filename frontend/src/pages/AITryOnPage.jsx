@@ -8,6 +8,7 @@ import { applyMakeup, detectZonePositions } from "../lib/faceMakeup";
 import { PRESET_LOOKS } from "../data/criteria";
 import ProductCard from "../components/ProductCard";
 import { toast } from "sonner";
+import Seo from "../components/Seo";
 
 const LOADER_STEPS = [
   "Sélection des produits les plus adaptés…",
@@ -480,6 +481,11 @@ export default function AITryOnPage() {
 
   return (
     <main className="bg-white min-h-screen relative">
+      <Seo
+        title="Essayage maquillage par IA : teste ton look sur ta photo | Beautify Vision"
+        description="Envoie ta photo, choisis un look et vois le résultat sur ton visage avec l'IA, puis retrouve les produits utilisés et leurs prix. Gratuit et sans inscription."
+        path="/essayage-ia"
+      />
       <div className="halo-pink -top-20 -right-20" />
       <div className="halo-blue top-1/2 -left-32" />
       <section className="px-6 py-16 relative">
