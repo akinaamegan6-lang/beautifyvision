@@ -180,6 +180,24 @@ export function TipsBlock({ items = [] }) {
   );
 }
 
+export function FaqBlock({ items = [] }) {
+  return (
+    <div className="my-6 space-y-3">
+      {items.map((it, i) => (
+        <details key={i} className="group bg-white border border-[#FEC4D2]/40 rounded-2xl px-5 py-4 open:bg-[#FEEFF2]/40">
+          <summary className="cursor-pointer list-none flex items-start justify-between gap-4 font-semibold text-neutral-900">
+            <span>{it.q}</span>
+            <span className="shrink-0 text-[#79C1E0] text-xl leading-none transition group-open:rotate-45">+</span>
+          </summary>
+          <p className="mt-3 text-sm text-neutral-600 leading-relaxed">
+            <RichText text={it.a} highlightClassName="text-neutral-900 font-semibold"/>
+          </p>
+        </details>
+      ))}
+    </div>
+  );
+}
+
 export function ArticleBlock({ block }) {
   switch (block.type) {
     case "heading2": return <Heading2Block text={block.text}/>;
@@ -191,6 +209,7 @@ export function ArticleBlock({ block }) {
     case "ingredients": return <IngredientsBlock items={block.items}/>;
     case "products": return <ProductsBlock items={block.items}/>;
     case "tips": return <TipsBlock items={block.items}/>;
+    case "faq": return <FaqBlock items={block.items}/>;
     default: return null;
   }
 }

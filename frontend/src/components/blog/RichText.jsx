@@ -1,8 +1,21 @@
+import { Link } from "react-router-dom";
 import { parseRichText } from "./blogText";
 
 export default function RichText({ text, highlightClassName = "text-[#79C1E0]", italicHighlight = false, block = true }) {
   const lines = parseRichText(text);
   const renderSegment = (seg, j) => {
+    if (seg.link && seg.link.startsWith("/")) {
+      // Lien interne (autre article, page du site) : meme onglet, pas de rel sponsored.
+      return (
+        <Link
+          key={j}
+          to={seg.link}
+          className="text-[#79C1E0] underline decoration-[#79C1E0]/40 hover:decoration-[#79C1E0] font-medium"
+        >
+          {seg.text}
+        </Link>
+      );
+    }
     if (seg.link) {
       return (
         <a

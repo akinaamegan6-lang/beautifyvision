@@ -60,7 +60,7 @@ export default function ArticlePage() {
   const metaDescription = article.meta_description || article.excerpt || article.chapo || "";
   const heroImg = article.hero_image || article.image;
   const canonicalPath = `/blog/${article.slug}`;
-  const jsonLd = {
+  const articleLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: plainTitle,
@@ -70,6 +70,22 @@ export default function ArticlePage() {
     mainEntityOfPage: absoluteUrl(canonicalPath),
     author: { "@type": "Organization", name: "Beautify Vision" },
   };
+  // Bloc FAQ -> donnees structurees FAQPage (resultats enrichis Google).
+  const faqItems = (article.blocks || []).filter((b) => b.type === "faq").flatMap((b) => b.items || []);
+  const jsonLd = faqItems.length
+    ? [
+        articleLd,
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqItems.map((it) => ({
+            "@type": "Question",
+            name: plainText(it.q),
+            acceptedAnswer: { "@type": "Answer", text: plainText(it.a) },
+          })),
+        },
+      ]
+    : articleLd;
 
   return (
     <main className="bg-white" data-testid="article-page">
